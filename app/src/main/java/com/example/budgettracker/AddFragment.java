@@ -10,6 +10,7 @@ import android.view.ViewGroup;
  * The fragment subclass for the Add section of the app
  * Connects to fragment_add.xml to provide layout
  */
+
 public class AddFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match

@@ -11,11 +11,8 @@ import android.view.ViewGroup;
 /**
  * The fragment subclass for the Transaction section of the app
  * Connects to fragment_transactions.xml to provide layout
- *
- * A simple {@link Fragment} subclass.
- * Use the {@link TransactionsFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
+
 public class TransactionsFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match

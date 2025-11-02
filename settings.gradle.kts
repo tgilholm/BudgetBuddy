@@ -18,11 +18,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // Include the jitpack repository as a prerequisite for MPAndroidChart
         maven { url = uri("https://jitpack.io")}
     }
 }
-
-
 
 rootProject.name = "BudgetTracker"
 include(":app")

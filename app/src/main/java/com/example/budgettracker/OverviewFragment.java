@@ -11,11 +11,8 @@ import android.view.ViewGroup;
 /**
  * The fragment subclass for the Overview section of the app
  * Connects to fragment_overview.xml to provide layout
- *
- * A simple {@link Fragment} subclass.
- * Use the {@link OverviewFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
+
 public class OverviewFragment extends Fragment {
 
     /* TODO: Pie-chart functionality
