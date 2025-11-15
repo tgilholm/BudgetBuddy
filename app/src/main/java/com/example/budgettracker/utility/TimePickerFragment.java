@@ -29,7 +29,8 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         // Use setFragmentResult() to send the result of the timePicker back to addFragment
-        // This is done using a bundle, which contains a key, "timeKey", and the date with month + 1
+        // This is done using a bundle, which contains a key, "timeKey", and the selected time
+
         Bundle bundle = new Bundle();
 
         // Always use 00:00 format for time

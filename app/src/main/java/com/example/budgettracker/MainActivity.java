@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     These icons are on the task bar at the top of the view
      */
 
+    // TODO receive input from addFragment of new transactions
+    // For now simply output them in a toast
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

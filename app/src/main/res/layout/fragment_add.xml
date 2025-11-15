@@ -37,7 +37,7 @@
         android:textColor="@color/material_dynamic_neutral60"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textInputAddAmount">
+        app:layout_constraintTop_toBottomOf="@id/editTextAmount">
 
     </TextView>
 
@@ -57,7 +57,7 @@
 
     <!-- TextInputEditText for the transaction amount- force on one line -->
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/textInputAddAmount"
+        android:id="@+id/editTextAmount"
         android:layout_width="132dp"
         android:layout_height="48dp"
         android:layout_marginStart="36dp"
