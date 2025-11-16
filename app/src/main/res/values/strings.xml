@@ -38,4 +38,5 @@
     <string name="set_a_date">Set a Date</string>
     <string name="set_a_time">Set a Time</string>
     <string name="add_transaction">Add Transaction</string>
+    <string name="recent_transactions">Recent Transactions</string>
 </resources>

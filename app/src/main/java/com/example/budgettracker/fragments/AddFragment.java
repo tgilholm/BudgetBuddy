@@ -23,6 +23,7 @@ import com.example.budgettracker.R;
 import com.example.budgettracker.Transaction;
 import com.example.budgettracker.TransactionViewModel;
 import com.example.budgettracker.timeselector.DatePickerFragment;
+import com.example.budgettracker.utility.ColorHandler;
 import com.example.budgettracker.utility.InputValidator;
 import com.example.budgettracker.timeselector.TimePickerFragment;
 import com.example.budgettracker.enums.RepeatDuration;
@@ -153,16 +154,16 @@ public class AddFragment extends Fragment
         {
             // Resolve the color IDs from colors.xml to a color integer before passing to Chip
             int colorID = colorIDs.get(categories.indexOf(i));
-            int resolvedColor = ContextCompat.getColor(requireContext(), colorID);
+            //int resolvedColor = ContextCompat.getColor(requireContext(), colorID);
 
-            Chip chip = createChip(i, resolvedColor);
+            Chip chip = createChip(i, ColorHandler.resolveColorID(getContext(), colorID));
             chipGroupCategories.addView(chip); // Add the new chip group to the view
         }
     }
 
     // Allows for the creation of default and user-defined category chips //TODO Add color picker
     @NonNull
-    private Chip createChip(String label, int color)
+    private Chip createChip(String label, ColorStateList color)
     {
         Chip newChip = new Chip(getContext(), null, R.style.Theme_BudgetTracker_ChipStyle);
 
@@ -172,7 +173,7 @@ public class AddFragment extends Fragment
         newChip.setClickable(true);
 
         // Set the background color of the chip
-        newChip.setChipBackgroundColor(ColorStateList.valueOf(color));
+        newChip.setChipBackgroundColor(color);
         return newChip;
     }
 

@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgettracker.R;
 import com.example.budgettracker.Transaction;
+import com.example.budgettracker.enums.TransactionType;
+import com.example.budgettracker.utility.ColorHandler;
 
 import java.util.Objects;
 
@@ -65,6 +67,7 @@ public class RecyclerViewAdapter extends ListAdapter<Transaction, RecyclerViewAd
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
         private final TextView textCategory;
+        private final TextView textDateTime;
         private final TextView textAmount;
 
         public ViewHolder(@NonNull View itemView)
@@ -72,6 +75,7 @@ public class RecyclerViewAdapter extends ListAdapter<Transaction, RecyclerViewAd
             super(itemView);
 
             // Find the textViews from the layout
+            textDateTime = itemView.findViewById(R.id.textDateTime);
             textCategory = itemView.findViewById(R.id.textCategory);
             textAmount = itemView.findViewById(R.id.textAmount);
         }
@@ -79,9 +83,21 @@ public class RecyclerViewAdapter extends ListAdapter<Transaction, RecyclerViewAd
         // Bind the data from a transaction to the textViews on the layout
         public void bind(Transaction transaction)
         {
+            // Get the category and amount fields
             textCategory.setText(transaction.getCategory());
             textAmount.setText(String.valueOf(transaction.getAmount()));
 
+            // For positive (income) transactions, set the color to green
+            if (transaction.getType() == TransactionType.INCOMING)
+            {
+                textAmount.setTextColor(ColorHandler.resolveColorID(itemView.getContext(), R.color.brightGreen));
+            } else
+            {
+                // For negative transactions set the color to red and prepend a '-'
+                String negatedString = "-" + textAmount.getText();
+                textAmount.setText(negatedString);
+                textAmount.setTextColor(ColorHandler.resolveColorID(itemView.getContext(), R.color.brightRed));
+            } textDateTime.setText(transaction.getDateTimeString());
         }
     }
 }

@@ -71,9 +71,18 @@ public final class Transaction
         return type;
     }
 
+    // Returns date and time as a Calendar object
     public Calendar getDateTime()
     {
         return dateTime;
+    }
+
+    // Returns the date and time in the format hh:mm dd/MM/yyyy
+    public String getDateTimeString()
+    {
+        return String.format(Locale.getDefault(), "%02d:%02d %02d/%02d/%d",
+                dateTime.get(Calendar.HOUR_OF_DAY), dateTime.get(Calendar.MINUTE),
+                dateTime.get(Calendar.DAY_OF_MONTH), dateTime.get(Calendar.MONTH) + 1, dateTime.get(Calendar.YEAR));
     }
 
     public String getCategory()
