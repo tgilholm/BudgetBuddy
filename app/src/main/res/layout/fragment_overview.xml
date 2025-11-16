@@ -43,15 +43,36 @@
             app:layout_constraintTop_toBottomOf="@id/txtBudgetLabel" />
 
 
-        <!-- TODO put pie chart & categories in a horizontal view -->
-        <!-- Display the pie chart -->
-        <com.github.mikephil.charting.charts.PieChart
-            android:layout_width="180dp"
-            android:layout_height="180dp"
+        <!--        &lt;!&ndash; TODO put pie chart & categories in a horizontal view &ndash;&gt;-->
+        <!--        &lt;!&ndash; Display the pie chart &ndash;&gt;-->
+        <!--        <com.github.mikephil.charting.charts.PieChart-->
+        <!--            android:id="@+id/pieChart"-->
+        <!--            android:layout_width="180dp"-->
+        <!--            android:layout_height="180dp"-->
+        <!--            android:layout_marginStart="24dp"-->
+        <!--            android:layout_marginTop="48dp"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/txtBudgetAmount" />-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtBudgetAmount" />
+            app:layout_constraintTop_toBottomOf="@+id/txtBudgetAmount"
+            app:layout_constraintVertical_bias="0.0"
+            tools:itemCount="3"
+            tools:listitem="@layout/transaction_item">
+
+
+        </androidx.recyclerview.widget.RecyclerView>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

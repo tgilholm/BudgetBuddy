@@ -7,6 +7,9 @@
         <item name="android:statusBarColor">@color/budgetBlue</item>
     </style>
 
+    <style name="Theme.BudgetTracker.ChipStyle" parent="@style/Widget.MaterialComponents.Chip.Choice">
+        <item name="chipStyle">@style/Widget.MaterialComponents.Chip.Choice</item>
+    </style>
 
     <style name="Theme.BudgetTracker" parent="Base.Theme.BudgetTracker" />
 </resources>

@@ -1,9 +1,8 @@
-package com.example.budgettracker.utility;
+package com.example.budgettracker.timeselector;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;

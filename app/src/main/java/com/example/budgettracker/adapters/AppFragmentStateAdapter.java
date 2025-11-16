@@ -1,4 +1,4 @@
-package com.example.budgettracker.utility;
+package com.example.budgettracker.adapters;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

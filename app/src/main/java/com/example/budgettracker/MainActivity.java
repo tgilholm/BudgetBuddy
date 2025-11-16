@@ -1,4 +1,5 @@
 package com.example.budgettracker;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -9,42 +10,52 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.budgettracker.utility.AppFragmentStateAdapter;
+import com.example.budgettracker.adapters.AppFragmentStateAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 /*
- * The main class of the program
- * Initialises a ViewPager2 and a AppFragmentStateAdaptor to handle the swipe view functionality
- * Fragments are attached to MainActivity- the layout in activity_main.xml is shown behind them
- * Attaches these to a TabLayout to enable the user to switch between the three tabs without swiping
- * Title bar is automatically updated to reflect fragment title
+ * The main class of the program. Responsibilities:
+ *  Initialises a ViewPager2 and a AppFragmentStateAdaptor to handle the swipe view functionality
+ *  Fragments are attached to MainActivity- the layout in activity_main.xml is shown behind them
+ *  Attaches these to a TabLayout to enable the user to switch between the three tabs without swiping
+ *  Title bar is automatically updated to reflect fragment title
+ *  Receive new Transactions from the AddFragment and add them to the TransactionViewModel
+ *
+ *
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+{
+    // Create an instance of the TransactionViewModel
 
-    /* TODO
-    Settings & notifications icons, leading to separate activities
-    These icons are on the task bar at the top of the view
-     */
+    // TODO database connection
 
-    // TODO receive input from addFragment of new transactions
-    // For now simply output them in a toast
+
+
+
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
         EdgeToEdge.enable(this);
 
+        // Initialise the TransactionViewModel- all other fragments should use this instance
+        TransactionViewModel transactionViewModel = new ViewModelProvider(this).get(TransactionViewModel.class);
+
         /*
          window.statusBarColor is deprecated since Android 14
          WindowInsets is used instead to set the status bar colour
          */
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) ->
+        {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 
             // Set the underlying background to blue, this is drawn over in white by the fragments
@@ -66,8 +77,10 @@ public class MainActivity extends AppCompatActivity {
         new TabLayoutMediator(findViewById(R.id.tab_layout), vp,
 
                 // Create a TabConfigurationStrategy to set the text for each tab
-                (tab, position) -> {
-                    switch (position) {
+                (tab, position) ->
+                {
+                    switch (position)
+                    {
                         case 0:
                             tab.setText("Overview");
                             break;
@@ -78,13 +91,14 @@ public class MainActivity extends AppCompatActivity {
                             tab.setText("Transactions");
                             break;
                     }
-                }
-        ).attach();
+                }).attach();
 
         // Update the title bar to the name of the currently-displayed fragment
-        vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+        vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback()
+        {
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(int position)
+            {
                 switch (position)
                 {
                     case 0:
@@ -101,18 +115,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+        //
+        public void settingsButtonPressed (View v)
+        {
+            Toast toast = Toast.makeText(this, "Settings", Toast.LENGTH_LONG);
+            toast.show();
+        }
 
-    //
-    public void settingsButtonPressed(View v)
-    {
-        Toast toast = Toast.makeText(this, "Settings", Toast.LENGTH_LONG);
-        toast.show();
-    }
-
-    public void notificationsButtonPressed(View v)
-    {
-        Toast toast = Toast.makeText(this, "Notifications", Toast.LENGTH_LONG);
-        toast.show();
-    }
-
+        public void notificationsButtonPressed (View v)
+        {
+            Toast toast = Toast.makeText(this, "Notifications", Toast.LENGTH_LONG);
+            toast.show();
+        }
 }

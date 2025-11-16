@@ -4,4 +4,13 @@
     <color name="white">#FFFFFFFF</color>
     <color name="budgetBlue">#4141eb</color>
 
+    <!--  Light colors for chips  -->
+    <color name="lightBlue">#ADD8E6</color>
+    <color name="lightGreen">#90EE90</color>
+    <color name="lightPink">#FFB6C1</color>
+    <color name="lightOrange">#FED8B1</color>
+    <color name="lightRed">#F08080</color>
+    <color name="lightYellow">#FFFFE0</color>
+    <color name="lightPurple">#E6E6FA</color>
+
 </resources>

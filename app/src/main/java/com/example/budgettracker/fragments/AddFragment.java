@@ -1,31 +1,40 @@
 package com.example.budgettracker.fragments;
 
+
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
+import androidx.lifecycle.ViewModelProvider;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.budgettracker.R;
-import com.example.budgettracker.utility.DatePickerFragment;
-import com.example.budgettracker.utility.TimePickerFragment;
+import com.example.budgettracker.Transaction;
+import com.example.budgettracker.TransactionViewModel;
+import com.example.budgettracker.timeselector.DatePickerFragment;
+import com.example.budgettracker.utility.InputValidator;
+import com.example.budgettracker.timeselector.TimePickerFragment;
+import com.example.budgettracker.enums.RepeatDuration;
+import com.example.budgettracker.enums.TransactionType;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 
 /**
@@ -38,10 +47,13 @@ public class AddFragment extends Fragment
     private EditText dateText;
     private EditText timeText;
     private FloatingActionButton addButton;
+    private ChipGroup chipGroupCategories;
 
 
     // Used to hold user-defined time values
     private final Calendar userTime;
+
+    private TransactionViewModel transactionViewModel;
 
     // Update UI to be more like Google Calendar
     // Dropdown menu for time and date & keep both selected
@@ -59,28 +71,30 @@ public class AddFragment extends Fragment
         userTime = Calendar.getInstance();
     }
 
-    public static AddFragment newInstance(String param1, String param2)
+    // Handle the logic for the fragment startup
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
     {
-        AddFragment fragment = new AddFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
+        super.onViewCreated(view, savedInstanceState);
+
+        // Connect the TransactionViewModel
+        transactionViewModel = new ViewModelProvider(requireActivity()).get(TransactionViewModel.class);
+
+
+
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null)
-        {
-        }
     }
 
     // Creates the layout and event listeners for the fragment
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-
         // Instantiate a new View with the inflated XML layout
         View v = inflater.inflate(R.layout.fragment_add, container, false);
 
@@ -105,57 +119,63 @@ public class AddFragment extends Fragment
         onFragmentResult is used to take the bundled date or time from the fragment
         and pass it to AddFragment
          */
-        getParentFragmentManager().setFragmentResultListener("dateKey", this, new FragmentResultListener()
+        getParentFragmentManager().setFragmentResultListener("dateKey", this, (requestKey, bundle) ->
         {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle)
-            {
-                String result = bundle.getString("dateKey");
-                dateText.setText(result);   // Update the dateText field with the requested date
-            }
+            String result = bundle.getString("dateKey");
+            dateText.setText(result);   // Update the dateText field with the requested date
         });
 
-        getParentFragmentManager().setFragmentResultListener("timeKey", this, new FragmentResultListener()
+        getParentFragmentManager().setFragmentResultListener("timeKey", this, (requestKey, bundle) ->
         {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle)
-            {
-                String result = bundle.getString("timeKey");
-                timeText.setText(result);   // Update the timeText field with the requested date
-            }
+            String result = bundle.getString("timeKey");
+            timeText.setText(result);   // Update the timeText field with the requested date
         });
 
         // STARTUP LOGIC
-        /*
-        - Sets default values for the date and time fields
-         */
+        setInitialDateTime();   // Sets default values for the date and time fields
 
-        // Set the date and time fields to the current date & time
-        int year = userTime.get(Calendar.YEAR);
-        int month = userTime.get(Calendar.MONTH);
-        int day = userTime.get(Calendar.DAY_OF_MONTH);
+        // Get the chip group for the categories from the layout and populate with the existing categories
+        chipGroupCategories = v.findViewById(R.id.chipGroupCategories);
+        populateChipGroup();    // Adds the categories to the chip group
 
-        // Month is indexed from 0, so add 1 to prevent off by ones
-        String currentDate = day + "/" + (month + 1) + "/" + year;
-        dateText.setText(currentDate);
-
-        int minute = userTime.get(Calendar.MINUTE);
-        int hour = userTime.get(Calendar.HOUR_OF_DAY);
-
-        // Always use 00:00 format for time output, i.e. 03:00 instead of 3.0
-        // Set the locale to be the user's region
-        timeText.setText(String.format(Locale.getDefault(), "%02d:%02d", hour, minute));
         return v;
     }
 
-
-    // Handle the logic for the fragment startup
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
+    // Populate the ChipGroup with the pre-set categories //TODO MOVE TO DATABASE
+    private void populateChipGroup()
     {
-        super.onViewCreated(view, savedInstanceState);
+        // Create a default list of categories
+        List<String> categories = Arrays.asList("Entertainment", "Petrol", "Pets", "Travel", "Shopping");
+        List<Integer> colorIDs = Arrays.asList(R.color.lightGreen, R.color.lightBlue, R.color.lightRed, R.color.lightYellow, R.color.lightPurple);
 
+
+        for (String i : categories)
+        {
+            // Resolve the color IDs from colors.xml to a color integer before passing to Chip
+            int colorID = colorIDs.get(categories.indexOf(i));
+            int resolvedColor = ContextCompat.getColor(requireContext(), colorID);
+
+            Chip chip = createChip(i, resolvedColor);
+            chipGroupCategories.addView(chip); // Add the new chip group to the view
+        }
     }
+
+    // Allows for the creation of default and user-defined category chips //TODO Add color picker
+    @NonNull
+    private Chip createChip(String label, int color)
+    {
+        Chip newChip = new Chip(getContext(), null, R.style.Theme_BudgetTracker_ChipStyle);
+
+        // Set the name of the chip
+        newChip.setText(label);
+        newChip.setCheckable(true);
+        newChip.setClickable(true);
+
+        // Set the background color of the chip
+        newChip.setChipBackgroundColor(ColorStateList.valueOf(color));
+        return newChip;
+    }
+
 
     // Open a DatePickerDialog when the user interacts with the date field
     public void onDatePressed(View view)
@@ -172,65 +192,129 @@ public class AddFragment extends Fragment
         timePicker.show(getParentFragmentManager(), "timePicker");
     }
 
+    // Sets the DateText and TimeText fields to the current time
+    private void setInitialDateTime()
+    {
+        // Set the date and time fields to the current date & time
+        int year = userTime.get(Calendar.YEAR);
+        int month = userTime.get(Calendar.MONTH);
+        int day = userTime.get(Calendar.DAY_OF_MONTH);
+        int minute = userTime.get(Calendar.MINUTE);
+        int hour = userTime.get(Calendar.HOUR_OF_DAY);
+
+        // Always use 00:00 format for time output, i.e. 03:00 instead of 3.0
+        // Set the locale to be the user's region
+        timeText.setText(String.format(Locale.getDefault(), "%02d:%02d", hour, minute));
+
+        // Month is indexed from 0, so add 1 to prevent off by ones
+        String currentDate = day + "/" + (month + 1) + "/" + year;
+        dateText.setText(currentDate);
+    }
+
+
     // Handle the logic for the add button
     // Collects all the user input into a new transaction
     public void onAddPressed(View view)
     {
-        getAmount();
-        // Get the transaction amount
-        // Get the incoming/outgoing
-        // Get the transaction category
-        // Get the repeat duration of the transaction
+        // Parcelable order:
+        /*
+            - id
+            - amount
+            - type
+            - date
+            - category
+            - repeat
+         */
+        // Bundle all the user input into a new transaction
+        double amount = getAmount();        // Get the transaction amount
+        if (amount < 0) { return; }         // Break here if getAmount() failed
 
-        // Get transaction date and time from EditText fields
+        TransactionType type = getType();   // Get the transaction type
 
+        Calendar dateTime = getDateAndTime();
+        if (dateTime == null) {return;}     // Break here if getDateAndTime() failed
 
+        String category = getCategory();    // Get the transaction category
+        if (category == null) {return;}     // Break here if getCategory() failed
+
+        RepeatDuration repeatDuration = getRepeatDuration();
+
+        Log.v("AddFragment", "Adding new transaction");
+
+        // Add the transaction to the list of transactions
+        transactionViewModel.addTransaction(new Transaction(amount, type, dateTime, category, repeatDuration));
     }
 
-    // Get the transaction amount from the user
+
+    // Get the transaction amount inputted by the user
     private double getAmount()
     {
         // Get the amount from the amountText field
         EditText amountText = requireView().findViewById(R.id.editTextAmount);
         String amount = amountText.getText().toString().trim(); // Remove any whitespace
 
-        // Verify format is correct, inform user via toasts about any errors
-        // Check if amountText is empty- this is also validated by the regex but is more specific
-        if (amount.isEmpty())
-        {
-            Toast.makeText(getContext(), "Please enter an amount", Toast.LENGTH_SHORT).show();
-            return -1; // -1 is the "error code"
-        }
+        // Validate the input
+        return InputValidator.validateCurrencyInput(getContext(), amount);
+    }
 
-        // Regular expression for checking amount format is correct
-        /* Regex:
-            Breakdown:
-            [0-9]+          Matches if the string contains one-or-more numbers- i.e. 50
-            [.]             Matches if the string contains a decimal point
-            [0-9]{2}        Matches if numeric and ONLY 2 d.p. i.e. 50.12 instead of 50.123
-            ([.][0-9]{2})?  The '?' indicates that the entire block is optional (zero or one)
-                            This means that 50 is valid, and so is 50.12
+    // Return the type of the transaction- incoming or outgoing
+    private TransactionType getType()
+    {
+        // Get the type radio buttons from the layout
+        RadioButton rbIncoming = requireView().findViewById(R.id.rbIncoming);
 
-            Complete regex: [0-9]+([.][0-9]{2})?
-        */
-        String regex = "[0-9]+([.][0-9]{2})?";
+        // Only one radio button can be selected at a time
+        if (rbIncoming.isChecked())
+        {
+            return TransactionType.INCOMING;
+        } else
+        {
+            return TransactionType.OUTGOING;
+        }
+    }
 
-        // Use the regex to check whether the string meets the format "123" or "123.12"
-        if (!(amount.matches(regex)))
+    // Return the category of the transaction
+    @Nullable
+    private String getCategory()
+    {
+        // The ChipGroup uses Single Selection mode, making the process of finding the checked chip faster
+        int selectedChipId = chipGroupCategories.getCheckedChipId();
+
+        // If no chip is selected, inform the user via a toast message
+        if (selectedChipId == View.NO_ID) // View.NO_ID has a value of -1
         {
-            Toast.makeText(getContext(), "Please enter an amount in the format '***' or '***.**'", Toast.LENGTH_LONG).show();
-            return -1;
+            Toast.makeText(getContext(), "No Category Selected!", Toast.LENGTH_SHORT).show();
+            return null; // Return null if no chip is selected
+        } else
+        {
+            // Returns the chip with the ID of the selected chip
+            Chip selectedCategory = chipGroupCategories.findViewById(selectedChipId);
+            return selectedCategory.getText().toString(); // Returns the text of the chip
         }
-        // If the string is formatted correctly, return it
-        // Put the return in a try-catch in case the user tries any funny business not caught by the regex
-        try
-        {
-            return Double.parseDouble(amount);
-        } catch (NumberFormatException funnyBusiness)
-        {
-            Toast.makeText(getContext(), "Error getting amount value", Toast.LENGTH_LONG).show();
-            Log.e("Error: ", funnyBusiness.toString());
-            return -1;
-        }
+    }
+
+    // Gets the date and time in the dateText and timeText fields and returns them as a Calendar object
+    // Storing the values as a Calendar helps with operations elsewhere in the program
+    private Calendar getDateAndTime()
+    {
+        // Get the values from the EditText fields
+        String date = dateText.getText().toString();
+        String time = timeText.getText().toString();
+
+        // Pass the date and time values to the validateDateAndTime method
+        return InputValidator.validateDateTimeInput(getContext(), date + " " + time);
+    }
+
+    private RepeatDuration getRepeatDuration()
+    {
+        // Get the radio group from the layout
+        RadioGroup radioGroupSelectRepeat = requireView().findViewById(R.id.radioGroupSelectRepeat);
+        int selectedRadioButtonID = radioGroupSelectRepeat.getCheckedRadioButtonId();
+
+        // Get the selected RadioButton by indexing the radio group
+        RadioButton rbSelected = radioGroupSelectRepeat.findViewById(selectedRadioButtonID);
+
+        // Pass the rbSelected field to the selectRepeatDuration method in InputValidator
+        return InputValidator.selectRepeatDuration(rbSelected.getText().toString());
     }
 }
