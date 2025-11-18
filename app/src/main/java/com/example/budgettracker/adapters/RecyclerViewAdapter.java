@@ -15,37 +15,22 @@ import com.example.budgettracker.Transaction;
 import com.example.budgettracker.enums.TransactionType;
 import com.example.budgettracker.utility.ColorHandler;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 // The adapter for the RecyclerView in OverviewFragment
 // Extends ListAdapter to improve performance- does not need to rewrite entire list on update
-public class RecyclerViewAdapter extends ListAdapter<Transaction, RecyclerViewAdapter.ViewHolder>
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>
 {
-    public RecyclerViewAdapter()
+    // Hold a list of transactions
+    private final List<Transaction> _transactions = new ArrayList<>();
+
+    public RecyclerViewAdapter(List<Transaction> transactions)
     {
-        super(DIFF_CALLBACK);
+        this._transactions.addAll(transactions);    // Instantiate list with transactions
     }
-
-    // DIFF_CALLBACK calculates the difference between old and new lists
-    // This reduces overhead by not having to update the entire list
-    private static final DiffUtil.ItemCallback<Transaction> DIFF_CALLBACK = new DiffUtil.ItemCallback<>()
-    {
-
-        // Compares Transactions by their IDs
-        @Override
-        public boolean areItemsTheSame(@NonNull Transaction oldItem, @NonNull Transaction newItem)
-        {
-            return Objects.equals(oldItem.getId(), newItem.getId());
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull Transaction oldItem, @NonNull Transaction newItem)
-        {
-            return oldItem.equals(newItem);
-        }
-    };
-
 
     @NonNull
     @Override
@@ -53,16 +38,35 @@ public class RecyclerViewAdapter extends ListAdapter<Transaction, RecyclerViewAd
     {
         // Inflate the layout for each item in the RecyclerView
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.transaction_item, parent, false);
-
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position)
     {
-        Transaction transaction = getItem(position);
-        holder.bind(transaction);
+        Transaction transaction = _transactions.get(position);    // Get the transaction at the current position
+        holder.bind(transaction);   // Set the data in the view elements
     }
+
+    @Override
+    public int getItemCount()
+    {
+        return _transactions.size();
+    }
+
+    // Update a transaction without resetting the entire RecyclerView using DiffUtil
+    public void updateTransactions(List<Transaction> transactions)
+    {
+        // Compare the list held in the Adapter with the new list
+        final TransactionDiffCallback diffCallback = new TransactionDiffCallback(this._transactions, transactions);
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);    // Calculate the result of the operation
+
+
+        this._transactions.clear();                         // Clear the list held in the Adapter
+        this._transactions.addAll(transactions);            // Add the new list to the Adapter
+        diffResult.dispatchUpdatesTo(this);        // Tells the RecyclerView to update the display
+    }
+
 
     // ViewHolder for the RecyclerView
     public static class ViewHolder extends RecyclerView.ViewHolder
@@ -81,7 +85,7 @@ public class RecyclerViewAdapter extends ListAdapter<Transaction, RecyclerViewAd
             textAmount = itemView.findViewById(R.id.textAmount);
         }
 
-        // Bind the data from a transaction to the textViews on the layout
+        // Set layout elements to the transaction data
         public void bind(Transaction transaction)
         {
             // Get the category and amount fields
@@ -98,7 +102,8 @@ public class RecyclerViewAdapter extends ListAdapter<Transaction, RecyclerViewAd
                 String negatedString = "-" + textAmount.getText();
                 textAmount.setText(negatedString);
                 textAmount.setTextColor(ColorHandler.resolveColorID(itemView.getContext(), R.color.brightRed));
-            } textDateTime.setText(transaction.getDateTimeString());
+            }
+            textDateTime.setText(transaction.getDateTimeString());
         }
     }
 }
