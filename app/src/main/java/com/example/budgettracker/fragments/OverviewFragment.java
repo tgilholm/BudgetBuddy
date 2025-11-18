@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,8 +16,13 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.budgettracker.R;
+import com.example.budgettracker.Transaction;
 import com.example.budgettracker.TransactionViewModel;
 import com.example.budgettracker.adapters.RecyclerViewAdapter;
+import com.example.budgettracker.utility.InputValidator;
+
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * The fragment subclass for the Overview section of the app
@@ -56,42 +62,39 @@ public class OverviewFragment extends Fragment
         // Required empty public constructor
     }
 
+
+
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
-        recyclerViewAdapter = new RecyclerViewAdapter();
 
+        // Connect the TransactionViewModel to the same one in MainActivity
+        transactionViewModel = new ViewModelProvider(requireActivity()).get(TransactionViewModel.class);
+
+        // Get the current Transaction list and convert it to a standard List
+        List<Transaction> transactions = transactionViewModel.getTransactions().getValue();
+
+        // Set up the recyclerViewAdapter with the current (sorted) transaction list
+        if (transactions != null)
+        {
+            recyclerViewAdapter = new RecyclerViewAdapter(InputValidator.sortTransactions(transactions));
+        }
 
         // Set up the recycler view
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(recyclerViewAdapter);
 
-
-        // Connect the TransactionViewModel to the same one in MainActivity
-        transactionViewModel = new ViewModelProvider(requireActivity()).get(TransactionViewModel.class);
-        final String[] lastTransaction = new String[1];
-
         // Set up an observer on the TransactionViewModel
         transactionViewModel.getTransactions().observe(getViewLifecycleOwner(), transactionList ->
         {
+            // When the transactionViewModel observes an update on transaction list, update the RecyclerView
 
-            // Send the new list to the recyclerViewAdapter
-            recyclerViewAdapter.submitList(transactionList);
+            // Send the new (sorted) list to the recyclerViewAdapter
+            recyclerViewAdapter.updateTransactions(InputValidator.sortTransactions(transactionList));
             Log.v("OverviewFragment", String.valueOf(transactionList.size()));
             Log.v("OverviewFragment", String.valueOf(recyclerViewAdapter.getItemCount()));
-
-            // TODO USE LESS TERRIBLE METHOD TO UPDATE RECYCLERVIEW
-            recyclerViewAdapter.notifyDataSetChanged();
-
-            if (!transactionList.isEmpty())
-            {
-                lastTransaction[0] = transactionList.get(transactionList.size() - 1).toString();
-
-            }
-
-            Toast.makeText(getContext(), "Transaction list updated: " + lastTransaction[0], Toast.LENGTH_LONG).show();
         });
     }
 

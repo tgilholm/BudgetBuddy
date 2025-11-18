@@ -9,12 +9,17 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.budgettracker.Transaction;
 import com.example.budgettracker.enums.RepeatDuration;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public final class InputValidator
@@ -96,7 +101,8 @@ public final class InputValidator
         }
     }
 
-    public static RepeatDuration selectRepeatDuration(String input) {
+    public static RepeatDuration selectRepeatDuration(String input)
+    {
         switch (input)
         {
             case "Never":
@@ -112,5 +118,10 @@ public final class InputValidator
             default:
                 return null;
         }
+    }
+    public static List<Transaction> sortTransactions(List<Transaction> transactions)
+    {
+        transactions.sort((o1, o2) -> o2.getDateTime().compareTo(o1.getDateTime()));
+        return transactions;
     }
 }
