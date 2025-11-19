@@ -20,7 +20,13 @@ import com.example.budgettracker.Transaction;
 import com.example.budgettracker.TransactionViewModel;
 import com.example.budgettracker.adapters.RecyclerViewAdapter;
 import com.example.budgettracker.utility.InputValidator;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -37,7 +43,8 @@ public class OverviewFragment extends Fragment
 
     // Create an instance of the RecyclerViewAdapter
     private RecyclerViewAdapter recyclerViewAdapter;
-    //private RecyclerViewAdapter
+
+    private PieChart pieChart;
 
     /* TODO: Update remaining budget
     Update txtBudgetAmount when new transactions are added.
@@ -51,7 +58,7 @@ public class OverviewFragment extends Fragment
     Categories are then shown to the right of the pie chart, ordered by percentage
      */
 
-    /*TODO: Recent Transactions
+    /*TODO: Recent Transactions DONE
     Get the most recent (last week or so) transactions from the file and display them in a
     list view, sorted by date.
      */
@@ -62,12 +69,11 @@ public class OverviewFragment extends Fragment
         // Required empty public constructor
     }
 
-
-
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
+
 
         // Connect the TransactionViewModel to the same one in MainActivity
         transactionViewModel = new ViewModelProvider(requireActivity()).get(TransactionViewModel.class);
@@ -96,6 +102,11 @@ public class OverviewFragment extends Fragment
             Log.v("OverviewFragment", String.valueOf(transactionList.size()));
             Log.v("OverviewFragment", String.valueOf(recyclerViewAdapter.getItemCount()));
         });
+
+        // Update the pie chart
+
+        pieChart = view.findViewById(R.id.pieChart);    // Get the pie chart from the layout
+        setupPieChart();
     }
 
     @Override
@@ -114,5 +125,26 @@ public class OverviewFragment extends Fragment
         return inflater.inflate(R.layout.fragment_overview, container, false);
     }
 
+    // Set up the pie chart
+    // Gets each of the categories and the total spending (currently for all time)
+    // Gets the number of items in each category
 
+    // Calculates the proportion of each element
+    private void setupPieChart() {
+        // Get the list of transactions
+        List<Transaction> transactions = transactionViewModel.getTransactions().getValue();
+
+        // List of pie entries
+        List<PieEntry> pieEntries = new ArrayList<>();
+        // Convert each of the transactions into a PieEntry
+        for (Transaction t : transactions)
+        {
+            // Add the category as the label and amount as the data
+            pieEntries.add(new PieEntry((float) t.getAmount(), t.getCategory()));
+        }
+
+        // Add the pie entries to the chart
+        PieDataSet dataSet = new PieDataSet(pieEntries, "Spending");
+        pieChart.setData(new PieData(dataSet));
+    }
 }
