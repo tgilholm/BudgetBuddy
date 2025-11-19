@@ -1,15 +1,13 @@
 package com.example.budgettracker;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
-
-import org.jetbrains.annotations.Contract;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.example.budgettracker.enums.RepeatDuration;
 import com.example.budgettracker.enums.TransactionType;
@@ -25,6 +23,10 @@ import com.example.budgettracker.enums.TransactionType;
     - Repeating durations e.g. weekly
 
  */
+
+// Also acts as an entity in the Room Database
+
+@Entity(tableName = "transaction")
 public final class Transaction
 {
     // Use a static field for the nextID parameter
@@ -37,11 +39,23 @@ public final class Transaction
      */
     private static long nextID;
 
-    private final String id;
+    @NonNull
+    @PrimaryKey
+    private String id;
+
+    @ColumnInfo(name = "amount")
     private final double amount;
+
+    @ColumnInfo(name = "type")
     private final TransactionType type;
+
+    @ColumnInfo(name = "datetime" )
     private final Calendar dateTime;
+
+    @ColumnInfo(name = "category")
     private final String category;
+
+    @ColumnInfo(name = "repeat")
     private final RepeatDuration repeatDuration;
 
     public Transaction(double amount, TransactionType type, Calendar dateTime, String category, RepeatDuration repeatDuration)
@@ -56,6 +70,7 @@ public final class Transaction
     }
 
     // Getter methods
+    @NonNull
     public String getId()
     {
         return id;
@@ -121,5 +136,9 @@ public final class Transaction
     public int hashCode() {
         // Generates a unique hashcode for this object using all of its fields
         return Objects.hash(id, amount, type, dateTime, category, repeatDuration);
+    }
+
+    public void setId(@NonNull String id) {
+        this.id = id;
     }
 }
