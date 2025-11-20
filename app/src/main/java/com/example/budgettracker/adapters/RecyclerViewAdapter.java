@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,12 +23,17 @@ import java.util.Locale;
 // Extends ListAdapter to improve performance- does not need to rewrite entire list on update
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>
 {
-    // Hold a list of transactions
-    private final List<Transaction> _transactions = new ArrayList<>();
+    // The layout for the items in the RecyclerView
+    @LayoutRes
+    protected final int resource;
 
-    public RecyclerViewAdapter(List<Transaction> transactions)
+    // Hold a list of transactions
+    protected final List<Transaction> _transactions = new ArrayList<>();
+
+    public RecyclerViewAdapter(List<Transaction> transactions, @LayoutRes int resource)
     {
         this._transactions.addAll(transactions);    // Instantiate list with transactions
+        this.resource = resource;                   // Instantiate layout
     }
 
     @NonNull
@@ -35,7 +41,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
     {
         // Inflate the layout for each item in the RecyclerView
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.transaction_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
         return new ViewHolder(view);
     }
 
