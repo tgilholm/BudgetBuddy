@@ -35,7 +35,6 @@
             android:layout_width="wrap_content"
             android:layout_gravity="center"
             android:layout_height="wrap_content"
-            android:layout_weight="1.25"
             android:text="@string/placeholder_category"
             android:textAppearance="?attr/textAppearanceBody1"
             android:textColor="@color/black"

@@ -1,6 +1,7 @@
 package com.example.budgettracker.fragments;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,15 +21,18 @@ import com.example.budgettracker.adapters.RecyclerViewAdapter;
 import com.example.budgettracker.enums.TransactionType;
 import com.example.budgettracker.utility.InputValidator;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -138,38 +142,91 @@ public class OverviewFragment extends Fragment
         pieChart.setDrawEntryLabels(false);                             // Remove the labels from slices
 
         // Set the legend of the pie chart
-        com.github.mikephil.charting.components.Legend l = pieChart.getLegend();
-        l.setEnabled(true);
-        l.setVerticalAlignment(com.github.mikephil.charting.components.Legend.LegendVerticalAlignment.CENTER); // Center vertically
-        l.setHorizontalAlignment(com.github.mikephil.charting.components.Legend.LegendHorizontalAlignment.RIGHT); // Place on the right
-        l.setOrientation(com.github.mikephil.charting.components.Legend.LegendOrientation.VERTICAL); // Stack vertically
-        l.setDrawInside(false); // Place outside the chart canvas
-        l.setXEntrySpace(7f); // Space between chart and legend
-        l.setYEntrySpace(0f);
-        l.setYOffset(0f);
+        Legend legend = pieChart.getLegend();
+        legend.setEnabled(true);
+        legend.setTextSize(12f);
+        legend.setTypeface(Typeface.MONOSPACE);                         // Use a monospace font so string padding works properly
+
+        // Set the alignment to be to the centre right of the chart
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        legend.setOrientation(Legend.LegendOrientation.VERTICAL);       // Stack the legend vertically
+
+        // Set the draw location of the legend
+        legend.setDrawInside(false);
+        legend.setXEntrySpace(0f);     // X offset
+        legend.setYEntrySpace(0f);      // Y offset
+
     }
 
 
-
     // Add new data to the pie chart
-    // todo diffutils?
-    private void updatePieChart(List<Transaction> transactions) {
+    // Displays only the top three categories by name, then aggregates the rest as "other"
+    // Also displays a legend of categories and the percentage they take up
+    // Pads the label with spaces between the category name and percentage for readability
 
+    // todo diffutils?
+    // todo select by category on transactions page
+    private void updatePieChart(List<Transaction> transactions)
+    {
+        int padLength = 16;
+
+        // Get the total spending per category
         Map<String, Double> totalPerCategory = getStringDoubleMap(transactions);
 
-        // Add each of the map entries to a PieEntry
-        List<PieEntry> pieEntries = new ArrayList<>();
-        for (Map.Entry<String, Double> entry : totalPerCategory.entrySet())
+        // Calculate the total of all spending
+        double totalSpend = 0;
+        for (Double value : totalPerCategory.values())
         {
-            // Add the category as the label and amount as the data
-            pieEntries.add(new PieEntry(entry.getValue().floatValue(), entry.getKey()));
+            totalSpend += value;
+        }
+
+        // Convert the entrySet to a list and sort by amount
+        List<Map.Entry<String, Double>> entryList = new ArrayList<>(totalPerCategory.entrySet());
+        entryList.sort((lhs, rhs) -> rhs.getValue().compareTo(lhs.getValue()));
+
+
+        // Add the top three categories as PieEntries to the chart
+        List<PieEntry> pieEntries = new ArrayList<>();
+        double otherTotal = 0; // Aggregate anything beyond i=4 into one category
+
+        for (int i = 0; i < entryList.size(); i++)
+        {
+            if (i < 3)
+            {
+                String label = String.format(Locale.getDefault(), "%s %.2f%%",
+                        padLeft(entryList.get(i).getKey() + ":", padLength),
+                        calculatePercentage(entryList.get(i).getValue(), totalSpend));
+
+                pieEntries.add(new PieEntry(entryList.get(i).getValue().floatValue(), label));
+            }
+            // Add anything else to the otherTotal
+            else
+            {
+                otherTotal += entryList.get(i).getValue();
+            }
+        }
+
+        // Add the "other" category
+        if (otherTotal > 0)
+        {
+            String label = String.format(Locale.getDefault(), "%s %.2f%%",
+                    padLeft("Other:", padLength),
+                    calculatePercentage(otherTotal, totalSpend));
+
+            pieEntries.add(new PieEntry((float) otherTotal, label));
         }
 
         // Add the pie entries to the a dataSet
         PieDataSet dataSet = new PieDataSet(pieEntries, "");
 
         // todo custom colors
+        // Style the dataset
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS); // Add some sample colours
+        dataSet.setValueFormatter(new PercentFormatter(pieChart));
+        dataSet.setSliceSpace(2f);
+        dataSet.setDrawValues(false); // Remove the labels on the slices themselves
+
         pieChart.setData(new PieData(dataSet));
         pieChart.invalidate();
 
@@ -187,22 +244,42 @@ public class OverviewFragment extends Fragment
         Map<String, Double> totalPerCategory = new HashMap<>();
 
         // Put the transactions into the Map
-        for (Transaction t : transactions) {
+        for (Transaction t : transactions)
+        {
             String category = t.getCategory();
             double amount = t.getAmount();
 
             // Only add "outgoing" transactions
-            if (t.getType() == TransactionType.OUTGOING) {
-                if (totalPerCategory.containsKey(category)) {
+            if (t.getType() == TransactionType.OUTGOING)
+            {
+                if (totalPerCategory.containsKey(category))
+                {
                     // If the category already exists in the map, add the amount to the total
                     totalPerCategory.put(category, totalPerCategory.get(category) + amount);
-                }
-                else {
+                } else
+                {
                     // If the category does not exist in the map, add it with the amount
                     totalPerCategory.put(category, amount);
                 }
             }
         }
         return totalPerCategory;
+    }
+
+    // Re-usable method for calculating percentage
+    private double calculatePercentage(double value, double total)
+    {
+        return (value / total) * 100;
+    }
+
+    // Used to pad the percentage text in the category labels so they line up properly
+    private String padLeft(String inputString, int length)
+    {
+        if (inputString.length() >= length) {
+            return inputString;
+        }
+        else {
+            return String.format(Locale.getDefault(), "%-" + length + "s", inputString);
+        }
     }
 }
