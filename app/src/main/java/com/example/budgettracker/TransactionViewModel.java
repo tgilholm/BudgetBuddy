@@ -2,6 +2,7 @@ package com.example.budgettracker;
 
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -81,6 +82,7 @@ public class TransactionViewModel extends AndroidViewModel
 
             // Post the result to the main thread
             transactions.postValue(transactionList);
+            Log.v("TransactionViewModel", "loadFromDB called, size: " + transactionList.size());
 
         });
     }
