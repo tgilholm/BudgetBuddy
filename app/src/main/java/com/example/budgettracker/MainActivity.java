@@ -48,9 +48,7 @@ public class MainActivity extends AppCompatActivity {
          WindowInsets is used instead to set the status bar colour
          */
         ViewCompat.setOnApplyWindowInsetsListener(
-
                 findViewById(R.id.main), (v, insets) ->
-
                 {
                     Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 
@@ -73,12 +71,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Attach the ViewPager to the TabLayout with a TabLayoutMediator
         new
-
                 TabLayoutMediator(findViewById(R.id.tab_layout), vp,
 
                 // Create a TabConfigurationStrategy to set the text for each tab
                 (tab, position) ->
-
                 {
                     switch (position) {
                         case 0:
@@ -113,6 +109,16 @@ public class MainActivity extends AppCompatActivity {
                 super.onPageSelected(position);
             }
         });
+
+
+        // Start a FragmentResultListener to handle the button press within the OverviewFragment
+        getSupportFragmentManager().setFragmentResultListener("addPage", this, (requestKey, result) -> {
+            if (result.getInt(requestKey) == 1) {
+                toolbar.setTitle(R.string.add);
+            }
+            vp.setCurrentItem(1, true); // Set the ViewPager to the addFragment using a smooth scroll
+        });
+
     }
 
     //

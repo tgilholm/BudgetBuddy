@@ -27,6 +27,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,6 +110,19 @@ public class OverviewFragment extends Fragment
             {
                 rvPartialHistory.getLayoutManager().scrollToPosition(0);
             }
+        });
+
+
+        // Set up the FloatingActionButton to direct the user to the Add Fragment
+        FloatingActionButton addButton = view.findViewById(R.id.overviewAddButton);
+        addButton.setOnClickListener(v ->
+        {
+            Bundle bundle = new Bundle();
+            bundle.putInt("addPage", 1);    // Send 1 to change the page title to 'Add'
+
+            // Use FragmentResult to send a message to the MainActivity
+            getParentFragmentManager().setFragmentResult("addPage", new Bundle());
+
         });
 
 
