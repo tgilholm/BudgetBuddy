@@ -37,13 +37,16 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
-    // Add dependencies for the ViewPager2 and MPAndroidChart libraries
-    implementation("androidx.viewpager2:viewpager2:1.1.0")
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("androidx.viewpager2:viewpager2:1.1.0") // ViewPager2
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0") // MPAndroidChart
 
     // Add dependency for Room DB
     implementation(libs.room.runtime)
     implementation(libs.recyclerview)
+
+    // DataStore dependencies
+    implementation("androidx.datastore:datastore-preferences:1.0.0") // base functionality
+    implementation("androidx.datastore:datastore-preferences-rxjava2:1.0.0") // java instead of kotlin
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

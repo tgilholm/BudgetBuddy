@@ -1,5 +1,7 @@
-package com.example.budgettracker;
+package com.example.budgettracker.activities;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -13,6 +15,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.budgettracker.R;
+import com.example.budgettracker.TransactionViewModel;
 import com.example.budgettracker.adapters.AppFragmentStateAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -31,13 +35,43 @@ public class MainActivity extends AppCompatActivity {
 
     TransactionViewModel transactionViewModel;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        // TODO Onboarding Screen
+        // Use SharedPreferences to read a "firstRun" flag
+        /*
+        If such a flag does not exist in the preferences, it is assumed
+        that the app has never been started before, and the user will be taken
+        to the FirstTimeStartup activity, where they are prompted to put in a budget
+        This budget is also saved to SharedPreferences under the "budget" tag
+
+        Subsequent runs will read the "firstRun" flag as false and get the budget
+        from the "budget" tag.
+         */
+
+
+        // Handle first startup logic
+        SharedPreferences prefs = this.getPreferences(
+                Context.MODE_PRIVATE);
+
+        // Search prefs for a "firstRun" key-value pair
+        // If there is none, it is assumed that the app is on first time startup
+        boolean firstRun = prefs.getBoolean("firstRun", true);
+        if (firstRun) {
+            // TODO send user to another activity here
+            // TODO set budget in another activity
+        }
+
+        // TODO get the budget from the preferences here
+
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
         EdgeToEdge.enable(this);
+
+
 
 
         // Initialise the TransactionViewModel- all other fragments should use this instance
