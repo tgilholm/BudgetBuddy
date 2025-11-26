@@ -234,6 +234,9 @@ public class AddFragment extends Fragment
         // Add the transaction to the list of transactions
         Transaction newTransaction = new Transaction(amount, type, dateTime, category, repeatDuration);
         transactionViewModel.addTransaction(newTransaction);
+
+        // Inform the user via a toast that the transaction was added
+        Toast.makeText(getContext(), "Added new transaction!", Toast.LENGTH_SHORT).show();
     }
 
 
