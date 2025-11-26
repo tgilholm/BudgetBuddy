@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import com.example.budgettracker.R;
 import com.example.budgettracker.Transaction;
-import com.example.budgettracker.TransactionViewModel;
+import com.example.budgettracker.viewmodel.TransactionViewModel;
 import com.example.budgettracker.adapters.EditRecyclerViewAdapter;
 import com.example.budgettracker.utility.InputValidator;
 

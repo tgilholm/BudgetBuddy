@@ -1,4 +1,4 @@
-package com.example.budgettracker;
+package com.example.budgettracker.viewmodel;
 
 
 import android.app.Application;
@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.budgettracker.Transaction;
 import com.example.budgettracker.database.AppDB;
 import com.example.budgettracker.database.TransactionDAO;
 

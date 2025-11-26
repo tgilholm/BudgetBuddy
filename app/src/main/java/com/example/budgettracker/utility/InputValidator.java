@@ -34,7 +34,7 @@ public final class InputValidator
         // Check if amountText is empty- this is also validated by the regex but is more specific
         if (input.isEmpty())
         {
-            Toast.makeText(context, "Please enter an amount", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Please enter a currency value", Toast.LENGTH_SHORT).show();
             return -1; // -1 is the "error code"
         }
 
@@ -54,9 +54,10 @@ public final class InputValidator
         // Use the regex to check whether the string meets the format "123" or "123.12"
         if (!(input.matches(regex)))
         {
-            Toast.makeText(context, "Please enter an amount in the format '***' or '***.**'", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Please enter a currency value in the format '123' or '123.45'", Toast.LENGTH_LONG).show();
             return -1;
         }
+
         // If the string is formatted correctly, return it
         // Put the return in a try-catch in case the user tries any funny business not caught by the regex
         try
@@ -64,12 +65,11 @@ public final class InputValidator
             return Double.parseDouble(input); // Return the amount as a double
         } catch (NumberFormatException funnyBusiness)
         {
-            Toast.makeText(context, "Error getting amount value", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Error getting currency value", Toast.LENGTH_LONG).show();
             Log.e("InputValidator Error: ", funnyBusiness.toString());
             return -1;
         }
     }
-
 
     // Takes two String parameters, dateInput and timeInput and attempts to parse them into a Calendar object
     public static Calendar validateDateTimeInput(Context context, String dateTimeInput)
