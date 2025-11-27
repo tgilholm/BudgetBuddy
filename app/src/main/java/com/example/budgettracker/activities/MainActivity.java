@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -138,10 +139,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //
+    // Send the user to the Settings activity
     public void settingsButtonPressed(View v) {
-        Toast toast = Toast.makeText(this, "Settings", Toast.LENGTH_LONG);
-        toast.show();
+        goToSettings();
     }
 
     public void notificationsButtonPressed(View v) {
@@ -152,6 +152,11 @@ public class MainActivity extends AppCompatActivity {
     // Creates an Intent to take the user to the FirstTimeStartup activity
     private void firstTimeStartup() {
         Intent intent = new Intent(this, FirstTimeStartupActivity.class);
+        startActivity(intent);
+    }
+
+    private void goToSettings() {
+        Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
 }
