@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.example.budgettracker.R;
 import com.example.budgettracker.Transaction;
-import com.example.budgettracker.TransactionViewModel;
+import com.example.budgettracker.viewmodel.TransactionViewModel;
 import com.example.budgettracker.timeselector.DatePickerFragment;
 import com.example.budgettracker.utility.ColorHandler;
 import com.example.budgettracker.utility.InputValidator;
@@ -248,7 +248,13 @@ public class AddFragment extends Fragment
         String amount = amountText.getText().toString().trim(); // Remove any whitespace
 
         // Validate the input
-        return InputValidator.validateCurrencyInput(getContext(), amount);
+        if (InputValidator.validateCurrencyInput(getContext(), amount)) {
+            return Double.parseDouble(amount);
+        }
+        else {
+            Log.v("AddFragment", "Invalid amount input");
+            return 0;
+        }
     }
 
     // Return the type of the transaction- incoming or outgoing

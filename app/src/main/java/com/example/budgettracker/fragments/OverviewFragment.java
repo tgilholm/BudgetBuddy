@@ -13,10 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.budgettracker.R;
 import com.example.budgettracker.Transaction;
-import com.example.budgettracker.TransactionViewModel;
+import com.example.budgettracker.utility.ColorHandler;
+import com.example.budgettracker.viewmodel.BudgetViewModel;
+import com.example.budgettracker.viewmodel.TransactionViewModel;
 import com.example.budgettracker.adapters.RecyclerViewAdapter;
 import com.example.budgettracker.enums.TransactionType;
 import com.example.budgettracker.utility.InputValidator;
@@ -49,6 +52,8 @@ public class OverviewFragment extends Fragment
 
     private PieChart pieChart;
 
+    private TextView txtBudgetRemaining;
+
     /* TODO: Update remaining budget
     Update txtBudgetAmount when new transactions are added.
     Subtract the total outgoings from the total budget to get the remaining budget
@@ -61,12 +66,6 @@ public class OverviewFragment extends Fragment
     Categories are then shown to the right of the pie chart, ordered by percentage
      */
 
-
-    public OverviewFragment()
-    {
-        // Required empty public constructor
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
@@ -75,13 +74,18 @@ public class OverviewFragment extends Fragment
         pieChart = view.findViewById(R.id.pieChart);    // Get the pie chart from the layout
         setupPieChart();
 
+        // This displays the remaining budget
+        txtBudgetRemaining = view.findViewById(R.id.txtBudgetRemaining);
 
-        // Connect the TransactionViewModel to the same one in MainActivity
+        // Create an instance of the BudgetViewModel
+        BudgetViewModel budgetViewModel = new ViewModelProvider(requireActivity()).get(BudgetViewModel.class);
+
         // Create an instance of the TransactionViewModel
         TransactionViewModel transactionViewModel = new ViewModelProvider(requireActivity()).get(TransactionViewModel.class);
 
         // Get the current Transaction list and convert it to a standard List
         List<Transaction> transactions = transactionViewModel.getTransactions().getValue();
+
 
         // Set up the recyclerViewAdapter with the current (sorted) transaction list
         if (transactions != null)
@@ -105,6 +109,18 @@ public class OverviewFragment extends Fragment
             // Update the PieChart
             updatePieChart(transactionList);
 
+
+            // TODO FIX THIS NIGHTMARE
+            // todo format budget remaining text to currency format
+            double budgetRemaining = calculateBudgetRemaining(
+                    budgetViewModel.getBudget().getValue(),
+                    transactionList);
+
+            // Update the budget remaining
+            txtBudgetRemaining.setText("£" + budgetRemaining);
+
+            updateBudgetRemainingText(view, txtBudgetRemaining, budgetRemaining);
+
             // Scroll back to the top of the RecyclerView to show the new transaction
             if (rvPartialHistory.getLayoutManager() != null)
             {
@@ -124,6 +140,7 @@ public class OverviewFragment extends Fragment
             getParentFragmentManager().setFragmentResult("addPage", new Bundle());
 
         });
+
 
 
     }
@@ -243,8 +260,6 @@ public class OverviewFragment extends Fragment
 
         pieChart.setData(new PieData(dataSet));
         pieChart.invalidate();
-
-
     }
 
 
@@ -295,5 +310,37 @@ public class OverviewFragment extends Fragment
         else {
             return String.format(Locale.getDefault(), "%-" + length + "s", inputString);
         }
+    }
+
+    private void updateBudgetRemainingText(View view, TextView text, double budget)
+    {
+        if (budget < 0)
+        {
+            text.setTextColor(ColorHandler.resolveColorID(view.getContext(), R.color.brightRed));
+        }
+        else {
+            text.setTextColor(ColorHandler.resolveColorID(view.getContext(), R.color.brightGreen));
+        }
+    }
+
+    // Takes the list of transactions and recalculates the budget remaining
+    // Subtracts all negative transactions and adds positive ones
+    //TODO filter by date and time
+    private double calculateBudgetRemaining(double startingBudget, List<Transaction> transactions) {
+
+        double budgetResult = startingBudget;
+        for (Transaction t : transactions)
+        {
+            // Subtract outgoings
+            if (t.getType() == TransactionType.OUTGOING){
+                budgetResult -= t.getAmount();
+            }
+            // Add incoming
+            else {
+                budgetResult += t.getAmount();
+            }
+        }
+
+        return budgetResult;
     }
 }

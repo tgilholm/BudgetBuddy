@@ -1,6 +1,11 @@
-package com.example.budgettracker;
+package com.example.budgettracker.activities;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -11,8 +16,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.budgettracker.R;
+import com.example.budgettracker.viewmodel.BudgetViewModel;
+import com.example.budgettracker.viewmodel.TransactionViewModel;
 import com.example.budgettracker.adapters.AppFragmentStateAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -30,7 +39,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 public class MainActivity extends AppCompatActivity {
 
     TransactionViewModel transactionViewModel;
-
+    BudgetViewModel budgetViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,22 +48,36 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         EdgeToEdge.enable(this);
 
+        // Set the default preferences for the app
+        PreferenceManager.setDefaultValues(this, "appPreferences", Context.MODE_PRIVATE, R.xml.preferences, true);
+
+        // Get an instance of the BudgetViewModel
+        budgetViewModel = new ViewModelProvider(this).get(BudgetViewModel.class);
 
         // Initialise the TransactionViewModel- all other fragments should use this instance
         transactionViewModel = new ViewModelProvider(this).get(TransactionViewModel.class);
 
-        /*
-         window.statusBarColor is deprecated since Android 14
-         WindowInsets is used instead to set the status bar colour
-         */
+        // Open the appPreferences SharedPreferences file
+        SharedPreferences prefs = this.getSharedPreferences(
+                "appPreferences",
+                Context.MODE_PRIVATE);
+
+        // Search prefs for a "firstRun" key-value pair
+        // If there is none, it is assumed that the app is on first time startup
+        boolean notFirstRun = prefs.getBoolean("notFirstRun", false);
+        Log.v("MainActivity", "Read notFirstRun property as: " + notFirstRun);
+
+        // If it IS the first run, send the user to first startup activity
+        if (!notFirstRun) {
+            firstTimeStartup();
+            Log.v("MainActivity", "First startup, moving to onboarding activity");
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(
                 findViewById(R.id.main), (v, insets) ->
                 {
                     Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 
-                    // Set the underlying background to blue, this is drawn over in white by the fragments
-                    // Also sets the bottom bar to blue :/
-                    //v.setBackground(ResourcesCompat.getDrawable(getResources(), R.color.budgetBlue, getTheme()));
                     v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
                     return insets;
                 });
@@ -118,17 +141,26 @@ public class MainActivity extends AppCompatActivity {
             }
             vp.setCurrentItem(1, true); // Set the ViewPager to the addFragment using a smooth scroll
         });
-
     }
 
-    //
+    // Send the user to the Settings activity
     public void settingsButtonPressed(View v) {
-        Toast toast = Toast.makeText(this, "Settings", Toast.LENGTH_LONG);
-        toast.show();
+        goToSettings();
     }
 
     public void notificationsButtonPressed(View v) {
         Toast toast = Toast.makeText(this, "Notifications", Toast.LENGTH_LONG);
         toast.show();
+    }
+
+    // Creates an Intent to take the user to the FirstTimeStartup activity
+    private void firstTimeStartup() {
+        Intent intent = new Intent(this, FirstTimeStartupActivity.class);
+        startActivity(intent);
+    }
+
+    private void goToSettings() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 }

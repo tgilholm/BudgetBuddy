@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import com.example.budgettracker.R;
 import com.example.budgettracker.Transaction;
-import com.example.budgettracker.TransactionViewModel;
+import com.example.budgettracker.viewmodel.TransactionViewModel;
 import com.example.budgettracker.adapters.EditRecyclerViewAdapter;
 import com.example.budgettracker.utility.InputValidator;
 import com.google.android.material.snackbar.Snackbar;
@@ -43,7 +43,7 @@ public class TransactionsFragment extends Fragment
         }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_transactions, container, false);

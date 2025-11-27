@@ -27,7 +27,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtBudgetAmount">
+            app:layout_constraintTop_toBottomOf="@id/txtBudgetRemaining">
 
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/pieChart"
@@ -51,10 +51,9 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <!-- Create TextView to display the currently remaining budget -->
-
+        <!-- TextView to display the currently remaining budget -->
         <TextView
-            android:id="@+id/txtBudgetAmount"
+            android:id="@+id/txtBudgetRemaining"
             android:layout_width="167dp"
             android:layout_height="42dp"
             android:layout_marginStart="24dp"

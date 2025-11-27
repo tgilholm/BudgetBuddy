@@ -51,4 +51,10 @@
 
     <!--  Content Description Strings  -->
     <string name="cd_remove_transaction">Remove Transaction</string>
+
+
+    <!--  Intro Strings -->
+    <string name="intro_text">It appears this is your first time using BudgetBuddy!\n\n
+        Please set your monthly budget below</string>
+    <string name="welcome_text">Welcome!</string>
 </resources>

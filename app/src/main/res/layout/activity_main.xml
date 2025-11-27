@@ -11,7 +11,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/main"
-        tools:context=".MainActivity">
+        tools:context=".activities.MainActivity">
 
         <!-- Add an AppBarLayout to contain all the elements at the top of the display -->
         <com.google.android.material.appbar.AppBarLayout
