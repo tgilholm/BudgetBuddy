@@ -17,12 +17,13 @@ import android.widget.TextView;
 
 import com.example.budgettracker.R;
 import com.example.budgettracker.Transaction;
+import com.example.budgettracker.utility.CalculationUtils;
 import com.example.budgettracker.utility.ColorHandler;
 import com.example.budgettracker.utility.Converters;
+import com.example.budgettracker.utility.StringUtils;
 import com.example.budgettracker.viewmodel.BudgetViewModel;
 import com.example.budgettracker.viewmodel.TransactionViewModel;
 import com.example.budgettracker.adapters.RecyclerViewAdapter;
-import com.example.budgettracker.enums.TransactionType;
 import com.example.budgettracker.utility.InputValidator;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -34,10 +35,8 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -48,6 +47,7 @@ import java.util.Map;
 public class OverviewFragment extends Fragment
 {
     private RecyclerViewAdapter recyclerViewAdapter;
+    private TransactionViewModel transactionViewModel;
 
     private PieChart pieChart;
 
@@ -70,7 +70,7 @@ public class OverviewFragment extends Fragment
 
         // Set up the Transaction and Budget ViewModels
         BudgetViewModel budgetViewModel = new ViewModelProvider(requireActivity()).get(BudgetViewModel.class);
-        TransactionViewModel transactionViewModel = new ViewModelProvider(requireActivity()).get(TransactionViewModel.class);
+        transactionViewModel = new ViewModelProvider(requireActivity()).get(TransactionViewModel.class);
 
 
         // Instantiate the RecyclerView with an empty list (the observer will update it)
@@ -82,15 +82,20 @@ public class OverviewFragment extends Fragment
         // Helper method to calculate the remaining budget
         // The budget needs to be recalculated if either the budget changes or a new transaction is added
         // This method is therefore able to be called in the observers for both values
-        Runnable updateRemainingBudget = () -> {
+        Runnable updateRemainingBudget = () ->
+        {
 
             Double initialBudget = budgetViewModel.getBudget().getValue();                      // Get the user's budget from the ViewModel
             List<Transaction> transactions = transactionViewModel.getTransactions().getValue(); // Get the list of transactions from the ViewModel
 
             // If both values are non-null, recalculate the remaining budget
-            if (initialBudget != null && transactions != null) {
-                double budgetRemaining = calculateBudgetRemaining(initialBudget, transactions);
+            if (initialBudget != null && transactions != null)
+            {
+                double budgetRemaining = transactionViewModel.getBudgetRemaining(initialBudget, transactions);
                 txtBudgetRemaining.setText(Converters.doubleToCurrencyString(budgetRemaining));
+
+                // Set the text colour to red if negative, green if positive
+                ColorHandler.setAmountColour(txtBudgetRemaining, budgetRemaining);
             }
         };
 
@@ -111,10 +116,7 @@ public class OverviewFragment extends Fragment
 
 
         // Set up a listener on the Budget variable and invoke the Runnable when changes are detected
-        budgetViewModel.getBudget().observe(getViewLifecycleOwner(), budget ->
-        {
-            updateRemainingBudget.run();
-        });
+        budgetViewModel.getBudget().observe(getViewLifecycleOwner(), budget -> updateRemainingBudget.run());
 
 
         // Set up the FloatingActionButton to direct the user to the Add Fragment
@@ -137,13 +139,6 @@ public class OverviewFragment extends Fragment
         return inflater.inflate(R.layout.fragment_overview, container, false);
     }
 
-    // Set up the pie chart
-    // Gets each of the categories and the total spending (currently for all time)
-    // Gets the number of items in each category
-
-    // Calculates the proportion of each element
-
-    // TODO only add outgoing spending to the pie chart (not income)
 
     // Sets up the styling of the pie chart
     private void setupPieChart()
@@ -171,7 +166,6 @@ public class OverviewFragment extends Fragment
         legend.setDrawInside(false);
         legend.setXEntrySpace(0f);     // X offset
         legend.setYEntrySpace(0f);      // Y offset
-
     }
 
 
@@ -182,54 +176,30 @@ public class OverviewFragment extends Fragment
 
     // todo diffutils?
     // todo select by category on transactions page
+    // todo stop using the legend and use a recycler view instead
+
     private void updatePieChart(List<Transaction> transactions)
     {
-        int padLength = 16;
-
-        // Get the total spending per category
-        Map<String, Double> totalPerCategory = getStringDoubleMap(transactions);
-
-        // Calculate the total of all spending
-        double totalSpend = 0;
-        for (Double value : totalPerCategory.values())
+        if (transactions == null || transactions.isEmpty())
         {
-            totalSpend += value;
+            return;
         }
 
-        // Convert the entrySet to a list and sort by amount
-        List<Map.Entry<String, Double>> entryList = new ArrayList<>(totalPerCategory.entrySet());
-        entryList.sort((lhs, rhs) -> rhs.getValue().compareTo(lhs.getValue()));
+        // Get the top 3 categories and group the rest into other
+        Map<String, Double> categoryTotals = transactionViewModel.getTopNCategoryTotals(transactions, 3);
 
+        // Get the total spend
+        double totalSpend = transactionViewModel.getTotalSpend(transactions);
 
-        // Add the top three categories as PieEntries to the chart
+        // Create a list of pie entries
         List<PieEntry> pieEntries = new ArrayList<>();
-        double otherTotal = 0; // Aggregate anything beyond i=4 into one category
 
-        for (int i = 0; i < entryList.size(); i++)
+        for (Map.Entry<String, Double> entry : categoryTotals.entrySet())
         {
-            if (i < 3)
-            {
-                String label = String.format(Locale.getDefault(), "%s %.2f%%",
-                        padLeft(entryList.get(i).getKey() + ":", padLength),
-                        calculatePercentage(entryList.get(i).getValue(), totalSpend));
-
-                pieEntries.add(new PieEntry(entryList.get(i).getValue().floatValue(), label));
-            }
-            // Add anything else to the otherTotal
-            else
-            {
-                otherTotal += entryList.get(i).getValue();
-            }
-        }
-
-        // Add the "other" category
-        if (otherTotal > 0)
-        {
-            String label = String.format(Locale.getDefault(), "%s %.2f%%",
-                    padLeft("Other:", padLength),
-                    calculatePercentage(otherTotal, totalSpend));
-
-            pieEntries.add(new PieEntry((float) otherTotal, label));
+            String label = StringUtils.formatLabel(
+                    entry.getKey(),
+                    CalculationUtils.calculatePercentage(entry.getValue(), totalSpend));
+            pieEntries.add(new PieEntry(entry.getValue().floatValue(), label));
         }
 
         // Add the pie entries to the a dataSet
@@ -247,83 +217,4 @@ public class OverviewFragment extends Fragment
     }
 
 
-    // Separate method to convert the list of transactions to a Map of String:Double values
-    @NonNull
-    private static Map<String, Double> getStringDoubleMap(List<Transaction> transactions)
-    {
-        // Aggregate transactions by category
-        // Map does not allow duplicate keys so it is the ideal choice
-
-        Map<String, Double> totalPerCategory = new HashMap<>();
-
-        // Put the transactions into the Map
-        for (Transaction t : transactions)
-        {
-            String category = t.getCategory();
-            double amount = t.getAmount();
-
-            // Only add "outgoing" transactions
-            if (t.getType() == TransactionType.OUTGOING)
-            {
-                if (totalPerCategory.containsKey(category))
-                {
-                    // If the category already exists in the map, add the amount to the total
-                    totalPerCategory.put(category, totalPerCategory.get(category) + amount);
-                } else
-                {
-                    // If the category does not exist in the map, add it with the amount
-                    totalPerCategory.put(category, amount);
-                }
-            }
-        }
-        return totalPerCategory;
-    }
-
-    // Re-usable method for calculating percentage
-    private double calculatePercentage(double value, double total)
-    {
-        return (value / total) * 100;
-    }
-
-    // Used to pad the percentage text in the category labels so they line up properly
-    private String padLeft(String inputString, int length)
-    {
-        if (inputString.length() >= length) {
-            return inputString;
-        }
-        else {
-            return String.format(Locale.getDefault(), "%-" + length + "s", inputString);
-        }
-    }
-
-    private void updateBudgetRemainingText(View view, TextView text, double budget)
-    {
-        if (budget < 0)
-        {
-            text.setTextColor(ColorHandler.resolveColorID(view.getContext(), R.color.brightRed));
-        }
-        else {
-            text.setTextColor(ColorHandler.resolveColorID(view.getContext(), R.color.brightGreen));
-        }
-    }
-
-    // Takes the list of transactions and recalculates the budget remaining
-    // Subtracts all negative transactions and adds positive ones
-    //TODO filter by date and time
-    private double calculateBudgetRemaining(double start, List<Transaction> transactions) {
-
-        double result = start;
-        for (Transaction t : transactions)
-        {
-            // Subtract outgoings
-            if (t.getType() == TransactionType.OUTGOING){
-                result -= t.getAmount();
-            }
-            // Add incoming
-            else {
-                result += t.getAmount();
-            }
-        }
-        return result;
-    }
 }
