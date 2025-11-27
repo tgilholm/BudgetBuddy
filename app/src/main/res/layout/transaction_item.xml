@@ -5,6 +5,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:baselineAligned="false"
     android:orientation="horizontal"
     android:padding="16dp"
     >
@@ -16,9 +17,10 @@
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/textAmount"
@@ -26,6 +28,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="+/£0.00"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textAppearance="?attr/textAppearanceBody1"
             android:textColor="@color/brightGreen"
             android:textStyle="bold">
@@ -38,6 +42,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Entertainment"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textAppearance="?attr/textAppearanceBody1"
             android:textColor="@color/black"
             android:textStyle="bold">
@@ -49,7 +55,8 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/textDateTime"
@@ -57,6 +64,8 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:text="12:34 12/3/2000"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textAppearance="?attr/textAppearanceBody1"
             android:textColor="@color/black">
 

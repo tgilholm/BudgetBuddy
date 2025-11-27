@@ -9,7 +9,7 @@
 
     <!--  Each row is formatted like so  -->
     <!--  category (type)amount datetime -->
-
+    <!--  TextViews all have the property ellipsize="end" to prevent text spill-over -->
 
     <!-- The amount of the transaction -->
     <LinearLayout
@@ -25,23 +25,26 @@
             android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:text="@string/placeholder_amount"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textAppearance="?attr/textAppearanceBody1"
             android:textColor="@color/brightGreen"
             android:textStyle="bold">
 
         </TextView>
 
+        <!-- maxLines is used to force the category onto a single line and preserve height -->
         <TextView
             android:id="@+id/textCategory"
             android:layout_width="wrap_content"
             android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:text="@string/placeholder_category"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textAppearance="?attr/textAppearanceBody1"
             android:textColor="@color/black"
-            android:textStyle="bold">
-
-        </TextView>
+            android:textStyle="bold" />
     </LinearLayout>
 
     <!-- The date and time of the transaction -->
@@ -58,10 +61,10 @@
             android:layout_gravity="center"
             android:layout_height="match_parent"
             android:text="@string/placeholder_date"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textAppearance="?attr/textAppearanceBody1"
-            android:textColor="@color/black">
-
-        </TextView>
+            android:textColor="@color/black" />
     </LinearLayout>
 
     <LinearLayout
@@ -81,9 +84,5 @@
             app:srcCompat="@drawable/close_icon"
             android:scaleType="fitCenter"/>
     </LinearLayout>
-
-
-
-
 </LinearLayout>
 
