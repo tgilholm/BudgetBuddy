@@ -3,6 +3,8 @@ package com.example.budgettracker.repositories;
 import android.app.Application;
 import android.provider.ContactsContract;
 
+import androidx.lifecycle.LiveData;
+
 import com.example.budgettracker.database.AppDB;
 import com.example.budgettracker.database.TransactionDAO;
 import com.example.budgettracker.entities.Transaction;
@@ -49,7 +51,7 @@ public class DataRepository
     }
 
     // TransactionDAO interface methods
-    public List<Transaction> getAllTransactions()
+    public LiveData<List<Transaction>> getAllTransactions()
     {
         return transactionDAO.getAll();
     }

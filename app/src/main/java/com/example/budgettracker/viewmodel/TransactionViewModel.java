@@ -95,11 +95,13 @@ public class TransactionViewModel extends AndroidViewModel
         // Execute in a background thread
         executorService.execute(() ->
         {
-            List<Transaction> transactionList = transactionDAO.getAll();
+            List<Transaction> transactionList = transactionDAO.getAll().getValue();
 
-            // Post the result to the main thread
-            transactions.postValue(transactionList);
-            Log.v("TransactionViewModel", "loadFromDB called, size: " + transactionList.size());
+            if (transactionList != null) {
+                // Post the result to the main thread
+                transactions.postValue(transactionList);
+                Log.v("TransactionViewModel", "loadFromDB called, size: " + transactionList.size());
+            }
 
         });
     }
