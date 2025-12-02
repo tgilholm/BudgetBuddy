@@ -2,8 +2,10 @@ package com.example.budgettracker.repositories;
 
 import android.app.Application;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.budgettracker.database.AppDB;
 import com.example.budgettracker.database.TransactionDAO;
@@ -49,6 +51,7 @@ public class DataRepository
         }
         return INSTANCE;
     }
+
 
     // TransactionDAO interface methods
     public LiveData<List<Transaction>> getAllTransactions()

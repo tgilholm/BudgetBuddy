@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ import com.example.budgettracker.utility.ColorHandler;
 import com.example.budgettracker.utility.Converters;
 import com.example.budgettracker.utility.StringUtils;
 import com.example.budgettracker.viewmodel.BudgetViewModel;
-import com.example.budgettracker.viewmodel.TransactionViewModel;
+import com.example.budgettracker.viewmodel.OverviewViewModel;
 import com.example.budgettracker.adapters.RecyclerViewAdapter;
 import com.example.budgettracker.utility.InputValidator;
 import com.github.mikephil.charting.charts.PieChart;
@@ -47,7 +48,7 @@ import java.util.Map;
 public class OverviewFragment extends Fragment
 {
     private RecyclerViewAdapter recyclerViewAdapter;
-    private TransactionViewModel transactionViewModel;
+    private OverviewViewModel overviewViewModel;
 
     private PieChart pieChart;
 
@@ -70,7 +71,7 @@ public class OverviewFragment extends Fragment
 
         // Set up the Transaction and Budget ViewModels
         BudgetViewModel budgetViewModel = new ViewModelProvider(requireActivity()).get(BudgetViewModel.class);
-        transactionViewModel = new ViewModelProvider(requireActivity()).get(TransactionViewModel.class);
+        overviewViewModel = new ViewModelProvider(requireActivity()).get(OverviewViewModel.class);
 
 
         // Instantiate the RecyclerView with an empty list (the observer will update it)
@@ -79,33 +80,16 @@ public class OverviewFragment extends Fragment
         rvPartialHistory.setAdapter(recyclerViewAdapter);                               // Connect to the recyclerViewAdapter
 
 
-        // Helper method to calculate the remaining budget
-        // The budget needs to be recalculated if either the budget changes or a new transaction is added
-        // This method is therefore able to be called in the observers for both values
-        Runnable updateRemainingBudget = () ->
-        {
-
-            Double initialBudget = budgetViewModel.getBudget().getValue();                      // Get the user's budget from the ViewModel
-            List<Transaction> transactions = transactionViewModel.getTransactions().getValue(); // Get the list of transactions from the ViewModel
-
-            // If both values are non-null, recalculate the remaining budget
-            if (initialBudget != null && transactions != null)
-            {
-                double budgetRemaining = transactionViewModel.getBudgetRemaining(initialBudget, transactions);
-                txtBudgetRemaining.setText(Converters.doubleToCurrencyString(budgetRemaining));
-
-                // Set the text colour to red if negative, green if positive
-                ColorHandler.setAmountColour(txtBudgetRemaining, budgetRemaining);
-            }
-        };
-
-        // Set up an observer on the TransactionViewModel
+        // Set up an observer on the OverviewViewModel
         // Updates the RecyclerView, PieChart and BudgetRemaining when a new transaction is loaded from the DB
-        transactionViewModel.getTransactions().observe(getViewLifecycleOwner(), transactionList ->
+        overviewViewModel.getTransactions().observe(getViewLifecycleOwner(), transactionList ->
         {
             recyclerViewAdapter.updateTransactions(InputValidator.sortTransactions(transactionList));   // Update the RecyclerView
             updatePieChart(transactionList);    // Update the PieChart
-            updateRemainingBudget.run();        // Invoke the Runnable to update the remaining budget
+
+            // Get the user's budget
+            Double budget = budgetViewModel.getBudget().getValue();
+            updateRemainingBudget(budget, transactionList);        // Invoke the method to update the remaining budget
 
             // Scroll back to the top of the RecyclerView to show the new transaction
             if (rvPartialHistory.getLayoutManager() != null)
@@ -115,8 +99,13 @@ public class OverviewFragment extends Fragment
         });
 
 
-        // Set up a listener on the Budget variable and invoke the Runnable when changes are detected
-        budgetViewModel.getBudget().observe(getViewLifecycleOwner(), budget -> updateRemainingBudget.run());
+        // Set up a listener on the Budget variable and invoke the method when changes are detected
+        budgetViewModel.getBudget().observe(getViewLifecycleOwner(), budget -> {
+            // Get the transaction list
+            List<Transaction> transactions = overviewViewModel.getTransactions().getValue();
+
+            updateRemainingBudget(budget, transactions);
+        });
 
 
         // Set up the FloatingActionButton to direct the user to the Add Fragment
@@ -129,6 +118,27 @@ public class OverviewFragment extends Fragment
             getParentFragmentManager().setFragmentResult("addPage", new Bundle());
 
         });
+    }
+
+    // Helper method to calculate the remaining budget
+    // The budget needs to be recalculated if either the budget changes or a new transaction is added
+    // This method is therefore able to be called in the observers for both values
+    private void updateRemainingBudget(Double budget, List<Transaction> transactions)
+    {
+        Log.v("OverviewFragment", "updateRemainingBudget invoked");
+
+
+        Log.v("updateRemainingBudget", "Read budget as " + budget);
+        // If both values are non-null, recalculate the remaining budget
+        if (budget != null && transactions != null)
+        {
+            Log.v("updateRemainingBudget", "Read transactions, size: " + transactions.size());
+            double budgetRemaining = overviewViewModel.getBudgetRemaining(budget, transactions);
+            txtBudgetRemaining.setText(Converters.doubleToCurrencyString(budgetRemaining));
+
+            // Set the text colour to red if negative, green if positive
+            ColorHandler.setAmountColour(txtBudgetRemaining, budgetRemaining);
+        }
     }
 
 
@@ -186,10 +196,10 @@ public class OverviewFragment extends Fragment
         }
 
         // Get the top 3 categories and group the rest into other
-        Map<String, Double> categoryTotals = transactionViewModel.getTopNCategoryTotals(transactions, 3);
+        Map<String, Double> categoryTotals = overviewViewModel.getTopNCategoryTotals(transactions, 3);
 
         // Get the total spend
-        double totalSpend = transactionViewModel.getTotalSpend(transactions);
+        double totalSpend = overviewViewModel.getTotalSpend(transactions);
 
         // Create a list of pie entries
         List<PieEntry> pieEntries = new ArrayList<>();

@@ -19,9 +19,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.budgettracker.R;
-import com.example.budgettracker.entities.Transaction;
 import com.example.budgettracker.viewmodel.AddViewModel;
-import com.example.budgettracker.viewmodel.TransactionViewModel;
 import com.example.budgettracker.timeselector.DatePickerFragment;
 import com.example.budgettracker.utility.ColorHandler;
 import com.example.budgettracker.utility.InputValidator;

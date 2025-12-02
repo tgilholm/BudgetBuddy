@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.budgettracker.R;
 import com.example.budgettracker.utility.InputValidator;
 import com.example.budgettracker.viewmodel.BudgetViewModel;
-import com.example.budgettracker.viewmodel.TransactionViewModel;
 
 // The FirstTimeStartup activity handles the case where the
 // "notFirstRun" flag is false in the Preferences
