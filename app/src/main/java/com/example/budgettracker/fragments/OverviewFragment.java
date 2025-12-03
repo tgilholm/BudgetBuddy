@@ -53,6 +53,7 @@ public class OverviewFragment extends Fragment
     private PieChart pieChart;
 
     private TextView txtBudgetRemaining;
+    private TextView txtTotalBudget;
 
 
     @Override
@@ -63,6 +64,7 @@ public class OverviewFragment extends Fragment
         // Get the Views from the layout
         pieChart = view.findViewById(R.id.pieChart);                                // Get the pie chart from the layout
         txtBudgetRemaining = view.findViewById(R.id.txtBudgetRemaining);            // Get the budget remaining text from the layout
+        txtTotalBudget = view.findViewById(R.id.txtTotalBudget);                    // Get the total budget text from the layout
         RecyclerView rvPartialHistory = view.findViewById(R.id.rvPartialHistory);   // Get the recycler view from the layout
         FloatingActionButton addButton = view.findViewById(R.id.overviewAddButton); // Get the FloatingActionButton from the layout
 
@@ -125,16 +127,17 @@ public class OverviewFragment extends Fragment
     // This method is therefore able to be called in the observers for both values
     private void updateRemainingBudget(Double budget, List<Transaction> transactions)
     {
-        Log.v("OverviewFragment", "updateRemainingBudget invoked");
-
-
-        Log.v("updateRemainingBudget", "Read budget as " + budget);
         // If both values are non-null, recalculate the remaining budget
         if (budget != null && transactions != null)
         {
-            Log.v("updateRemainingBudget", "Read transactions, size: " + transactions.size());
             double budgetRemaining = overviewViewModel.getBudgetRemaining(budget, transactions);
+
+            // Display the remaining budget
             txtBudgetRemaining.setText(Converters.doubleToCurrencyString(budgetRemaining));
+
+            // Display the total budget
+            String outputString = "Monthly Budget: " + Converters.doubleToCurrencyString(budget);
+            txtTotalBudget.setText(outputString);
 
             // Set the text colour to red if negative, green if positive
             ColorHandler.setAmountColour(txtBudgetRemaining, budgetRemaining);

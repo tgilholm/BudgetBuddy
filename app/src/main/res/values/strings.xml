@@ -57,4 +57,5 @@
     <string name="intro_text">It appears this is your first time using BudgetBuddy!\n\n
         Please set your monthly budget below</string>
     <string name="welcome_text">Welcome!</string>
+    <string name="placeholder_monthly_budget">(Monthly Budget: £1000.00)</string>
 </resources>
