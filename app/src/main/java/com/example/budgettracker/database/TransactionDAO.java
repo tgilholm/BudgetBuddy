@@ -1,6 +1,7 @@
 package com.example.budgettracker.database;
 
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -18,7 +19,7 @@ public interface TransactionDAO {
 
     // Return the entire table
     @Query("SELECT * FROM 'transaction'")
-    List<Transaction> getAll();
+    LiveData<List<Transaction>> getAll();
 
     // Returns only the transaction matching the provided transaction ID
     @Query("SELECT * FROM 'transaction' WHERE id = (:id)")

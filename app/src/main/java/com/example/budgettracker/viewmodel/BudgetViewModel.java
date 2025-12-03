@@ -1,6 +1,6 @@
 package com.example.budgettracker.viewmodel;
 
-// Similar format to TransactionViewModel
+// Similar format to OverviewViewModel
 // The purpose is to centralise all "budget" interactions here
 // The ViewModel is responsible for interfacing with SharedPreferences
 

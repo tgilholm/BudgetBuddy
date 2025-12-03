@@ -14,11 +14,12 @@ import android.view.ViewGroup;
 
 import com.example.budgettracker.R;
 import com.example.budgettracker.entities.Transaction;
-import com.example.budgettracker.viewmodel.TransactionViewModel;
 import com.example.budgettracker.adapters.EditRecyclerViewAdapter;
 import com.example.budgettracker.utility.InputValidator;
+import com.example.budgettracker.viewmodel.TransactionViewModel;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,13 +30,6 @@ import java.util.List;
 
 public class TransactionsFragment extends Fragment
 {
-
-    public TransactionsFragment()
-    {
-        super();
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -57,30 +51,18 @@ public class TransactionsFragment extends Fragment
         Snackbar snackbar = Snackbar.make(view, "Transaction deleted", Snackbar.LENGTH_LONG);
         snackbar.setAction("Undo", v ->
         {
-
-
         });
 
-
-        // Connect the transactionViewModel
+        // Connect the TransactionViewModel
         TransactionViewModel transactionViewModel = new ViewModelProvider(requireActivity()).get(TransactionViewModel.class);
 
-        // Get the current transaction list
-        List<Transaction> transactions = transactionViewModel.getTransactions().getValue();
-
-        EditRecyclerViewAdapter editRecyclerViewAdapter;
+        // Empty List to instantiate the RecyclerView
+        List<Transaction> emptyList = new ArrayList<>();
 
         // Set up the editRecyclerViewAdapter
-        if (transactions != null)
-        {
-            // Set the click listener for the delete button
-            editRecyclerViewAdapter = new EditRecyclerViewAdapter(
-                    InputValidator.sortTransactions(transactions), transactionViewModel::deleteTransaction,
-                    R.layout.editable_transaction_item);
-        } else
-        {
-            editRecyclerViewAdapter = null;
-        }
+        EditRecyclerViewAdapter editRecyclerViewAdapter = new EditRecyclerViewAdapter(
+                emptyList, transactionViewModel::deleteTransaction, R.layout.editable_transaction_item
+        );
 
         // Get the recycler view from the layout and set the adapter
         RecyclerView rvFullHistory = view.findViewById(R.id.rvFullHistory);
@@ -91,15 +73,12 @@ public class TransactionsFragment extends Fragment
         transactionViewModel.getTransactions().observe(getViewLifecycleOwner(), transactionList ->
         {
             // Add the list to the recyclerView on update
-            if (editRecyclerViewAdapter != null)
-            {
-                editRecyclerViewAdapter.updateTransactions(InputValidator.sortTransactions(transactionList));
+            editRecyclerViewAdapter.updateTransactions(InputValidator.sortTransactions(transactionList));
 
-                // Scroll back to the top of the RecyclerView to show the new transaction
-                if (rvFullHistory.getLayoutManager() != null)
-                {
-                    rvFullHistory.getLayoutManager().scrollToPosition(0);
-                }
+            // Scroll back to the top of the RecyclerView to show the new transaction
+            if (rvFullHistory.getLayoutManager() != null)
+            {
+                rvFullHistory.getLayoutManager().scrollToPosition(0);
             }
         });
     }

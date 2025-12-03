@@ -19,8 +19,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.budgettracker.R;
-import com.example.budgettracker.entities.Transaction;
-import com.example.budgettracker.viewmodel.TransactionViewModel;
+import com.example.budgettracker.viewmodel.AddViewModel;
 import com.example.budgettracker.timeselector.DatePickerFragment;
 import com.example.budgettracker.utility.ColorHandler;
 import com.example.budgettracker.utility.InputValidator;
@@ -48,8 +47,7 @@ public class AddFragment extends Fragment
     private EditText timeText;
     private ChipGroup chipGroupCategories;
 
-
-    private TransactionViewModel transactionViewModel;
+    private AddViewModel addViewModel;
 
     // Update UI to be more like Google Calendar
     // Dropdown menu for time and date & keep both selected
@@ -71,11 +69,8 @@ public class AddFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
 
-        // Connect the TransactionViewModel
-        transactionViewModel = new ViewModelProvider(requireActivity()).get(TransactionViewModel.class);
-
-
-
+        // Connect the AddViewModel
+        addViewModel = new ViewModelProvider(requireActivity()).get(AddViewModel.class);
     }
 
 
@@ -231,9 +226,8 @@ public class AddFragment extends Fragment
 
         Log.v("AddFragment", "Adding new transaction");
 
-        // Add the transaction to the list of transactions
-        Transaction newTransaction = new Transaction(amount, type, dateTime, category, repeatDuration);
-        transactionViewModel.addTransaction(newTransaction);
+        // Send the transaction details to the ViewModel
+        addViewModel.addTransaction(amount, type, dateTime, category, repeatDuration);
 
         // Inform the user via a toast that the transaction was added
         Toast.makeText(getContext(), "Added new transaction!", Toast.LENGTH_SHORT).show();

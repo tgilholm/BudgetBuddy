@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -21,7 +20,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.budgettracker.R;
 import com.example.budgettracker.viewmodel.BudgetViewModel;
-import com.example.budgettracker.viewmodel.TransactionViewModel;
+import com.example.budgettracker.viewmodel.OverviewViewModel;
 import com.example.budgettracker.adapters.AppFragmentStateAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -38,7 +37,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainActivity extends AppCompatActivity {
 
-    TransactionViewModel transactionViewModel;
+    OverviewViewModel overviewViewModel;
     BudgetViewModel budgetViewModel;
 
     @Override
@@ -53,9 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Get an instance of the BudgetViewModel
         budgetViewModel = new ViewModelProvider(this).get(BudgetViewModel.class);
-
-        // Initialise the TransactionViewModel- all other fragments should use this instance
-        transactionViewModel = new ViewModelProvider(this).get(TransactionViewModel.class);
 
         // Open the appPreferences SharedPreferences file
         SharedPreferences prefs = this.getSharedPreferences(
