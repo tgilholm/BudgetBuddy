@@ -8,7 +8,7 @@ import java.util.Locale;
 
 // Used to convert types into those able to be stored by RoomDB
 @ProvidedTypeConverter
-public class Converters {
+public final class Converters {
 
     @TypeConverter
     public long fromCalendar(Calendar calendar) {

@@ -3,7 +3,7 @@ package com.example.budgettracker.utility;
 import java.util.Locale;
 
 // Stateless utility class for string operations such as padding and formatting.
-public class StringUtils
+public final class StringUtils
 {
     private StringUtils() {}
 

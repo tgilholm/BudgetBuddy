@@ -1,8 +1,5 @@
 package com.example.budgettracker.fragments;
 
-
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,7 +7,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +19,7 @@ import com.example.budgettracker.R;
 import com.example.budgettracker.entities.Category;
 import com.example.budgettracker.viewmodel.AddViewModel;
 import com.example.budgettracker.timeselector.DatePickerFragment;
-import com.example.budgettracker.utility.ColorHandler;
+import com.example.budgettracker.utility.ChipHandler;
 import com.example.budgettracker.utility.InputValidator;
 import com.example.budgettracker.timeselector.TimePickerFragment;
 import com.example.budgettracker.enums.RepeatDuration;
@@ -47,12 +43,8 @@ public class AddFragment extends Fragment
     private EditText dateText;
     private EditText timeText;
     private ChipGroup chipGroupCategories;
-
     private AddViewModel addViewModel;
 
-    public AddFragment()
-    {
-    }
 
     // Creates the layout and event listeners for the fragment
     @Override
@@ -61,21 +53,20 @@ public class AddFragment extends Fragment
         // Instantiate a new View with the inflated XML layout
         View v = inflater.inflate(R.layout.fragment_add, container, false);
 
-        // Connect the AddViewModel
-        addViewModel = new ViewModelProvider(requireActivity()).get(AddViewModel.class);
-
-        // VIEW IDs
+        // Get IDs from the view
         FloatingActionButton addButton = v.findViewById(R.id.addButton);
         timeText = v.findViewById(R.id.editTextTime);
         dateText = v.findViewById(R.id.editTextDate);
+        chipGroupCategories = v.findViewById(R.id.chipGroupCategories);
+
+
+        // Connect the AddViewModel
+        addViewModel = new ViewModelProvider(requireActivity()).get(AddViewModel.class);
 
 
         // ONCLICK LISTENERS
-        // Connect an onClickListener to the date and time fields
         dateText.setOnClickListener(this::onDatePressed);
         timeText.setOnClickListener(this::onTimePressed);
-
-        // Connect an onClickListener the add button
         addButton.setOnClickListener(this::onAddPressed);
 
 
@@ -97,15 +88,13 @@ public class AddFragment extends Fragment
             timeText.setText(result);   // Update the timeText field with the requested date
         });
 
-        // STARTUP LOGIC
-        setInitialDateTime();   // Sets default values for the date and time fields
-
-        // Get the chip group for the categories from the layout and populate with the existing categories
-        chipGroupCategories = v.findViewById(R.id.chipGroupCategories);
 
         // Set up the observer on the categories list
         // When new categories are added, refresh the category list
         addViewModel.getCategories().observe(getViewLifecycleOwner(), this::populateChipGroup);
+
+
+        setInitialDateTime();   // Sets default values for the date and time fields
         return v;
     }
 
@@ -118,51 +107,11 @@ public class AddFragment extends Fragment
         // Add the new chips
         for (Category c : categories)
         {
-            chipGroupCategories.addView(createChip(c));
+            chipGroupCategories.addView(ChipHandler.createChip(requireContext(), c));
         }
 
         // Create the "add category" chip
-        chipGroupCategories.addView(createAddCategoryChip());
-    }
-
-    // Takes a category and generates a chip //TODO Add color picker
-    @NonNull
-    private Chip createChip(@NonNull Category category)
-    {
-        Chip chip = new Chip(getContext(), null, R.style.Widget_BudgetTracker_ChipStyle);
-
-        // Set the name of the chip to the category name
-        chip.setText(category.getName());
-        chip.setCheckable(true);
-        chip.setClickable(true);
-
-        int backgroundColor = ColorHandler.getColorARGB(getContext(), category.getColorID());
-
-        // Set the background color of the chip top the category's colour
-        chip.setChipBackgroundColor(ColorHandler.resolveColorID(backgroundColor));
-
-        // Set the chip text colour to adapt to the chip background colour
-        chip.setTextColor(ColorHandler.resolveForegroundColor(requireContext(), backgroundColor));
-
-        // Set the "tag" parameter of the Chip to the category ID
-        // This facilitates the category selection logic
-        chip.setTag(category.getCategoryID());
-        return chip;
-    }
-
-    // Creates a chip with an add icon and an onclick to create a new category
-    private Chip createAddCategoryChip()
-    {
-        ContextThemeWrapper newContext = new ContextThemeWrapper(getContext(), R.style.ThemeOverlay_BudgetTracker_AddChip);
-        Chip chip = new Chip(newContext);
-        chip.setChipIconResource(R.drawable.add_icon);
-        chip.setText("");
-        chip.setClickable(true);
-
-        chip.setChipStartPadding(20);
-        chip.setChipEndPadding(20);
-
-        return chip;
+        chipGroupCategories.addView(ChipHandler.createAddCategoryChip(requireContext()));
     }
 
 

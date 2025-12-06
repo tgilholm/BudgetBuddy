@@ -2,7 +2,7 @@ package com.example.budgettracker.utility;
 
 // Holds stateless Calculation logic accessible throughout the application
 // Used for basic calculations such as percentage
-public class CalculationUtils
+public final class CalculationUtils
 {
     private CalculationUtils() {}   // Declare constructor as private to prevent instantiation
 
