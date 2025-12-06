@@ -19,6 +19,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.budgettracker.R;
+import com.example.budgettracker.entities.Category;
 import com.example.budgettracker.viewmodel.AddViewModel;
 import com.example.budgettracker.timeselector.DatePickerFragment;
 import com.example.budgettracker.utility.ColorHandler;
@@ -31,7 +32,6 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -41,8 +41,7 @@ import java.util.List;
  * Connects to fragment_add.xml to provide layout
  */
 
-public class AddFragment extends Fragment
-{
+public class AddFragment extends Fragment {
     private EditText dateText;
     private EditText timeText;
     private ChipGroup chipGroupCategories;
@@ -59,33 +58,30 @@ public class AddFragment extends Fragment
     TODO: Chip group containing chips representing each category- default categories & user defined
      */
 
-    public AddFragment()
-    {
+    public AddFragment() {
     }
 
     // Handle the logic for the fragment startup
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState)
-    {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Connect the AddViewModel
-        addViewModel = new ViewModelProvider(requireActivity()).get(AddViewModel.class);
     }
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
     // Creates the layout and event listeners for the fragment
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Instantiate a new View with the inflated XML layout
         View v = inflater.inflate(R.layout.fragment_add, container, false);
+
+        // Connect the AddViewModel
+        addViewModel = new ViewModelProvider(requireActivity()).get(AddViewModel.class);
 
         // VIEW IDs
         FloatingActionButton addButton = v.findViewById(R.id.addButton);
@@ -125,65 +121,65 @@ public class AddFragment extends Fragment
 
         // Get the chip group for the categories from the layout and populate with the existing categories
         chipGroupCategories = v.findViewById(R.id.chipGroupCategories);
-        populateChipGroup();    // Adds the categories to the chip group
 
+        // Set up the observer on the categories list
+        // When new categories are added, refresh the category list
+        addViewModel.getCategories().observe(getViewLifecycleOwner(), this::populateChipGroup);
         return v;
     }
 
-    // Populate the ChipGroup with the pre-set categories //TODO MOVE TO DATABASE
-    private void populateChipGroup()
-    {
-        // Create a default list of categories
-        List<String> categories = Arrays.asList("Entertainment", "Petrol", "Pets", "Travel", "Shopping");
-        List<Integer> colorIDs = Arrays.asList(R.color.lightGreen, R.color.lightBlue, R.color.lightRed, R.color.lightYellow, R.color.lightPurple);
+    // Populate the ChipGroup with categories
+    private void populateChipGroup(@NonNull List<Category> categories) {
+        // Replace the chips with new ones
+        chipGroupCategories.removeAllViews();
 
-
-        for (String i : categories)
+        // Add the new chips
+        for (Category c : categories)
         {
-            // Resolve the color IDs from colors.xml to a color integer before passing to Chip
-            int colorID = colorIDs.get(categories.indexOf(i));
-            //int resolvedColor = ContextCompat.getColor(requireContext(), colorID);
-
-            Chip chip = createChip(i, ColorHandler.resolveColorID(getContext(), colorID));
-            chipGroupCategories.addView(chip); // Add the new chip group to the view
+            chipGroupCategories.addView(createChip(c));
         }
     }
 
-    // Allows for the creation of default and user-defined category chips //TODO Add color picker
+    // Takes a category and generates a chip //TODO Add color picker
     @NonNull
-    private Chip createChip(String label, ColorStateList color)
-    {
-        Chip newChip = new Chip(getContext(), null, R.style.Theme_BudgetTracker_ChipStyle);
+    private Chip createChip(@NonNull Category category) {
+        Chip chip = new Chip(getContext(), null, R.style.Theme_BudgetTracker_ChipStyle);
 
-        // Set the name of the chip
-        newChip.setText(label);
-        newChip.setCheckable(true);
-        newChip.setClickable(true);
+        // Set the name of the chip to the category name
+        chip.setText(category.getName());
+        chip.setCheckable(true);
+        chip.setClickable(true);
 
-        // Set the background color of the chip
-        newChip.setChipBackgroundColor(color);
-        return newChip;
+        int backgroundColor = ColorHandler.getColorARGB(getContext(), category.getColorID());
+
+        // Set the background color of the chip top the category's colour
+        chip.setChipBackgroundColor(ColorHandler.resolveColorID(backgroundColor));
+
+        // Set the chip text colour to adapt to the chip background colour
+        chip.setTextColor(ColorHandler.resolveForegroundColor(requireContext(), backgroundColor));
+
+        // Set the "tag" parameter of the Chip to the category ID
+        // This facilitates the category selection logic
+        chip.setTag(category.getCategoryID());
+        return chip;
     }
 
 
     // Open a DatePickerDialog when the user interacts with the date field
-    public void onDatePressed(View view)
-    {
+    public void onDatePressed(View view) {
         DatePickerFragment datePicker = new DatePickerFragment();
         datePicker.show(getParentFragmentManager(), "datePicker");
 
     }
 
     // Open a TimePickerDialog when the user interacts with the date field
-    public void onTimePressed(View view)
-    {
+    public void onTimePressed(View view) {
         TimePickerFragment timePicker = new TimePickerFragment();
         timePicker.show(getParentFragmentManager(), "timePicker");
     }
 
     // Sets the DateText and TimeText fields to the current time
-    private void setInitialDateTime()
-    {
+    private void setInitialDateTime() {
         Calendar userTime = Calendar.getInstance();
 
         // Always use 00:00 format for time output, i.e. 03:00 instead of 3.0
@@ -199,8 +195,7 @@ public class AddFragment extends Fragment
     // Collects all the user input into a new transaction
     // TODO set character limits on fields
     // TODO clear all fields on add
-    public void onAddPressed(View view)
-    {
+    public void onAddPressed(View view) {
         // Parcelable order:
         /*
             - id
@@ -212,22 +207,28 @@ public class AddFragment extends Fragment
          */
         // Bundle all the user input into a new transaction
         double amount = getAmount();        // Get the transaction amount
-        if (amount < 0) { return; }         // Break here if getAmount() failed
+        if (amount < 0) {
+            return;
+        }         // Break here if getAmount() failed
 
         TransactionType type = getType();   // Get the transaction type
 
         Calendar dateTime = getDateAndTime();
-        if (dateTime == null) {return;}     // Break here if getDateAndTime() failed
+        if (dateTime == null) {
+            return;
+        }     // Break here if getDateAndTime() failed
 
-        String category = getCategory();    // Get the transaction category
-        if (category == null) {return;}     // Break here if getCategory() failed
+        long categoryID = getCategoryID();    // Get the transaction category
+        if (categoryID < 0) {
+            return;
+        }     // Break here if getCategoryID() failed
 
         RepeatDuration repeatDuration = getRepeatDuration();
 
         Log.v("AddFragment", "Adding new transaction");
 
         // Send the transaction details to the ViewModel
-        addViewModel.addTransaction(amount, type, dateTime, category, repeatDuration);
+        addViewModel.addTransaction(amount, type, dateTime, categoryID, repeatDuration);
 
         // Inform the user via a toast that the transaction was added
         Toast.makeText(getContext(), "Added new transaction!", Toast.LENGTH_SHORT).show();
@@ -235,8 +236,7 @@ public class AddFragment extends Fragment
 
 
     // Get the transaction amount inputted by the user
-    private double getAmount()
-    {
+    private double getAmount() {
         // Get the amount from the amountText field
         EditText amountText = requireView().findViewById(R.id.editTextAmount);
         String amount = amountText.getText().toString().trim(); // Remove any whitespace
@@ -244,33 +244,27 @@ public class AddFragment extends Fragment
         // Validate the input
         if (InputValidator.validateCurrencyInput(getContext(), amount)) {
             return Double.parseDouble(amount);
-        }
-        else {
+        } else {
             Log.v("AddFragment", "Invalid amount input");
             return 0;
         }
     }
 
     // Return the type of the transaction- incoming or outgoing
-    private TransactionType getType()
-    {
+    private TransactionType getType() {
         // Get the type radio buttons from the layout
         RadioButton rbIncoming = requireView().findViewById(R.id.rbIncoming);
 
         // Only one radio button can be selected at a time
-        if (rbIncoming.isChecked())
-        {
+        if (rbIncoming.isChecked()) {
             return TransactionType.INCOMING;
-        } else
-        {
+        } else {
             return TransactionType.OUTGOING;
         }
     }
 
     // Return the category of the transaction
-    @Nullable
-    private String getCategory()
-    {
+    private long getCategoryID() {
         // The ChipGroup uses Single Selection mode, making the process of finding the checked chip faster
         int selectedChipId = chipGroupCategories.getCheckedChipId();
 
@@ -278,19 +272,17 @@ public class AddFragment extends Fragment
         if (selectedChipId == View.NO_ID) // View.NO_ID has a value of -1
         {
             Toast.makeText(getContext(), "No Category Selected!", Toast.LENGTH_SHORT).show();
-            return null; // Return null if no chip is selected
-        } else
-        {
-            // Returns the chip with the ID of the selected chip
+            return 0; // Return null if no chip is selected
+        } else {
+            // Return the tag property of the selected chip
             Chip selectedCategory = chipGroupCategories.findViewById(selectedChipId);
-            return selectedCategory.getText().toString(); // Returns the text of the chip
+            return (long) selectedCategory.getTag();
         }
     }
 
     // Gets the date and time in the dateText and timeText fields and returns them as a Calendar object
     // Storing the values as a Calendar helps with operations elsewhere in the program
-    private Calendar getDateAndTime()
-    {
+    private Calendar getDateAndTime() {
         // Get the values from the EditText fields
         String date = dateText.getText().toString();
         String time = timeText.getText().toString();
@@ -300,8 +292,7 @@ public class AddFragment extends Fragment
     }
 
     // Get the repeat duration from the radio group
-    private RepeatDuration getRepeatDuration()
-    {
+    private RepeatDuration getRepeatDuration() {
         // Get the radio group from the layout
         RadioGroup radioGroupSelectRepeat = requireView().findViewById(R.id.radioGroupSelectRepeat);
         int selectedRadioButtonID = radioGroupSelectRepeat.getCheckedRadioButtonId();

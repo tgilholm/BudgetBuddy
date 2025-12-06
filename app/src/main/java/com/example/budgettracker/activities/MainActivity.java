@@ -22,6 +22,7 @@ import com.example.budgettracker.R;
 import com.example.budgettracker.viewmodel.BudgetViewModel;
 import com.example.budgettracker.viewmodel.OverviewViewModel;
 import com.example.budgettracker.adapters.AppFragmentStateAdapter;
+import com.example.budgettracker.viewmodel.StartupViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -31,12 +32,9 @@ import com.google.android.material.tabs.TabLayoutMediator;
  *  Fragments are attached to MainActivity- the layout in activity_main.xml is shown behind them
  *  Attaches these to a TabLayout to enable the user to switch between the three tabs without swiping
  *  Title bar is automatically updated to reflect fragment title
- *
- *
  */
 
 public class MainActivity extends AppCompatActivity {
-
     OverviewViewModel overviewViewModel;
     BudgetViewModel budgetViewModel;
 
@@ -68,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
             firstTimeStartup();
             Log.v("MainActivity", "First startup, moving to onboarding activity");
         }
+
+        // Check if there are any categories- if not, add the defaults
+        StartupViewModel startupViewModel = new ViewModelProvider(this).get(StartupViewModel.class);
+        startupViewModel.addDefaultCategories();
 
         ViewCompat.setOnApplyWindowInsetsListener(
                 findViewById(R.id.main), (v, insets) ->

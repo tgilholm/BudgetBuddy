@@ -10,14 +10,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.budgettracker.R;
-import com.example.budgettracker.entities.Transaction;
+import com.example.budgettracker.entities.TransactionWithCategory;
 import com.example.budgettracker.utility.CalculationUtils;
 import com.example.budgettracker.utility.ColorHandler;
 import com.example.budgettracker.utility.Converters;
@@ -104,7 +103,7 @@ public class OverviewFragment extends Fragment
         // Set up a listener on the Budget variable and invoke the method when changes are detected
         budgetViewModel.getBudget().observe(getViewLifecycleOwner(), budget -> {
             // Get the transaction list
-            List<Transaction> transactions = overviewViewModel.getTransactions().getValue();
+            List<TransactionWithCategory> transactions = overviewViewModel.getTransactions().getValue();
 
             updateRemainingBudget(budget, transactions);
         });
@@ -125,7 +124,7 @@ public class OverviewFragment extends Fragment
     // Helper method to calculate the remaining budget
     // The budget needs to be recalculated if either the budget changes or a new transaction is added
     // This method is therefore able to be called in the observers for both values
-    private void updateRemainingBudget(Double budget, List<Transaction> transactions)
+    private void updateRemainingBudget(Double budget, List<TransactionWithCategory> transactions)
     {
         // If both values are non-null, recalculate the remaining budget
         if (budget != null && transactions != null)
@@ -164,10 +163,19 @@ public class OverviewFragment extends Fragment
         pieChart.setHoleRadius(40f);                                    // Make the hole smaller
         pieChart.setDrawEntryLabels(false);                             // Remove the labels from slices
 
+
+
+        // TODO Replace with RecyclerView
         // Set the legend of the pie chart
         Legend legend = pieChart.getLegend();
         legend.setEnabled(true);
         legend.setTextSize(12f);
+
+        // Set the colour to the dynamic foreground colour
+        legend.setTextColor(ColorHandler.getThemeColor(
+                requireContext(),
+                com.google.android.material.R.attr.colorOnSurfaceVariant
+        ));
         legend.setTypeface(Typeface.MONOSPACE);                         // Use a monospace font so string padding works properly
 
         // Set the alignment to be to the centre right of the chart
@@ -191,7 +199,7 @@ public class OverviewFragment extends Fragment
     // todo select by category on transactions page
     // todo stop using the legend and use a recycler view instead
 
-    private void updatePieChart(List<Transaction> transactions)
+    private void updatePieChart(List<TransactionWithCategory> transactions)
     {
         if (transactions == null || transactions.isEmpty())
         {
