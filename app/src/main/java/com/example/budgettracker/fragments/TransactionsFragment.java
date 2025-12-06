@@ -13,12 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.budgettracker.R;
-import com.example.budgettracker.entities.Transaction;
 import com.example.budgettracker.adapters.EditRecyclerViewAdapter;
 import com.example.budgettracker.entities.TransactionWithCategory;
 import com.example.budgettracker.utility.InputValidator;
 import com.example.budgettracker.viewmodel.TransactionViewModel;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,11 +46,6 @@ public class TransactionsFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
 
-        // Snackbar to display "transaction deleted" message and undo button
-        Snackbar snackbar = Snackbar.make(view, "Transaction deleted", Snackbar.LENGTH_LONG);
-        snackbar.setAction("Undo", v ->
-        {
-        });
 
         // Connect the TransactionViewModel
         TransactionViewModel transactionViewModel = new ViewModelProvider(requireActivity()).get(TransactionViewModel.class);

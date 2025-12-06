@@ -16,15 +16,19 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.budgettracker.R;
 import com.example.budgettracker.utility.InputValidator;
 import com.example.budgettracker.viewmodel.BudgetViewModel;
-import com.example.budgettracker.viewmodel.StartupViewModel;
 
 // The FirstTimeStartup activity handles the case where the
 // "notFirstRun" flag is false in the Preferences
-public class FirstTimeStartupActivity extends AppCompatActivity {
 
-    EditText budgetText;
+// It is responsible for prompting the user to enter their preferred budget
+// and updating the SharedPreferences
 
-    BudgetViewModel budgetViewModel;
+// It is ONLY ran on first startup
+public class FirstTimeStartupActivity extends AppCompatActivity
+{
+    private EditText budgetText;
+
+    private BudgetViewModel budgetViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -44,18 +48,20 @@ public class FirstTimeStartupActivity extends AppCompatActivity {
     }
 
     // Handle the button press with input validation
-    public void startButtonPressed(View v) {
+    public void startButtonPressed(View v)
+    {
         double validatedInput = 0;
         String inputText = budgetText.getText().toString();
 
-        if (!inputText.isEmpty()) {
+        // Check if empty
+        if (!inputText.isEmpty())
+        {
             // Validate the input
             if (InputValidator.validateCurrencyInput(this, inputText))
             {
                 validatedInput = Double.parseDouble(inputText);
                 Log.v("FirstTimeStartupActivity", "Budget set: " + inputText);
-            }
-            else
+            } else
             {
                 Log.v("FirstTimeStartupActivity", "Invalid input: " + inputText);
             }
@@ -66,7 +72,8 @@ public class FirstTimeStartupActivity extends AppCompatActivity {
     }
 
     // Start an intent to return to the MainActivity
-    private void returnToMain() {
+    private void returnToMain()
+    {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
@@ -75,16 +82,14 @@ public class FirstTimeStartupActivity extends AppCompatActivity {
     private void updatePreferences(double budget)
     {
         // Get the shared preferences
-        SharedPreferences prefs = this.getSharedPreferences(
-                "appPreferences",
-                Context.MODE_PRIVATE);
+        SharedPreferences prefs = this.getSharedPreferences("appPreferences", Context.MODE_PRIVATE);
 
         // Create an editor for the shared preferences
         SharedPreferences.Editor editor = prefs.edit();
 
         // Set the notFirstRun flag to false
         editor.putBoolean("notFirstRun", true);
-        editor.apply();
+        editor.apply(); // Commit the changes
 
         // Update the budget through the BudgetViewModel
         budgetViewModel.setBudget(budget);

@@ -62,8 +62,8 @@ public class OverviewFragment extends Fragment
 
         // Get the Views from the layout
         pieChart = view.findViewById(R.id.pieChart);                                // Get the pie chart from the layout
-        txtBudgetRemaining = view.findViewById(R.id.txtBudgetRemaining);            // Get the budget remaining text from the layout
-        txtTotalBudget = view.findViewById(R.id.txtTotalBudget);                    // Get the total budget text from the layout
+        txtBudgetRemaining = view.findViewById(R.id.tvBudgetRemaining);            // Get the budget remaining text from the layout
+        txtTotalBudget = view.findViewById(R.id.tvTotalBudget);                    // Get the total budget text from the layout
         RecyclerView rvPartialHistory = view.findViewById(R.id.rvPartialHistory);   // Get the recycler view from the layout
         FloatingActionButton addButton = view.findViewById(R.id.overviewAddButton); // Get the FloatingActionButton from the layout
 

@@ -21,13 +21,11 @@
                 android:id="@+id/title_bar"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:title="Settings"
+                app:title="@string/title_settings"
                 app:titleCentered="true"
                 app:titleTextColor="@color/white"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize">
-
-            </com.google.android.material.appbar.MaterialToolbar>
+                android:layout_height="?attr/actionBarSize"/>
 
             <!-- Display the Back icon -->
             <ImageButton
@@ -38,14 +36,13 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:background="@android:color/transparent"
-                android:contentDescription="Return"
+                android:contentDescription="@string/cd_return"
                 android:src="@drawable/back_arrow"
                 android:onClick="backButtonPressed"
 
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-            </ImageButton>
+                app:layout_constraintTop_toTopOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>

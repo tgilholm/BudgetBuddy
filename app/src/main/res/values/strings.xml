@@ -1,61 +1,59 @@
+
+<!-- Naming convention -->
+<!-- TYPE_string_name -->
 <resources>
     <string name="app_name">BudgetBuddy</string>
 
     <!-- Titles-->
-    <string name="add">Add</string>
-    <string name="overview">Overview</string>
-    <string name="transactions">Transactions</string>
+    <string name="title_add">Add</string>
+    <string name="title_overview">Overview</string>
+    <string name="title_transactions">Transactions</string>
+    <string name="title_settings">Settings</string>
 
-    <!-- Overview Layout Strings -->
-    <string name="label_budget_remaining">Budget Remaining</string>
-
-    <!-- Add Layout Strings -->
+    <!-- Labels -->
     <string name="label_add_transaction">Add a Transaction</string>
-    <string name="set_a_category">Set a Category</string>
-    <string name="pound_sign">£</string>
-    <string name="incoming">Incoming</string>
-    <string name="outgoing">Outgoing</string>
+    <string name="label_set_a_category">Set a Category</string>
+    <string name="label_pound_sign">£</string>
+    <string name="label_repeat_duration">Repeat Every…</string>
+    <string name="label_date_time">Date/Time</string>
+    <string name="label_budget_remaining">Budget Remaining</string>
+    <string name="label_select_type">Select Type</string>
+    <string name="label_recent_transactions">Recent Transactions</string>
+    <string name="label_transaction_history">Transaction History</string>
 
-    <!-- Transaction Layout Strings -->
-    <string name="title_transaction_history">Transaction History</string>
+    <!-- Radio Buttons -->
+    <string name="rb_incoming">Incoming</string>
+    <string name="rb_outgoing">Outgoing</string>
+    <string name="rb_never">Never</string>
+    <string name="rb_day">Day</string>
+    <string name="rb_week">Week</string>
+    <string name="rb_month">Month</string>
+    <string name="rb_year">Year</string>
 
-    <!-- Default Category Strings -->
-    <string name="default_category_petrol">Petrol</string>
-    <string name="default_category_shopping">Shopping</string>
-    <string name="default_category_travel">Travel</string>
-    <string name="default_category_entertainment">Entertainment</string>
-    <string name="default_category_pets">Pets</string>
+    <!-- Hints -->
+    <string name="hint_amount">Amount</string>
+    <string name="hint_set_date">Set a Date</string>
+    <string name="hint_set_time">Set a Time</string>
+    <string name="hint_set_budget">Set a Budget</string>
 
+    <!-- Content Description -->
+    <string name="cd_remove_transaction">Remove Transaction</string>
+    <string name="cd_add_transaction">Add Transaction</string>
+    <string name="cd_navigation_bar">Navigation Bar</string>
+    <string name="cd_notifications">Notifications</string>
+    <string name="cd_settings">Settings</string>
+    <string name="cd_return">Return</string>
 
-    <!-- Miscellaneous -->
-    <string name="notifications">Notifications</string>
-    <string name="settings">Settings</string>
-    <string name="repeat_every">Repeat Every…</string>
-    <string name="never">Never</string>
-    <string name="day">Day</string>
-    <string name="week">Week</string>
-    <string name="month">Month</string>
-    <string name="year">Year</string>
-    <string name="amount">Amount</string>
-    <string name="date_time">Date/Time</string>
-    <string name="set_a_date">Set a Date</string>
-    <string name="set_a_time">Set a Time</string>
-    <string name="add_transaction">Add Transaction</string>
-    <string name="recent_transactions">Recent Transactions</string>
-
-    <!--  Placeholder Strings  -->
+    <!--  Placeholders -->
     <string name="placeholder_budget_amount">£527.01</string>
     <string name="placeholder_date">12:34 12/3/2000</string>
     <string name="placeholder_category">Entertainment</string>
     <string name="placeholder_amount">+/£0.00</string>
-
-    <!--  Content Description Strings  -->
-    <string name="cd_remove_transaction">Remove Transaction</string>
-
+    <string name="placeholder_monthly_budget">(Monthly Budget: £1000.00)</string>
 
     <!--  Intro Strings -->
     <string name="intro_text">It appears this is your first time using BudgetBuddy!\n\n
         Please set your monthly budget below</string>
-    <string name="welcome_text">Welcome!</string>
-    <string name="placeholder_monthly_budget">(Monthly Budget: £1000.00)</string>
+    <string name="intro_title">Welcome!</string>
+    <string name="intro_start">Start</string>
 </resources>

@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    <!-- Elements are held in a ConstraintLayout -->
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Elements are held in a ConstraintLayout -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.AddFragment">
+    tools:context=".fragments.AddFragment"
+    tools:ignore="TextSizeCheck">
 
-        <!-- TODO edit text colours -->
-    <!-- TODO Add comments for each view -->
+    <!-- Warnings about text expansion for static fields are ignored here -->
+    <!-- However accessibility has been maximised through the use of content description and hints -->
 
-        <!-- Create label to tell users to type in a number -->
-        <!-- Add a TextInputEditText to receive user input for the transaction amount -->
     <TextView
-        android:id="@+id/txtAddAmountLabel"
+        android:id="@+id/tvAddAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -23,70 +22,52 @@
         android:textColor="?attr/colorOnSurfaceVariant"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-    </TextView>
-
+    <!-- Display a pound sign before the amount field -->
+    <!-- Helps users to identify editTextAmount as a currency field -->
     <TextView
-        android:id="@+id/txtSetCategoryLabel"
+        android:id="@+id/tvPoundSign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="36dp"
-        android:text="@string/set_a_category"
+        android:layout_marginTop="12dp"
+        android:text="@string/label_pound_sign"
         android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextAmount">
+        app:layout_constraintTop_toBottomOf="@+id/tvAddAmount" />
 
-    </TextView>
 
-    <TextView
-        android:id="@+id/txtSetCategoryLabel2"
-        android:layout_width="138dp"
-        android:layout_height="26dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="24dp"
-        android:text="@string/repeat_every"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroupSelectType">
-
-    </TextView>
-
-    <!-- TextInputEditText for the transaction amount- force on one line -->
+    <!-- User input for amount field -->
+    <!-- Restricted to one line and 32 chars -->
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/editTextAmount"
         android:layout_width="132dp"
         android:layout_height="48dp"
         android:layout_marginStart="36dp"
-        android:hint="@string/amount"
+        android:hint="@string/hint_amount"
         android:inputType="number"
+        android:maxLength="32"
         android:singleLine="true"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtAddAmountLabel">
+        app:layout_constraintTop_toBottomOf="@id/tvAddAmount" />
 
-    </com.google.android.material.textfield.TextInputEditText>
 
     <TextView
-        android:id="@+id/txtPoundSign"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        android:text="@string/pound_sign"
+        android:id="@+id/tvSetType"
+        android:layout_width="138dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/label_select_type"
         android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtAddAmountLabel" />
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TextSizeCheck" />
 
-        <!-- Allows users to select between incoming & outgoing transactions -->
-
-    <!-- Contains each category in a Chip -->
-        <!-- Chips are styled to be a choice- users can only select one category at a time -->
-        <!-- singleSelection is set to 'true' to facilitate this -->
-
+    <!-- Allows users to select between incoming & outgoing transactions -->
     <RadioGroup
         android:id="@+id/radioGroupSelectType"
         android:layout_width="134dp"
@@ -94,34 +75,63 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtSetTypeLabel">
+        app:layout_constraintTop_toBottomOf="@+id/tvSetType"
+        tools:ignore="TextSizeCheck">
 
         <RadioButton
             android:id="@+id/rbIncoming"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="@string/incoming" />
+            android:text="@string/rb_incoming" />
 
         <RadioButton
             android:id="@+id/rbOutgoing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/outgoing" />
+            android:text="@string/rb_outgoing" />
     </RadioGroup>
 
+
+    <TextView
+        android:id="@+id/tvSetCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="36dp"
+        android:text="@string/label_set_a_category"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextAmount" />
+
+    <!-- Display each category as a Chip -->
+    <!-- Chips are styled to be a choice- users can only select one category at a time -->
+    <!-- singleSelection is set to 'true' to facilitate this -->
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chipGroupCategories"
         android:layout_width="189dp"
         android:layout_height="240dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/radioGroupSelectRepeat"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtSetCategoryLabel"
-        app:singleSelection="true">
-    </com.google.android.material.chip.ChipGroup>
+        app:layout_constraintTop_toBottomOf="@+id/tvSetCategory"
+        app:singleSelection="true" />
 
+    <TextView
+        android:id="@+id/tvSetRepeat"
+        android:layout_width="138dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/label_repeat_duration"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupSelectType"
+        tools:ignore="TextSizeCheck" />
+
+    <!-- Allows users to select a repeat duration for the transaction -->
     <RadioGroup
         android:id="@+id/radioGroupSelectRepeat"
         android:layout_width="137dp"
@@ -129,55 +139,55 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtSetCategoryLabel2">
+        app:layout_constraintTop_toBottomOf="@+id/tvSetRepeat">
 
         <RadioButton
             android:id="@+id/rbNever"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="@string/never" />
+            android:text="@string/rb_never" />
 
         <RadioButton
             android:id="@+id/rbDay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/day" />
+            android:text="@string/rb_day" />
 
         <RadioButton
             android:id="@+id/rbWeek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/week" />
+            android:text="@string/rb_week" />
 
         <RadioButton
             android:id="@+id/rbMonth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/month" />
+            android:text="@string/rb_month" />
 
         <RadioButton
             android:id="@+id/rbYear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/year" />
+            android:text="@string/rb_year" />
     </RadioGroup>
 
+
     <TextView
-        android:id="@+id/txtDateTime"
+        android:id="@+id/tvDateTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="36dp"
-        android:text="Date/Time"
+        android:text="@string/label_date_time"
         android:textColor="?attr/colorOnSurfaceVariant"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chipGroupCategories">
+        app:layout_constraintTop_toBottomOf="@+id/chipGroupCategories" />
 
-    </TextView>
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/editTextDate"
         android:layout_width="211dp"
         android:layout_height="48dp"
@@ -185,12 +195,13 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:focusable="false"
-        android:hint="Set a Date"
+        android:hint="@string/hint_set_date"
         android:inputType="date"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtDateTime" />
+        app:layout_constraintTop_toBottomOf="@+id/tvDateTime" />
 
-    <EditText
+
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/editTextTime"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
@@ -198,10 +209,11 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:focusable="false"
-        android:hint="Set a Time"
+        android:hint="@string/hint_set_time"
         android:inputType="time"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextDate" />
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addButton"
@@ -209,26 +221,14 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:clickable="true"
-        android:contentDescription="@string/add_transaction"
+        android:contentDescription="@string/cd_add_transaction"
         android:focusable="true"
         android:src="@drawable/add_icon"
-        android:tint="@color/white"
+        app:backgroundTint="@color/budgetBlue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/txtSetTypeLabel"
-        android:layout_width="138dp"
-        android:layout_height="26dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="24dp"
-        android:text="Select Type"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </TextView>
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="@color/white"
+        tools:ignore="ClassNameCheck,ImageContrastCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,7 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="text_fixed_dark">#FF444444</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="budgetBlue">#4141eb</color>
+    <color name="budgetBlue">#304FFE</color>
 
     <!--  Light colors for chips  -->
     <color name="lightBlue">#ADD8E6</color>
@@ -15,7 +15,7 @@
     <color name="lightPurple">#E6E6FA</color>
 
     <!--  Bright Colors  -->
-    <color name="brightGreen">#00FF00</color>
-    <color name="brightRed">#FF0000</color>
+    <color name="brightGreen">#43A047</color>
+    <color name="brightRed">#F44336</color>
 
 </resources>

@@ -1,92 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
- <!-- TODO Remove whitespace bar above title -->
 
-    <!--A LinearLayout is used to arrange the elements vertically -->
-    <LinearLayout
+<!--A LinearLayout is used to arrange the elements vertically -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context=".activities.MainActivity">
+
+    <!-- Add an AppBarLayout to contain all the elements at the top of the display -->
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:fitsSystemWindows="true"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/main"
-        tools:context=".activities.MainActivity">
+        android:layout_height="wrap_content"
+        android:background="@color/budgetBlue">
 
-        <!-- Add an AppBarLayout to contain all the elements at the top of the display -->
-        <com.google.android.material.appbar.AppBarLayout
+        <!-- Contain the MaterialToolbar & icons in a ConstraintLayout -->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/budgetBlue">
+            android:layout_height="match_parent">
 
-                <!-- Contain the MaterialToolbar & icons in a ConstraintLayout -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <!-- Displays a title bar section to display the name of the current tab above the nav bar -->
-                    <!-- Replaced Toolbar with MaterialToolbar to handle camera notch on Pixel displays-->
-                    <com.google.android.material.appbar.MaterialToolbar
-                        android:id="@+id/title_bar"
-                        android:layout_width="match_parent"
-                        android:layout_height="?attr/actionBarSize"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:title="xyz"
-                        app:titleCentered="true"
-                        app:titleTextColor="@color/white">
-                    </com.google.android.material.appbar.MaterialToolbar>
-
-                    <!-- Display the Notifications icon -->
-                    <ImageButton
-                        android:id="@+id/notificationButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="4dp"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="@string/notifications"
-                        android:src="@drawable/notifications_icon"
-                        android:onClick="notificationsButtonPressed"
-
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-                    </ImageButton>
-
-                    <!-- Display the Settings icon -->
-                    <ImageButton
-                        android:id="@+id/settingsButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginBottom="4dp"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="@string/settings"
-                        android:src="@drawable/settings_icon"
-                        android:onClick="settingsButtonPressed"
-
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-                    </ImageButton>
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <!-- Add a TabLayout to act as a navigation bar -->
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout"
+            <!-- Displays a title bar section to display the name of the current tab above the nav bar -->
+            <!-- Replaced Toolbar with MaterialToolbar to handle camera notch on Pixel displays-->
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/title_bar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </com.google.android.material.tabs.TabLayout>
-        </com.google.android.material.appbar.AppBarLayout>
+                android:layout_height="?attr/actionBarSize"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:title="@string/app_name"
+                app:titleCentered="true"
+                app:titleTextColor="@color/white" />
 
-        <!-- Add a ViewPager to the window for swiping between fragments -->
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/swipePager"
+            <!-- Display the Notifications icon -->
+            <ImageButton
+                android:id="@+id/notificationButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/cd_notifications"
+                android:onClick="notificationsButtonPressed"
+                android:src="@drawable/notifications_icon"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Display the Settings icon -->
+            <ImageButton
+                android:id="@+id/settingsButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="4dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/cd_settings"
+                android:onClick="settingsButtonPressed"
+                android:src="@drawable/settings_icon"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Add a TabLayout to act as a navigation bar -->
+        <com.google.android.material.tabs.TabLayout
+            android:contentDescription="@string/cd_navigation_bar"
+            android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-    </LinearLayout>
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Add a ViewPager to the window for swiping between fragments -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/swipePager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>
 

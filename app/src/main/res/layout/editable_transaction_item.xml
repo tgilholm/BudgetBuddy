@@ -7,11 +7,10 @@
     android:orientation="horizontal"
     android:padding="16dp">
 
-    <!--  Each row is formatted like so  -->
+    <!--  Each row is formatted as:   -->
     <!--  category (type)amount datetime -->
     <!--  TextViews all have the property ellipsize="end" to prevent text spill-over -->
 
-    <!-- The amount of the transaction -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -19,14 +18,15 @@
         android:orientation="vertical"
         android:gravity="center_vertical">
 
+        <!-- The amount of the transaction -->
         <TextView
             android:id="@+id/textAmount"
             android:layout_width="wrap_content"
-            android:layout_gravity="center"
             android:layout_height="wrap_content"
-            android:text="@string/placeholder_amount"
+            android:layout_gravity="center"
             android:ellipsize="end"
             android:maxLines="1"
+            android:text="@string/placeholder_amount"
             android:textAppearance="?attr/textAppearanceBody1"
             android:textColor="@color/brightGreen"
             android:textStyle="bold">
@@ -67,6 +67,8 @@
             android:textColor="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
 
+
+    <!-- "X" button to remove transactions -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -81,6 +83,7 @@
             android:adjustViewBounds="true"
             android:background="@android:color/transparent"
             android:contentDescription="@string/cd_remove_transaction"
+            app:tint="?attr/colorOnSurface"
             app:srcCompat="@drawable/close_icon"
             android:scaleType="fitCenter"/>
     </LinearLayout>

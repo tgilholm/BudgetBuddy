@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Provides the layout for each row of the RecyclerView -->
+<!-- Provides the layout for each row of the EditRecyclerView -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
     android:orientation="horizontal"
-    android:padding="16dp"
-    >
+    android:padding="16dp">
 
-<!--  Each row is formatted like so  -->
-<!--  category (type)amount datetime -->
-
-    <!-- The category of the transaction -->
+    <!-- Displays transaction amount, category and the date and time -->
 
     <LinearLayout
         android:layout_width="0dp"
@@ -27,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="+/£0.00"
+            android:text="@string/placeholder_amount"
             android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="?attr/textAppearanceBody1"
@@ -43,7 +39,7 @@
             android:layout_gravity="center"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="Entertainment"
+            android:text="@string/placeholder_category"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="?attr/colorOnSurface"
             android:textStyle="bold">
@@ -65,16 +61,10 @@
             android:layout_gravity="center"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="12:34 12/3/2000"
+            android:text="@string/placeholder_date"
             android:textAppearance="?attr/textAppearanceBody1"
             android:textColor="?attr/colorOnSurfaceVariant">
 
         </TextView>
     </LinearLayout>
-
-    <!-- The amount of the transaction -->
-
-    <!-- The date and time of the transaction -->
-
-
 </LinearLayout>

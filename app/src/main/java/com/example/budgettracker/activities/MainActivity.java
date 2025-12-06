@@ -20,7 +20,6 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.budgettracker.R;
 import com.example.budgettracker.viewmodel.BudgetViewModel;
-import com.example.budgettracker.viewmodel.OverviewViewModel;
 import com.example.budgettracker.adapters.AppFragmentStateAdapter;
 import com.example.budgettracker.viewmodel.StartupViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -34,12 +33,13 @@ import com.google.android.material.tabs.TabLayoutMediator;
  *  Title bar is automatically updated to reflect fragment title
  */
 
-public class MainActivity extends AppCompatActivity {
-    OverviewViewModel overviewViewModel;
+public class MainActivity extends AppCompatActivity
+{
     BudgetViewModel budgetViewModel;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
@@ -52,9 +52,7 @@ public class MainActivity extends AppCompatActivity {
         budgetViewModel = new ViewModelProvider(this).get(BudgetViewModel.class);
 
         // Open the appPreferences SharedPreferences file
-        SharedPreferences prefs = this.getSharedPreferences(
-                "appPreferences",
-                Context.MODE_PRIVATE);
+        SharedPreferences prefs = this.getSharedPreferences("appPreferences", Context.MODE_PRIVATE);
 
         // Search prefs for a "firstRun" key-value pair
         // If there is none, it is assumed that the app is on first time startup
@@ -62,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
         Log.v("MainActivity", "Read notFirstRun property as: " + notFirstRun);
 
         // If it IS the first run, send the user to first startup activity
-        if (!notFirstRun) {
+        if (!notFirstRun)
+        {
             firstTimeStartup();
             Log.v("MainActivity", "First startup, moving to onboarding activity");
         }
@@ -71,18 +70,17 @@ public class MainActivity extends AppCompatActivity {
         StartupViewModel startupViewModel = new ViewModelProvider(this).get(StartupViewModel.class);
         startupViewModel.addDefaultCategories();
 
-        ViewCompat.setOnApplyWindowInsetsListener(
-                findViewById(R.id.main), (v, insets) ->
-                {
-                    Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) ->
+        {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 
-                    v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-                    return insets;
-                });
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         // Connect to the MaterialToolbar to dynamically change the page title
         MaterialToolbar toolbar = findViewById(R.id.title_bar);
-        toolbar.setTitle(R.string.overview);
+        toolbar.setTitle(R.string.title_overview);
 
         // Create the ViewPager and attach an AppFragmentStateAdaptor to it
         ViewPager2 vp = findViewById(R.id.swipePager);
@@ -91,21 +89,21 @@ public class MainActivity extends AppCompatActivity {
                 AppFragmentStateAdapter(this));
 
         // Attach the ViewPager to the TabLayout with a TabLayoutMediator
-        new
-                TabLayoutMediator(findViewById(R.id.tab_layout), vp,
+        new TabLayoutMediator(findViewById(R.id.tab_layout), vp,
 
                 // Create a TabConfigurationStrategy to set the text for each tab
                 (tab, position) ->
                 {
-                    switch (position) {
+                    switch (position)
+                    {
                         case 0:
-                            tab.setText("Overview");
+                            tab.setText(R.string.title_overview);
                             break;
                         case 1:
-                            tab.setText("Add");
+                            tab.setText(R.string.title_add);
                             break;
                         case 2:
-                            tab.setText("Transactions");
+                            tab.setText(R.string.title_transactions);
                             break;
                     }
                 }).
@@ -113,18 +111,21 @@ public class MainActivity extends AppCompatActivity {
                 attach();
 
         // Update the title bar to the name of the currently-displayed fragment
-        vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+        vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback()
+        {
             @Override
-            public void onPageSelected(int position) {
-                switch (position) {
+            public void onPageSelected(int position)
+            {
+                switch (position)
+                {
                     case 0:
-                        toolbar.setTitle(R.string.overview);
+                        toolbar.setTitle(R.string.title_overview);
                         break;
                     case 1:
-                        toolbar.setTitle(R.string.add);
+                        toolbar.setTitle(R.string.title_add);
                         break;
                     case 2:
-                        toolbar.setTitle(R.string.transactions);
+                        toolbar.setTitle(R.string.title_transactions);
                         break;
                 }
                 super.onPageSelected(position);
@@ -133,31 +134,37 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Start a FragmentResultListener to handle the button press within the OverviewFragment
-        getSupportFragmentManager().setFragmentResultListener("addPage", this, (requestKey, result) -> {
-            if (result.getInt(requestKey) == 1) {
-                toolbar.setTitle(R.string.add);
+        getSupportFragmentManager().setFragmentResultListener("addPage", this, (requestKey, result) ->
+        {
+            if (result.getInt(requestKey) == 1)
+            {
+                toolbar.setTitle(R.string.title_add);
             }
             vp.setCurrentItem(1, true); // Set the ViewPager to the addFragment using a smooth scroll
         });
     }
 
     // Send the user to the Settings activity
-    public void settingsButtonPressed(View v) {
+    public void settingsButtonPressed(View v)
+    {
         goToSettings();
     }
 
-    public void notificationsButtonPressed(View v) {
+    public void notificationsButtonPressed(View v)
+    {
         Toast toast = Toast.makeText(this, "Notifications", Toast.LENGTH_LONG);
         toast.show();
     }
 
     // Creates an Intent to take the user to the FirstTimeStartup activity
-    private void firstTimeStartup() {
+    private void firstTimeStartup()
+    {
         Intent intent = new Intent(this, FirstTimeStartupActivity.class);
         startActivity(intent);
     }
 
-    private void goToSettings() {
+    private void goToSettings()
+    {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
