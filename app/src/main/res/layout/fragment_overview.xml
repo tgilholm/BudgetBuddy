@@ -101,7 +101,7 @@
         android:contentDescription="@string/cd_add_transaction"
         android:focusable="true"
         android:src="@drawable/add_icon"
-        android:tint="@color/white"
+        app:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

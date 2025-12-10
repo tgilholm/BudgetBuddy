@@ -16,12 +16,13 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.budgettracker.R;
+import com.example.budgettracker.dialogs.CategoryCreatorFragment;
 import com.example.budgettracker.entities.Category;
 import com.example.budgettracker.viewmodel.AddViewModel;
-import com.example.budgettracker.timeselector.DatePickerFragment;
+import com.example.budgettracker.dialogs.DatePickerFragment;
 import com.example.budgettracker.utility.ChipHandler;
 import com.example.budgettracker.utility.InputValidator;
-import com.example.budgettracker.timeselector.TimePickerFragment;
+import com.example.budgettracker.dialogs.TimePickerFragment;
 import com.example.budgettracker.enums.RepeatDuration;
 import com.example.budgettracker.enums.TransactionType;
 import com.example.budgettracker.utility.Converters;
@@ -111,7 +112,18 @@ public class AddFragment extends Fragment
         }
 
         // Create the "add category" chip
-        chipGroupCategories.addView(ChipHandler.createAddCategoryChip(requireContext()));
+        Chip addChip = ChipHandler.createAddCategoryChip(requireContext());
+
+        // Set the onClickListener for the chip
+        addChip.setOnClickListener(v -> {
+            // Open a DialogFragment with a Name and Colour picker
+
+            CategoryCreatorFragment categoryCreatorFragment = new CategoryCreatorFragment(requireContext());
+            categoryCreatorFragment.show(getParentFragmentManager(), "categoryCreator");
+
+        });
+
+        chipGroupCategories.addView(addChip);
     }
 
 

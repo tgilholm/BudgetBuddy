@@ -1,4 +1,4 @@
-package com.example.budgettracker.timeselector;
+package com.example.budgettracker.dialogs;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

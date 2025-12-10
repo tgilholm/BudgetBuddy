@@ -2,6 +2,7 @@ package com.example.budgettracker.utility;
 
 import android.content.Context;
 import android.view.ContextThemeWrapper;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -49,6 +50,13 @@ public final class ChipHandler
 
         chip.setChipStartPadding(20);
         chip.setChipEndPadding(20);
+
+        chip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         return chip;
     }
