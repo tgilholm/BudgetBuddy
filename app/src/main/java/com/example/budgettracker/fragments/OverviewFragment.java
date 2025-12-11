@@ -116,7 +116,7 @@ public class OverviewFragment extends Fragment
             bundle.putInt("addPage", 1);    // Send 1 to change the page title to 'Add'
 
             // Use FragmentResult to send a message to the MainActivity
-            getParentFragmentManager().setFragmentResult("addPage", new Bundle());
+            getParentFragmentManager().setFragmentResult("addPage", bundle);
 
         });
     }
@@ -145,7 +145,7 @@ public class OverviewFragment extends Fragment
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_overview, container, false);

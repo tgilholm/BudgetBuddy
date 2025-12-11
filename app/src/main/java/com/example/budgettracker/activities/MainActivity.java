@@ -31,6 +31,14 @@ import com.google.android.material.tabs.TabLayoutMediator;
  *  Title bar is automatically updated to reflect fragment title
  */
 
+
+//TODO automatically select new categories
+//TODO clear all fields on new transaction added
+// TODO trigger observers on budget change in preferences
+// todo pie chart colours reflecting category colours
+// todo fix recyclerview jankiness
+
+
 public class MainActivity extends AppCompatActivity
 {
     BudgetViewModel budgetViewModel;

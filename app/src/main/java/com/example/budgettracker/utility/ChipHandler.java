@@ -51,13 +51,6 @@ public final class ChipHandler
         chip.setChipStartPadding(20);
         chip.setChipEndPadding(20);
 
-        chip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
         return chip;
     }
 }

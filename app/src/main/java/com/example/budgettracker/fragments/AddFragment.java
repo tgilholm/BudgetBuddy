@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -89,6 +91,16 @@ public class AddFragment extends Fragment
             timeText.setText(result);   // Update the timeText field with the requested date
         });
 
+        // Start the fragment result listener for the category creator
+        getParentFragmentManager().setFragmentResultListener("newCategory", this, (requestKey, bundle) ->
+        {
+            // Send the category name and color to the AddViewModel to add a new category
+            addViewModel.addCategory(
+                    bundle.getString("categoryName"),
+                    bundle.getInt("categoryColor")
+            );
+        });
+
 
         // Set up the observer on the categories list
         // When new categories are added, refresh the category list
@@ -116,14 +128,21 @@ public class AddFragment extends Fragment
 
         // Set the onClickListener for the chip
         addChip.setOnClickListener(v -> {
+
             // Open a DialogFragment with a Name and Colour picker
-
-            CategoryCreatorFragment categoryCreatorFragment = new CategoryCreatorFragment(requireContext());
-            categoryCreatorFragment.show(getParentFragmentManager(), "categoryCreator");
-
+            showCategoryCreator();
         });
 
         chipGroupCategories.addView(addChip);
+    }
+
+
+    // Handle opening the category creator
+    private void showCategoryCreator()
+    {
+
+        CategoryCreatorFragment categoryCreatorFragment = new CategoryCreatorFragment(requireContext());
+        categoryCreatorFragment.show(getParentFragmentManager(), "categoryCreator");
     }
 
 
