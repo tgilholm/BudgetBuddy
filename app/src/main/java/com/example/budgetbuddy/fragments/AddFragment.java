@@ -30,6 +30,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -49,6 +50,8 @@ public class AddFragment extends Fragment
     private RadioButton rbIncoming;
     private RadioGroup radioGroupType;
     private RadioGroup radioGroupRepeat;
+
+    private List<Category> categoryList = new ArrayList<>();
 
 
     // Creates the layout and event listeners for the fragment
@@ -73,9 +76,20 @@ public class AddFragment extends Fragment
         addViewModel = new ViewModelProvider(requireActivity()).get(AddViewModel.class);
 
 
-        // ONCLICK LISTENERS
-        dateText.setOnClickListener(this::onDatePressed);
-        timeText.setOnClickListener(this::onTimePressed);
+        // Set the onClickListener for the time and date pickers
+        dateText.setOnClickListener(v1 ->
+        {
+            // Open a date picker
+            DatePickerFragment datePicker = new DatePickerFragment(getContext());
+            datePicker.show(getParentFragmentManager(), "datePicker");
+        });
+
+        timeText.setOnClickListener(v1 ->
+        {
+            // Open a time picker
+            TimePickerFragment timePicker = new TimePickerFragment(getContext());
+            timePicker.show(getParentFragmentManager(), "timePicker");
+        });
         addButton.setOnClickListener(this::onAddPressed);
 
 
@@ -107,8 +121,12 @@ public class AddFragment extends Fragment
 
         // Set up the observer on the categories list
         // When new categories are added, refresh the category list
-        addViewModel.getCategories().observe(getViewLifecycleOwner(), this::populateChipGroup);
+        addViewModel.getCategories().observe(getViewLifecycleOwner(), categories ->
+        {
+            categoryList = categories;
+            populateChipGroup(categories);
 
+        });
 
         resetDateTime();   // Sets default values for the date and time fields
         return v;
@@ -132,37 +150,14 @@ public class AddFragment extends Fragment
         // Set the onClickListener for the chip
         addChip.setOnClickListener(v ->
         {
-
-            // Open a DialogFragment with a Name and Colour picker
-            showCategoryCreator();
+            // Open the category creation screen
+            CategoryCreatorFragment categoryCreatorFragment = new CategoryCreatorFragment(requireContext(), categoryList);
+            categoryCreatorFragment.show(getParentFragmentManager(), "categoryCreator");
         });
 
         chipGroupCategories.addView(addChip);
     }
 
-
-    // Handle opening the category creator
-    private void showCategoryCreator()
-    {
-
-        CategoryCreatorFragment categoryCreatorFragment = new CategoryCreatorFragment(requireContext());
-        categoryCreatorFragment.show(getParentFragmentManager(), "categoryCreator");
-    }
-
-
-    // Open a DatePickerDialog when the user interacts with the date field
-    public void onDatePressed(View view)
-    {
-        DatePickerFragment datePicker = new DatePickerFragment(getContext());
-        datePicker.show(getParentFragmentManager(), "datePicker");
-    }
-
-    // Open a TimePickerDialog when the user interacts with the date field
-    public void onTimePressed(View view)
-    {
-        TimePickerFragment timePicker = new TimePickerFragment(getContext());
-        timePicker.show(getParentFragmentManager(), "timePicker");
-    }
 
     // Sets the DateText and TimeText fields to the current time
     private void resetDateTime()
@@ -180,15 +175,6 @@ public class AddFragment extends Fragment
     // Collects all the user input into a new transaction
     public void onAddPressed(View view)
     {
-        // Transaction order:
-        /*
-            - id
-            - amount
-            - type
-            - date
-            - categoryID
-            - repeat
-         */
         // Bundle all the user input into a new transaction
         double amount = getAmount();        // Get the transaction amount
         if (amount < 0)

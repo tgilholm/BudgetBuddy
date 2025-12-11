@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.adapters.ColorPickerAdapter;
+import com.example.budgetbuddy.entities.Category;
 import com.example.budgetbuddy.utility.ColorGridDecoration;
 
 import java.util.List;
@@ -30,12 +31,14 @@ public class CategoryCreatorFragment extends DialogFragment
 {
 
     private final Context context;
+    private final List<Category> categories; // Hold a list of categories for input validation
     private int colorChoice = -1;
 
 
-    public CategoryCreatorFragment(Context context)
+    public CategoryCreatorFragment(Context context, List<Category> categories)
     {
         this.context = context;
+        this.categories = categories;
     }
 
     @Override
@@ -102,38 +105,65 @@ public class CategoryCreatorFragment extends DialogFragment
         // Add the click listener to the button
         addCategoryButton.setOnClickListener(v ->
         {
+            String inputName = editTextCategory.getText().toString();
+
             // Check that the category name field is not empty
-            if (editTextCategory.getText().isEmpty())
-            {
-                Toast.makeText(context, "Please type in a category name!", Toast.LENGTH_SHORT).show();
-            } else
+            if (!inputName.isEmpty())
             {
                 // Check that colorChoice is not set to -1 (the default value, indicating no colour selection)
-                if (colorChoice == -1)
+                if (colorChoice != -1)
                 {
-                    Toast.makeText(context, "Please select a colour!", Toast.LENGTH_SHORT).show();
-                }
-                else
+                    if (!categoryNameExists(inputName, categories))
+                    {
+                        // If all checks succeeded, send the category name and colour back to the AddFragment
+                        Bundle bundle = new Bundle();
+                        String categoryName = editTextCategory.getText().toString();
+                        bundle.putString("categoryName", categoryName);        // Attach the category name
+                        bundle.putInt("categoryColor", colorChoice);                                    // Attach the color ID
+
+                        // Use FragmentResult to send a message to the MainActivity
+                        getParentFragmentManager().setFragmentResult("newCategory", bundle);
+
+                        // Tell the user via a toast that a new category was added
+                        Toast.makeText(context, "New category " + categoryName + " was added!", Toast.LENGTH_SHORT).show();
+
+                        // Close the window after the category was added
+                        this.dismiss();
+                    } else
+                    {
+                        editTextCategory.setError(inputName + " category already exists!");
+                    }
+                } else
                 {
-                    // If all checks succeeded, send the category name and colour back to the AddFragment
-                    Bundle bundle = new Bundle();
-                    String categoryName = editTextCategory.getText().toString();
-                    bundle.putString("categoryName", categoryName);        // Attach the category name
-                    bundle.putInt("categoryColor", colorChoice);                                    // Attach the color ID
-
-                    // Use FragmentResult to send a message to the MainActivity
-                    getParentFragmentManager().setFragmentResult("newCategory", bundle);
-
-                    // Tell the user via a toast that a new category was added
-                    Toast.makeText(context, "New category " + categoryName + " was added!", Toast.LENGTH_SHORT).show();
-
-                    // Close the window after the category was added
-                    this.dismiss();
+                    editTextCategory.setError("Please select a colour!");
                 }
+            } else
+            {
+                editTextCategory.setError("Please type in a category name!");
             }
-
         });
 
         return view;
+    }
+
+    // Method to check if the category already exists
+    private boolean categoryNameExists(String categoryName, List<Category> categories)
+    {
+        boolean exists = false;
+
+        if (categories != null)
+        {
+            for (Category category : categories)
+            {
+                // Use equalsIgnoreCase for more rigorous checking
+                if (category.getName().trim().equalsIgnoreCase(categoryName.trim()))
+                {
+                    exists = true;
+                    break;  // Break the loop if found
+                }
+            }
+        }
+
+        return exists;
     }
 }
