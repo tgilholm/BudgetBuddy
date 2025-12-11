@@ -57,7 +57,7 @@ public class FirstTimeStartupActivity extends AppCompatActivity
         if (!inputText.isEmpty())
         {
             // Validate the input
-            if (InputValidator.validateCurrencyInput(this, inputText))
+            if (InputValidator.validateCurrencyInput(inputText))
             {
                 validatedInput = Double.parseDouble(inputText);
                 Log.v("FirstTimeStartupActivity", "Budget set: " + inputText);

@@ -43,7 +43,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
                     validatedInput = ((String) newValue).trim();
 
                     // Validate the input and show a toast if successful
-                    if (InputValidator.validateCurrencyInput(getContext(), validatedInput)) {
+                    if (InputValidator.validateCurrencyInput(validatedInput)) {
                         Toast.makeText(getContext(), "Budget changed to: £" + validatedInput, Toast.LENGTH_SHORT).show();
                         return true;
                     }

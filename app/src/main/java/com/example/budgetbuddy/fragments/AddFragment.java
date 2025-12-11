@@ -36,10 +36,9 @@ import java.util.List;
 
 
 /**
- * The fragment subclass for the Add section of the app
+ * The fragment subclass for the Add section of the app.
  * Connects to fragment_add.xml to provide layout
  */
-
 public class AddFragment extends Fragment
 {
     private EditText dateText, timeText, amountText;
@@ -137,17 +136,23 @@ public class AddFragment extends Fragment
         return v;
     }
 
-    // Load the categories from the database and create chips for each
-    // The chipGroup is recreated each time a new category is added
+
+    /**
+     * Creates a new Chip for each of the categories in the category list. The background of the chip is set to the category colour.
+     * Additionally creates the "addChip" which opens a CategoryCreatorFragment
+     *
+     * @param categories a list of Category objects
+     *
+     */
     private void populateChipGroup(@NonNull List<Category> categories)
     {
-        // Remove all the chips
+        // Empty the ChipGroup
         chipGroupCategories.removeAllViews();
 
-        // Create and add the "add category" chip
+        // Create the "add category" chip
         Chip addChip = ChipHandler.createAddCategoryChip(requireContext());
 
-        // Set the click listener of the "addChip" to open the category creation screen
+        // Open the CategoryCreator when clicked
         addChip.setOnClickListener(v ->
         {
             CategoryCreatorFragment categoryCreatorFragment = new CategoryCreatorFragment(requireContext(), categoryList);
@@ -180,7 +185,9 @@ public class AddFragment extends Fragment
     }
 
 
-    // Sets the DateText and TimeText fields to the current time
+    /**
+     * Sets the DateText and TimeText fields to the current system time
+     */
     private void resetDateTime()
     {
         Calendar userTime = Calendar.getInstance();
@@ -192,46 +199,44 @@ public class AddFragment extends Fragment
 
     }
 
-    // Handle the logic for the add button
-    // Collects all the user input into a new transaction
+    /**
+     * Takes data from the layout fields and passes them to the ViewModel for validation. Handles each ValidationState case
+     * with a toast message displaying a short message about each condition
+     *
+     * @param view Connects to the View
+     */
     public void onAddPressed(View view)
     {
-        // Bundle all the user input into a new transaction
-        double amount = getAmount();        // Get the transaction amount
-        if (amount <= 0)
+        String amount = getAmount();                            // Get the transaction amount
+        String date = getDate();                                // Get the date
+        String time = getTime();                                // Get the time
+        TransactionType type = getType();                       // Get the transaction type
+        long categoryID = getSelectedCategoryID();              // Get the transaction category
+        RepeatDuration repeatDuration = getRepeatDuration();    // Get the repeat duration
+
+
+        // Handle the result of adding the transaction
+        switch (addViewModel.addTransaction(amount, type, date, time, categoryID, repeatDuration))
         {
-            return;
-        }         // Break here if getAmount() failed
+            case NONE:
+                // Successful add- clear the fields for the next transaction
+                Toast.makeText(getContext(), "Added new transaction!", Toast.LENGTH_SHORT).show();
+                resetFields();
+                break;
+            case INVALID_AMOUNT:
+                Toast.makeText(getContext(), "Invalid amount! (Format must be XXX.YY)", Toast.LENGTH_SHORT).show();
+                break;
+            case NO_CATEGORY:
+                Toast.makeText(getContext(), "No category selected!", Toast.LENGTH_SHORT).show();
 
-        TransactionType type = getType();   // Get the transaction type
 
-        Calendar dateTime = getDateAndTime();
-        if (dateTime == null)
-        {
-            return;
-        }     // Break here if getDateAndTime() failed
+        }
 
-        long categoryID = getCategoryID();    // Get the transaction category
-        if (categoryID < 0)
-        {
-            return;
-        }     // Break here if getCategoryID() failed
-
-        RepeatDuration repeatDuration = getRepeatDuration();
-
-        Log.v("AddFragment", "Adding new transaction");
-
-        // Send the transaction details to the ViewModel
-        addViewModel.addTransaction(amount, type, dateTime, categoryID, repeatDuration);
-
-        // Inform the user via a toast that the transaction was added
-        Toast.makeText(getContext(), "Added new transaction!", Toast.LENGTH_SHORT).show();
-
-        // Clear all the input fields
-        resetFields();
     }
 
-    // Set all the input fields back to their defaults
+    /**
+     * Resets all the input fields back to their defaults
+     */
     private void resetFields()
     {
         amountText.setText("");             // Reset the amountText
@@ -241,28 +246,21 @@ public class AddFragment extends Fragment
         resetDateTime();                    // Reset the date and time
         radioGroupRepeat.clearCheck();
         rbNever.setChecked(true);           // Reset the repeat duration
-
     }
 
 
-    // Get the transaction amount inputted by the user
-    private double getAmount()
+    /**
+     * Get the amount string from the EditText with whitespace removed
+     */
+    @NonNull
+    private String getAmount()
     {
-        // Get the amount from the amountText field
-        String amount = amountText.getText().toString().trim(); // Remove any whitespace
-
-        // Validate the input
-        if (InputValidator.validateCurrencyInput(getContext(), amount))
-        {
-            return Double.parseDouble(amount);
-        } else
-        {
-            Log.v("AddFragment", "Invalid amount input");
-            return 0;
-        }
+        return amountText.getText().toString().trim();
     }
 
-    // Return the type of the transaction- incoming or outgoing
+    /**
+     * Get the transaction type from the RadioGroup
+     */
     private TransactionType getType()
     {
         // Only one radio button can be selected at a time
@@ -275,17 +273,19 @@ public class AddFragment extends Fragment
         }
     }
 
-    // Return the category of the transaction
-    private long getCategoryID()
+    /**
+     * Returns the category ID stored in the tag of the selected chip.
+     * Returns a long categoryID if found, -1 if no chip is selected
+     */
+    private long getSelectedCategoryID()
     {
-        // The ChipGroup uses Single Selection mode, making the process of finding the checked chip faster
+        // Get the selected chip from the group
         int selectedChipId = chipGroupCategories.getCheckedChipId();
 
-        // If no chip is selected, inform the user via a toast message
+        // If no chip is selected, return -1
         if (selectedChipId == View.NO_ID) // View.NO_ID has a value of -1
         {
-            Toast.makeText(getContext(), "No Category Selected!", Toast.LENGTH_SHORT).show();
-            return 0; // Return null if no chip is selected
+            return -1;
         } else
         {
             // Return the tag property of the selected chip
@@ -294,19 +294,29 @@ public class AddFragment extends Fragment
         }
     }
 
-    // Gets the date and time in the dateText and timeText fields and returns them as a Calendar object
-    // Storing the values as a Calendar helps with operations elsewhere in the program
-    private Calendar getDateAndTime()
+    /**
+     * Gets the date from the EditText
+     */
+    @NonNull
+    private String getDate()
     {
-        // Get the values from the EditText fields
-        String date = dateText.getText().toString();
-        String time = timeText.getText().toString();
-
-        // Pass the date and time values to the validateDateAndTime method
-        return InputValidator.validateDateTimeInput(getContext(), date + " " + time);
+        return dateText.getText().toString();
     }
 
-    // Get the repeat duration from the radio group
+
+    /**
+     * Gets the time from the EditText
+     */
+    @NonNull
+    private String getTime()
+    {
+        return timeText.getText().toString();
+    }
+
+
+    /**
+     * Get the repeat duration from the radio group
+     */
     private RepeatDuration getRepeatDuration()
     {
         // Get the radio group from the layout

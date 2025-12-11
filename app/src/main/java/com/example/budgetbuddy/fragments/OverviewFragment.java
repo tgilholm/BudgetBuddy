@@ -23,10 +23,10 @@ import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.entities.TransactionWithCategory;
 import com.example.budgetbuddy.utility.ColorHandler;
 import com.example.budgetbuddy.utility.Converters;
+import com.example.budgetbuddy.utility.TransactionCalculator;
 import com.example.budgetbuddy.viewmodel.BudgetViewModel;
 import com.example.budgetbuddy.viewmodel.OverviewViewModel;
 import com.example.budgetbuddy.adapters.RecyclerViewAdapter;
-import com.example.budgetbuddy.utility.InputValidator;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
@@ -123,7 +123,7 @@ public class OverviewFragment extends Fragment
         {
 
             // Update the RecyclerView
-            recyclerViewAdapter.updateTransactions(InputValidator.sortTransactions(transactionWithCategories));
+            recyclerViewAdapter.updateTransactions(TransactionCalculator.sortTransactions(transactionWithCategories));
 
             // Update the PieChart
             updatePieChart(transactionWithCategories);

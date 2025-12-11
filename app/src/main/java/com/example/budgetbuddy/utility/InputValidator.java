@@ -5,97 +5,87 @@ package com.example.budgetbuddy.utility;
  This helps to ensure the single-responsibility principle is adhered to
  */
 
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.example.budgetbuddy.entities.TransactionWithCategory;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import org.jetbrains.annotations.Contract;
 import com.example.budgetbuddy.enums.RepeatDuration;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public final class InputValidator
 {
-    // Takes input to validate and context to pass to toast for error communication
-    // Returns false for empty strings or non-matching strings and true otherwise
-    public static boolean validateCurrencyInput(Context context, String input)
+    /**
+     * Validates that a string is not empty and conforms to the format set out by the regex. <br><br>
+     * Regex breakdown: <br>
+     * <pre>
+     * [0-9]+          Matches if the string contains one-or-more numbers- i.e. 50<br>
+     * [.]             Matches if the string contains a decimal point<br>
+     * [0-9]{2}        Matches if numeric and ONLY 2 d.p.<br>
+     * ([.][0-9]{2})?  Matches if numeric after the d.p (optional) <br>
+     * Complete Regex: [0-9]+([.][0-9]{2})?
+     * </pre>
+     *
+     * @param input a numeric string, e.g. "12.34"
+     * @return true, if <code>input</code> is of the correct format, false otherwise
+     */
+    public static boolean validateCurrencyInput(@NonNull String input)
     {
-        // Verify format is correct, inform user via toasts about any errors
-        // Check if amountText is empty before proceeding
+        // Checks for empty strings
         if (input.isEmpty())
         {
-            Toast.makeText(context, "Please enter a currency value", Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        // Regular expression for checking amount format is correct
-        /* Regex:
-            Breakdown:
-            [0-9]+          Matches if the string contains one-or-more numbers- i.e. 50
-            [.]             Matches if the string contains a decimal point
-            [0-9]{2}        Matches if numeric and ONLY 2 d.p. i.e. 50.12 instead of 50.123
-            ([.][0-9]{2})?  The '?' indicates that the entire block is optional (zero or one)
-                            This means that 50 is valid, and so is 50.12
-
-            Complete regex: [0-9]+([.][0-9]{2})?
-        */
-        String regex = "[0-9]+([.][0-9]{2})?";
-
-        // Use the regex to check whether the string meets the format "123" or "123.12"
-        if (!(input.matches(regex)))
-        {
-            Toast.makeText(context, "Please enter a currency value in the format '123' or '123.45'", Toast.LENGTH_LONG).show();
-            return false;
-        }
-
-        // Put the return in a try-catch in case the user tries any funny business not caught by the regex
-        try
-        {
-            return true; // Return true if correctly formatted
-        } catch (NumberFormatException funnyBusiness)
-        {
-            Toast.makeText(context, "Error getting currency value", Toast.LENGTH_LONG).show();
-            Log.e("InputValidator Error: ", funnyBusiness.toString());
-            return false;
-        }
+        // Checks the input against the regex
+        return input.matches("[0-9]+([.][0-9]{2})?");
     }
 
-    // Takes two String parameters, dateInput and timeInput and attempts to parse them into a Calendar object
-    public static Calendar validateDateTimeInput(Context context, String dateTimeInput)
+    /**
+     * Concatenates two strings, validates whether the resulting string matches the correct format and returns a <code>Calendar</code>
+
+     * @param date in the format "dd/mm/yyyy"
+     * @param time in the format "hh:mm"
+     * @return the parsed <code>Calendar</code> instance if succeeded, else null
+     */
+    @Nullable
+    public static Calendar parseDateTime(String date, String time)
     {
-        // Create a new Calendar instance
-        Calendar c = Calendar.getInstance();
-
-        // The format used by the program for dates is dd/mm/yyyy and time is hh/mm
-        // Create a SimpleDateFormat to parse the date and time for instantiation of a Calendar object
-        SimpleDateFormat timeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-
-        // Attempt to create a new Calendar object and inject these values
+        // Create a SimpleDateFormat to parse the date and time
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
         try
         {
-            // Attempts to parse the date and time into a Date object
-            Date parsedDateTime = timeFormat.parse(dateTimeInput);
+            // Parse the dateTime into a DateObject
+            Date parsedDateTime = dateFormat.parse(date + " " + time);
 
-            // If parsedDateTime is not null, update the calendar object
+            // If parsedDateTime is not null, pass the Date to calendar
             if (parsedDateTime != null)
             {
-                c.setTime(parsedDateTime);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(parsedDateTime);
+                return calendar;
+            } else
+            {
+                return null;
             }
-            return c;
-        } catch (ParseException e)  // Inform the user via a toast if there are parsing errors
+        } catch (ParseException e)
         {
-            Toast.makeText(context, "Error parsing date/time", Toast.LENGTH_LONG).show();
             Log.e("AddFragment", "Error parsing date & time: " + e.getMessage());
             return null;
         }
     }
 
-    public static RepeatDuration selectRepeatDuration(String input)
+    /**
+     * Converts an <code>input</code> into a <code>RepeatDuration</code>
+     * @param input a name in the enum
+     * @return a <code>RepeatDuration</code> type
+     */
+    @Nullable
+    @Contract(pure = true)
+    public static RepeatDuration selectRepeatDuration(@NonNull String input)
     {
         switch (input)
         {
@@ -112,12 +102,5 @@ public final class InputValidator
             default:
                 return null;
         }
-    }
-
-    public static List<TransactionWithCategory> sortTransactions(List<TransactionWithCategory> transactions)
-    {
-        transactions.sort((o1, o2) ->
-                o2.transaction.getDateTime().compareTo(o1.transaction.getDateTime()));
-        return transactions;
     }
 }
