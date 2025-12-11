@@ -5,47 +5,76 @@ package com.example.budgetbuddy.viewmodel;
 // The ViewModel is responsible for interfacing with SharedPreferences
 
 import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import androidx.preference.PreferenceManager;
 
-public class BudgetViewModel extends AndroidViewModel {
+
+// Implements OnSharedPreferenceChangeListener to listen to changes made to the budget from the settings menu
+// This means that the changes made will be propagated throughout the application correctly
+public class BudgetViewModel extends AndroidViewModel
+{
 
     private final MutableLiveData<Double> budget = new MutableLiveData<>();
 
     private final SharedPreferences prefs;
-    private final SharedPreferences.Editor prefsEditor;
 
-    public BudgetViewModel(@NonNull Application application) {
+    // The sharedPreferenceChangeListener is stored as a member variable to prevent Garbage Collection
+    private final SharedPreferences.OnSharedPreferenceChangeListener listener;
+
+
+    public BudgetViewModel(@NonNull Application application)
+    {
         super(application);
-        prefs = getApplication().getSharedPreferences(
-                "appPreferences",
-                Context.MODE_PRIVATE);
-        prefsEditor = prefs.edit();
+        prefs = PreferenceManager.getDefaultSharedPreferences(application);
 
-       budget.setValue(getBudgetFromPrefs());
+        listener = (sharedPreferences, key) ->
+        {
+            Log.v("BudgetViewModel", "SharedPreferences updated");
+            Log.v("BudgetViewModel", "Key = " + key);
+            // Update the budget when a change is made
+            if (key != null && key.equals("budget"))
+            {
+                Log.v("BudgetViewModel", prefs.getString(key, "0"));
+                getBudgetFromPrefs();
+            }
+        };
+
+        // Register the ViewModel to listen to changes made to the SharedPreferences
+        prefs.registerOnSharedPreferenceChangeListener(listener);
+
+        getBudgetFromPrefs();   // Update the budget value
     }
 
     // Retrieve the "budget" field from the SharedPreferences
-    private double getBudgetFromPrefs()
+    private void getBudgetFromPrefs()
     {
         // preferences.xml always stores the budget as a string
-        return Double.parseDouble(prefs.getString("budget", "0")); // default to 0
+        Log.v("BudgetViewModel", "getBudgetFromPrefs fired, read budget as " + prefs.getString("budget", "0"));
+        budget.postValue(Double.parseDouble(prefs.getString("budget", "0"))); // default to 0
     }
 
     // Return the value of the budget
-    public MutableLiveData<Double> getBudget() {
+    public MutableLiveData<Double> getBudget()
+    {
         return budget;
     }
 
-    public void setBudget(double _budget) {
+    public void setBudget(double _budget)
+    {
         // Take a double parameter and set the "budget" field in app preferences
-        prefsEditor.putString("budget", "" + _budget);
-        prefsEditor.apply();
-        getBudgetFromPrefs();
+        prefs.edit().putString("budget", "" + _budget).apply();
     }
 
+    @Override
+    protected void onCleared()
+    {
+        super.onCleared();
+        // Unregister the Preference listener
+        prefs.unregisterOnSharedPreferenceChangeListener(listener);
+    }
 }

@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -121,10 +122,13 @@ public class OverviewFragment extends Fragment
     // This method is therefore able to be called in the observers for both values
     private void updateRemainingBudget(Double budget, List<TransactionWithCategory> transactions)
     {
+        Log.v("OverviewFragment", "updateRemainingBudget called, read budget as " + budget);
+        Log.v("OverviewFragment", "transaction list state: " + (transactions == null));
         // If both values are non-null, recalculate the remaining budget
         if (budget != null && transactions != null)
         {
             double budgetRemaining = overviewViewModel.getBudgetRemaining(budget, transactions);
+            Log.v("OverviewFragment", "Calculated remaining budget as " + budgetRemaining + ", start budget " + budget);
 
             // Display the remaining budget
             txtBudgetRemaining.setText(Converters.doubleToCurrencyString(budgetRemaining));

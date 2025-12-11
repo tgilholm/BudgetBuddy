@@ -32,8 +32,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
  */
 
 
-//TODO automatically select new categories
-//TODO clear all fields on new transaction added
 // TODO trigger observers on budget change in preferences
 // todo fix recyclerview jankiness
 

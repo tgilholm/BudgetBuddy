@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -20,7 +21,6 @@ public class SettingsFragment extends PreferenceFragmentCompat
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey)
     {
-        getPreferenceManager().setSharedPreferencesName("appPreferences"); // Use the appPreferences file
         addPreferencesFromResource(R.xml.preferences);
 
 
@@ -40,18 +40,20 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 try
                 {
                     // Attempt to cast to a String
-                    validatedInput = (String) newValue;
+                    validatedInput = ((String) newValue).trim();
 
                     // Validate the input and show a toast if successful
                     if (InputValidator.validateCurrencyInput(getContext(), validatedInput)) {
                         Toast.makeText(getContext(), "Budget changed to: £" + validatedInput, Toast.LENGTH_SHORT).show();
                         return true;
                     }
+                    Log.v("SettingsFragment", "Failed to set preferences");
                     return false;
 
                 } catch (Exception e)
                 {
-                    throw new RuntimeException("Invalid input");
+                    Toast.makeText(getContext(), "Invalid input!", Toast.LENGTH_SHORT).show();
+                    return false;
                 }
             });
         }
