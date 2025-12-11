@@ -43,8 +43,12 @@ public class AddFragment extends Fragment
 {
     private EditText dateText;
     private EditText timeText;
+    private EditText amountText;
     private ChipGroup chipGroupCategories;
     private AddViewModel addViewModel;
+    private RadioButton rbIncoming;
+    private RadioGroup radioGroupType;
+    private RadioGroup radioGroupRepeat;
 
 
     // Creates the layout and event listeners for the fragment
@@ -59,6 +63,10 @@ public class AddFragment extends Fragment
         timeText = v.findViewById(R.id.editTextTime);
         dateText = v.findViewById(R.id.editTextDate);
         chipGroupCategories = v.findViewById(R.id.chipGroupCategories);
+        amountText = v.findViewById(R.id.editTextAmount);
+        rbIncoming = v.findViewById(R.id.rbIncoming);
+        radioGroupType = v.findViewById(R.id.radioGroupSelectType);
+        radioGroupRepeat = v.findViewById(R.id.radioGroupSelectRepeat);
 
 
         // Connect the AddViewModel
@@ -93,10 +101,7 @@ public class AddFragment extends Fragment
         getParentFragmentManager().setFragmentResultListener("newCategory", this, (requestKey, bundle) ->
         {
             // Send the category name and color to the AddViewModel to add a new category
-            addViewModel.addCategory(
-                    bundle.getString("categoryName"),
-                    bundle.getInt("categoryColor")
-            );
+            addViewModel.addCategory(bundle.getString("categoryName"), bundle.getInt("categoryColor"));
         });
 
 
@@ -105,7 +110,7 @@ public class AddFragment extends Fragment
         addViewModel.getCategories().observe(getViewLifecycleOwner(), this::populateChipGroup);
 
 
-        setInitialDateTime();   // Sets default values for the date and time fields
+        resetDateTime();   // Sets default values for the date and time fields
         return v;
     }
 
@@ -125,7 +130,8 @@ public class AddFragment extends Fragment
         Chip addChip = ChipHandler.createAddCategoryChip(requireContext());
 
         // Set the onClickListener for the chip
-        addChip.setOnClickListener(v -> {
+        addChip.setOnClickListener(v ->
+        {
 
             // Open a DialogFragment with a Name and Colour picker
             showCategoryCreator();
@@ -159,7 +165,7 @@ public class AddFragment extends Fragment
     }
 
     // Sets the DateText and TimeText fields to the current time
-    private void setInitialDateTime()
+    private void resetDateTime()
     {
         Calendar userTime = Calendar.getInstance();
 
@@ -213,6 +219,19 @@ public class AddFragment extends Fragment
 
         // Inform the user via a toast that the transaction was added
         Toast.makeText(getContext(), "Added new transaction!", Toast.LENGTH_SHORT).show();
+
+        // Clear all the input fields
+        resetFields();
+    }
+
+    // Set all the input fields back to their defaults
+    private void resetFields()
+    {
+        amountText.setText("");             // Reset the amountText
+        radioGroupType.clearCheck();        // Reset the type
+        chipGroupCategories.clearCheck();   // Reset the category chipGroup
+        resetDateTime();                    // Reset the date and time
+        radioGroupRepeat.clearCheck();      // Reset the repeat duration
     }
 
 
@@ -220,7 +239,6 @@ public class AddFragment extends Fragment
     private double getAmount()
     {
         // Get the amount from the amountText field
-        EditText amountText = requireView().findViewById(R.id.editTextAmount);
         String amount = amountText.getText().toString().trim(); // Remove any whitespace
 
         // Validate the input
@@ -237,9 +255,6 @@ public class AddFragment extends Fragment
     // Return the type of the transaction- incoming or outgoing
     private TransactionType getType()
     {
-        // Get the type radio buttons from the layout
-        RadioButton rbIncoming = requireView().findViewById(R.id.rbIncoming);
-
         // Only one radio button can be selected at a time
         if (rbIncoming.isChecked())
         {
