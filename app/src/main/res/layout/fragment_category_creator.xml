@@ -7,7 +7,7 @@
     android:paddingBottom="24dp">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tvAddCategory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -17,7 +17,7 @@
         android:textSize="16sp" />
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/editTextAmount2"
+        android:id="@+id/editTextCategoryName"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
@@ -27,10 +27,8 @@
         android:maxLength="16"
         android:singleLine="true" />
 
-
-
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tvChooseColour"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -52,7 +50,7 @@
         tools:listitem="@layout/colour_picker_item" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/addCategory"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

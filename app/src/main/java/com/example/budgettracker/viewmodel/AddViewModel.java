@@ -43,4 +43,11 @@ public class AddViewModel extends AndroidViewModel
     {
         return dataRepository.getAllCategories();
     }
+
+
+    // Sends a new category to the Repository
+    public void addCategory(String name, int colorID)
+    {
+        dataRepository.insertCategory(new Category(name, colorID));
+    }
 }

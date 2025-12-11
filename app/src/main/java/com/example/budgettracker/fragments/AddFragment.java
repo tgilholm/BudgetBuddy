@@ -91,6 +91,16 @@ public class AddFragment extends Fragment
             timeText.setText(result);   // Update the timeText field with the requested date
         });
 
+        // Start the fragment result listener for the category creator
+        getParentFragmentManager().setFragmentResultListener("newCategory", this, (requestKey, bundle) ->
+        {
+            // Send the category name and color to the AddViewModel to add a new category
+            addViewModel.addCategory(
+                    bundle.getString("categoryName"),
+                    bundle.getInt("categoryColor")
+            );
+        });
+
 
         // Set up the observer on the categories list
         // When new categories are added, refresh the category list
@@ -130,14 +140,6 @@ public class AddFragment extends Fragment
     // Handle opening the category creator
     private void showCategoryCreator()
     {
-
-
-        // Add the colours to the RecyclerView and set the adapter
-        RecyclerView recyclerView = new RecyclerView(requireContext());
-
-
-        // Handle what happens when a colour is selected
-
 
         CategoryCreatorFragment categoryCreatorFragment = new CategoryCreatorFragment(requireContext());
         categoryCreatorFragment.show(getParentFragmentManager(), "categoryCreator");

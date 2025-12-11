@@ -8,10 +8,14 @@ package com.example.budgettracker.dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,7 +38,7 @@ public class CategoryCreatorFragment extends DialogFragment
 {
 
     private final Context context;
-    private int colorChoice;
+    private int colorChoice = -1;
 
 
     public CategoryCreatorFragment(Context context)
@@ -48,6 +52,9 @@ public class CategoryCreatorFragment extends DialogFragment
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_category_creator, container, false);
 
+        RecyclerView recyclerView = view.findViewById(R.id.colorGrid);
+        Button addCategoryButton = view.findViewById(R.id.addCategory);
+        EditText editTextCategory = view.findViewById(R.id.editTextCategoryName);
 
         // Get the list of colours from the colors.xml file
         Integer[] colorIDs = new Integer[]{
@@ -72,25 +79,26 @@ public class CategoryCreatorFragment extends DialogFragment
         int columnCount = 4;    // 4 Columns
         int spacing = 16;
 
-        // Connect to the recycler view
-        RecyclerView recyclerView = view.findViewById(R.id.colorGrid);
 
         // Create an anonymous class extending GridLayoutManager to disable recycler view scrolling
         // This also maintains the ability to click on items
-        recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount) {
+        recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount)
+        {
             final boolean isScrollEnabled = false;
 
             @Override
-            public boolean canScrollVertically() {
+            public boolean canScrollVertically()
+            {
                 return isScrollEnabled && super.canScrollVertically();
             }
         });
 
-
+        // Handle getting the colour ID from a selected colour block
         ColorPickerAdapter colorPickerAdapter = new ColorPickerAdapter(context, List.of(colorIDs), selectedColour ->
         {
             // When a colour is selected, set it to "ticked" and get the colour from it
             colorChoice = selectedColour;
+            Log.v("CategoryCreatorFragment", "Read colour as " + colorChoice);
 
         });
 
@@ -98,6 +106,41 @@ public class CategoryCreatorFragment extends DialogFragment
         recyclerView.addItemDecoration(new ColorGridDecoration(columnCount, spacing, false));
         recyclerView.setAdapter(colorPickerAdapter);
 
+
+        // Add the click listener to the button
+        addCategoryButton.setOnClickListener(v ->
+        {
+            // Check that the category name field is not empty
+            if (editTextCategory.getText().isEmpty())
+            {
+                Toast.makeText(context, "Please type in a category name!", Toast.LENGTH_SHORT).show();
+            } else
+            {
+                // Check that colorChoice is not set to -1 (the default value, indicating no colour selection)
+                if (colorChoice == -1)
+                {
+                    Toast.makeText(context, "Please select a colour!", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    // If all checks succeeded, send the category name and colour back to the AddFragment
+                    Bundle bundle = new Bundle();
+                    String categoryName = editTextCategory.getText().toString();
+                    bundle.putString("categoryName", categoryName);        // Attach the category name
+                    bundle.putInt("categoryColor", colorChoice);                                    // Attach the color ID
+
+                    // Use FragmentResult to send a message to the MainActivity
+                    getParentFragmentManager().setFragmentResult("newCategory", bundle);
+
+                    // Tell the user via a toast that a new category was added
+                    Toast.makeText(context, "New category " + categoryName + " was added!", Toast.LENGTH_SHORT).show();
+
+                    // Close the window after the category was added
+                    this.dismiss();
+                }
+            }
+
+        });
 
         return view;
     }
