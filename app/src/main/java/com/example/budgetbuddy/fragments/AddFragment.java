@@ -52,6 +52,7 @@ public class AddFragment extends Fragment
     private RadioGroup radioGroupRepeat;
 
     private List<Category> categoryList = new ArrayList<>();
+    private String pendingCategory = "";    // Holds the name of a new category to be selected
 
 
     // Creates the layout and event listeners for the fragment
@@ -114,8 +115,12 @@ public class AddFragment extends Fragment
         // Start the fragment result listener for the category creator
         getParentFragmentManager().setFragmentResultListener("newCategory", this, (requestKey, bundle) ->
         {
+            String categoryName = bundle.getString("categoryName");
+            int categoryColor = bundle.getInt("categoryColor");
+
             // Send the category name and color to the AddViewModel to add a new category
-            addViewModel.addCategory(bundle.getString("categoryName"), bundle.getInt("categoryColor"));
+            addViewModel.addCategory(categoryName, categoryColor);
+            pendingCategory = categoryName;
         });
 
 
@@ -132,29 +137,45 @@ public class AddFragment extends Fragment
         return v;
     }
 
-    // Populate the ChipGroup with categories
+    // Load the categories from the database and create chips for each
+    // The chipGroup is recreated each time a new category is added
     private void populateChipGroup(@NonNull List<Category> categories)
     {
-        // Replace the chips with new ones
+        // Remove all the chips
         chipGroupCategories.removeAllViews();
 
-        // Add the new chips
-        for (Category c : categories)
-        {
-            chipGroupCategories.addView(ChipHandler.createChip(requireContext(), c));
-        }
-
-        // Create the "add category" chip
+        // Create and add the "add category" chip
         Chip addChip = ChipHandler.createAddCategoryChip(requireContext());
 
-        // Set the onClickListener for the chip
+        // Set the click listener of the "addChip" to open the category creation screen
         addChip.setOnClickListener(v ->
         {
-            // Open the category creation screen
             CategoryCreatorFragment categoryCreatorFragment = new CategoryCreatorFragment(requireContext(), categoryList);
             categoryCreatorFragment.show(getParentFragmentManager(), "categoryCreator");
         });
 
+        // Add the category chips
+        for (Category c : categories)
+        {
+            Chip chip = ChipHandler.createChip(requireContext(), c);
+
+            // Force the view to give the chip an ID
+            if (chip.getId() == View.NO_ID)
+            {
+                chip.setId(View.generateViewId());
+            }
+
+            chipGroupCategories.addView(chip);
+
+            // Check if the pendingCategory string matches the chip name
+            // If so, check (select) the chip and reset pendingCategory
+            if (pendingCategory != null && pendingCategory.equals(c.getName()))
+            {
+                Log.v("AddFragment", "Checking chip");
+                chipGroupCategories.check(chip.getId());
+                pendingCategory = null;
+            }
+        }
         chipGroupCategories.addView(addChip);
     }
 
