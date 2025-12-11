@@ -6,11 +6,14 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +54,10 @@ public class OverviewFragment extends Fragment
     private TextView txtTotalBudget;
 
 
+    // A MediatorLiveData is used to link together the LiveData from the budget and transaction list
+    private final MediatorLiveData<Pair<Double, Double>> budgetTransactionMediator = new MediatorLiveData<>();
+
+
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
@@ -77,31 +84,55 @@ public class OverviewFragment extends Fragment
         rvPartialHistory.setAdapter(recyclerViewAdapter);                               // Connect to the recyclerViewAdapter
 
 
-        // Set up an observer on the OverviewViewModel
-        // Updates the RecyclerView, PieChart and BudgetRemaining when a new transaction is loaded from the DB
-        overviewViewModel.getTransactions().observe(getViewLifecycleOwner(), transactionList ->
-        {
-            recyclerViewAdapter.updateTransactions(InputValidator.sortTransactions(transactionList));   // Update the RecyclerView
-            updatePieChart(transactionList);    // Update the PieChart
+        LiveData<List<TransactionWithCategory>> transactionSource = overviewViewModel.getTransactions();
+        LiveData<Double> budgetSource = budgetViewModel.getBudget();
 
-            // Get the user's budget
-            Double budget = budgetViewModel.getBudget().getValue();
-            updateRemainingBudget(budget, transactionList);        // Invoke the method to update the remaining budget
+        // The Runnable is executed when either the Transaction list or Budget is updated
+        Runnable combinedData = () ->
+        {
+            Log.v("OverviewFragment", "runnable combinedData called");
+            Double currentBudget = budgetSource.getValue();
+            List<TransactionWithCategory> currentTransactions = transactionSource.getValue();
+
+            // Null check
+            if (currentBudget != null && currentTransactions != null)
+            {
+                double remainingBudget = overviewViewModel.getBudgetRemaining(currentBudget, currentTransactions);
+
+                // Pass the remaining budget to the mediatorLiveData and trigger the observer
+                budgetTransactionMediator.setValue(new Pair<>(currentBudget, remainingBudget));
+            }
+
+        };
+
+        // Add the budgetSource and transactionSource to the budgetTransactionMediator
+        budgetTransactionMediator.addSource(transactionSource, transactions -> combinedData.run());
+        budgetTransactionMediator.addSource(budgetSource, budget -> combinedData.run());
+
+        // When the budgetTransactionMediator observer fires, update the remaining budget in the UI
+        budgetTransactionMediator.observe(getViewLifecycleOwner(), budgetResult ->
+        {
+            if (budgetResult != null)
+            {
+                updateRemainingBudget(budgetResult.first, budgetResult.second);
+            }
+        });
+
+        // Transaction list observer- Updates RecyclerView and PieChart only
+        transactionSource.observe(getViewLifecycleOwner(), transactionWithCategories ->
+        {
+
+            // Update the RecyclerView
+            recyclerViewAdapter.updateTransactions(InputValidator.sortTransactions(transactionWithCategories));
+
+            // Update the PieChart
+            updatePieChart(transactionWithCategories);
 
             // Scroll back to the top of the RecyclerView to show the new transaction
             if (rvPartialHistory.getLayoutManager() != null)
             {
                 rvPartialHistory.getLayoutManager().scrollToPosition(0);
             }
-        });
-
-
-        // Set up a listener on the Budget variable and invoke the method when changes are detected
-        budgetViewModel.getBudget().observe(getViewLifecycleOwner(), budget -> {
-            // Get the transaction list
-            List<TransactionWithCategory> transactions = overviewViewModel.getTransactions().getValue();
-
-            updateRemainingBudget(budget, transactions);
         });
 
 
@@ -119,27 +150,20 @@ public class OverviewFragment extends Fragment
 
     // Helper method to calculate the remaining budget
     // The budget needs to be recalculated if either the budget changes or a new transaction is added
-    // This method is therefore able to be called in the observers for both values
-    private void updateRemainingBudget(Double budget, List<TransactionWithCategory> transactions)
+    // This method is invoked whenever the MediatorLiveData updates
+    private void updateRemainingBudget(Double totalBudget, Double remainingBudget)
     {
-        Log.v("OverviewFragment", "updateRemainingBudget called, read budget as " + budget);
-        Log.v("OverviewFragment", "transaction list state: " + (transactions == null));
-        // If both values are non-null, recalculate the remaining budget
-        if (budget != null && transactions != null)
-        {
-            double budgetRemaining = overviewViewModel.getBudgetRemaining(budget, transactions);
-            Log.v("OverviewFragment", "Calculated remaining budget as " + budgetRemaining + ", start budget " + budget);
+        Log.v("OverviewFragment", "updateRemainingBudget called");
 
-            // Display the remaining budget
-            txtBudgetRemaining.setText(Converters.doubleToCurrencyString(budgetRemaining));
+        // Display the remaining budget
+        txtBudgetRemaining.setText(Converters.doubleToCurrencyString(remainingBudget));
 
-            // Display the total budget
-            String outputString = "Monthly Budget: " + Converters.doubleToCurrencyString(budget);
-            txtTotalBudget.setText(outputString);
+        // Display the total budget
+        String outputString = "Monthly Budget: " + Converters.doubleToCurrencyString(totalBudget);
+        txtTotalBudget.setText(outputString);
 
-            // Set the text colour to red if negative, green if positive
-            ColorHandler.setAmountColour(txtBudgetRemaining, budgetRemaining);
-        }
+        // Set the text colour to red if negative, green if positive
+        ColorHandler.setAmountColour(txtBudgetRemaining, remainingBudget);
     }
 
 
@@ -163,17 +187,13 @@ public class OverviewFragment extends Fragment
         pieChart.setDrawEntryLabels(false);                             // Remove the labels from slices
 
 
-
         // Set the legend of the pie chart
         Legend legend = pieChart.getLegend();
         legend.setEnabled(true);
         legend.setTextSize(12f);
 
         // Set the colour to the dynamic foreground colour
-        legend.setTextColor(ColorHandler.getThemeColor(
-                requireContext(),
-                com.google.android.material.R.attr.colorOnSurfaceVariant
-        ));
+        legend.setTextColor(ColorHandler.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
         legend.setTypeface(Typeface.MONOSPACE);                         // Use a monospace font so string padding works properly
 
         // Set the alignment to be to the centre right of the chart

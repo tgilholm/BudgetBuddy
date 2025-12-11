@@ -42,14 +42,11 @@ import java.util.List;
 
 public class AddFragment extends Fragment
 {
-    private EditText dateText;
-    private EditText timeText;
-    private EditText amountText;
+    private EditText dateText, timeText, amountText;
     private ChipGroup chipGroupCategories;
     private AddViewModel addViewModel;
-    private RadioButton rbIncoming;
-    private RadioGroup radioGroupType;
-    private RadioGroup radioGroupRepeat;
+    private RadioButton rbIncoming, rbNever;
+    private RadioGroup radioGroupType, radioGroupRepeat;
 
     private List<Category> categoryList = new ArrayList<>();
     private String pendingCategory = "";    // Holds the name of a new category to be selected
@@ -66,9 +63,12 @@ public class AddFragment extends Fragment
         FloatingActionButton addButton = v.findViewById(R.id.addButton);
         timeText = v.findViewById(R.id.editTextTime);
         dateText = v.findViewById(R.id.editTextDate);
-        chipGroupCategories = v.findViewById(R.id.chipGroupCategories);
         amountText = v.findViewById(R.id.editTextAmount);
+
+        chipGroupCategories = v.findViewById(R.id.chipGroupCategories);
         rbIncoming = v.findViewById(R.id.rbIncoming);
+        rbNever = v.findViewById(R.id.rbNever);
+
         radioGroupType = v.findViewById(R.id.radioGroupSelectType);
         radioGroupRepeat = v.findViewById(R.id.radioGroupSelectRepeat);
 
@@ -198,7 +198,7 @@ public class AddFragment extends Fragment
     {
         // Bundle all the user input into a new transaction
         double amount = getAmount();        // Get the transaction amount
-        if (amount < 0)
+        if (amount <= 0)
         {
             return;
         }         // Break here if getAmount() failed
@@ -235,10 +235,13 @@ public class AddFragment extends Fragment
     private void resetFields()
     {
         amountText.setText("");             // Reset the amountText
-        radioGroupType.clearCheck();        // Reset the type
+        radioGroupType.clearCheck();
+        rbIncoming.setChecked(true);        // Reset the type
         chipGroupCategories.clearCheck();   // Reset the category chipGroup
         resetDateTime();                    // Reset the date and time
-        radioGroupRepeat.clearCheck();      // Reset the repeat duration
+        radioGroupRepeat.clearCheck();
+        rbNever.setChecked(true);           // Reset the repeat duration
+
     }
 
 
