@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.budgettracker"
+    namespace = "com.example.budgetbuddy"
     compileSdk = 36
 
     defaultConfig {
@@ -37,15 +37,15 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
-    implementation("androidx.viewpager2:viewpager2:1.1.0") // ViewPager2
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0") // MPAndroidChart
+    implementation(libs.viewpager2) // ViewPager2
+    implementation(libs.mpandroidchart) // MPAndroidChart
 
     // Add dependency for Room DB
     implementation(libs.room.runtime)
     implementation(libs.recyclerview)
 
     // Preference Fragment dependency
-    implementation("androidx.preference:preference:1.2.1")
+    implementation(libs.preference)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
