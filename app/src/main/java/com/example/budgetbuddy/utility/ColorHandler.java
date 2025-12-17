@@ -22,9 +22,9 @@ public final class ColorHandler
 
     // Converts a colorID to a ColorStateList
     @NonNull
-    public static ColorStateList resolveColorID(int colorARGB)
+    public static ColorStateList resolveColorID(Context context, int colorID)
     {
-        return ColorStateList.valueOf(colorARGB);
+        return ColorStateList.valueOf(getColorARGB(context, colorID));
     }
 
     public static int getColorARGB(Context context, int colorID)
@@ -46,7 +46,7 @@ public final class ColorHandler
     {
         Context context = textView.getContext();
         int color = (amount < 0) ? R.color.brightRed : R.color.brightGreen;
-        textView.setTextColor(resolveColorID(getColorARGB(context, color)));
+        textView.setTextColor(resolveColorID(context, color));
     }
 
 

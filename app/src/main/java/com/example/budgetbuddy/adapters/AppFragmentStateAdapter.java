@@ -10,7 +10,9 @@ import com.example.budgetbuddy.fragments.OverviewFragment;
 import com.example.budgetbuddy.fragments.SettingsFragment;
 import com.example.budgetbuddy.fragments.TransactionsFragment;
 
-// Extend the FragmentStateAdapter class to create instances of each fragment
+/**
+ * Extends <code>FragmentStateAdapter</code> to create all the fragments
+  */
 public class AppFragmentStateAdapter extends FragmentStateAdapter {
 
     public AppFragmentStateAdapter(@NonNull FragmentActivity fragmentActivity)
@@ -18,13 +20,20 @@ public class AppFragmentStateAdapter extends FragmentStateAdapter {
         super(fragmentActivity);
     }
 
-    // Specify how many fragments are in the program, currently three:
-    // Overview, Add, and Transactions
+    /**
+     * Get the number of fragment entities
+     * @return int value of fragment count
+     */
     @Override
     public int getItemCount() {
         return 4;
     }
 
+    /**
+     * Returns the <code>Fragment</code> corresponding to the <code>position</code> passed to it
+     * @param position the index of the fragment
+     * @return the corresponding fragment
+     */
     @NonNull
     @Override
     public Fragment createFragment(int position)

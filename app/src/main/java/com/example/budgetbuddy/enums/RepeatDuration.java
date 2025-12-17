@@ -1,6 +1,8 @@
 package com.example.budgetbuddy.enums;
 
-// Enumerates the possible repeat durations of transactions
+/**
+ * Enumeration of possible <code>RepeatDuration</code> values.
+ */
 public enum RepeatDuration
 {
     NEVER, DAILY, WEEKLY, MONTHLY, YEARLY

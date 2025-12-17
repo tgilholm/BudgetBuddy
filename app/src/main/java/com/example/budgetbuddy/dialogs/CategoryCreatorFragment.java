@@ -1,13 +1,8 @@
 package com.example.budgetbuddy.dialogs;
 
 
-// A dialog fragment that appears when the user clicks the
-// "Add category" chip.
-// It allows users to select a category name and a colour from a preset list
-
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,20 +22,40 @@ import com.example.budgetbuddy.utility.ColorGridDecoration;
 
 import java.util.List;
 
+/**
+ * Extends DialogFragment. Takes user input and creates a new category.
+ * Displays a <code>RecyclerView</code> containing a grid of selectable colours
+ */
 public class CategoryCreatorFragment extends DialogFragment
 {
-
     private final Context context;
     private final List<Category> categories; // Hold a list of categories for input validation
     private int colorChoice = -1;
 
 
+    /**
+     * Constructs a new CategoryCreatorFragment
+     * @param context The application context
+     * @param categories A list of <code>Category</code> objects
+     */
     public CategoryCreatorFragment(Context context, List<Category> categories)
     {
         this.context = context;
         this.categories = categories;
     }
 
+    /**
+     * Called to instantiate the fragment view.
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return Return the View for the fragment's UI, or null.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -51,7 +66,10 @@ public class CategoryCreatorFragment extends DialogFragment
         Button addCategoryButton = view.findViewById(R.id.addCategory);
         EditText editTextCategory = view.findViewById(R.id.editTextCategoryName);
 
-        // Get the list of colours from the colors.xml file
+        final int columnCount = 4;    // 4 Columns
+        final int spacing = 16;
+
+        // List of colours from colors.xml
         Integer[] colorIDs = new Integer[]{
                 R.color.red,
                 R.color.hotPink,
@@ -71,16 +89,16 @@ public class CategoryCreatorFragment extends DialogFragment
                 R.color.darkOrange
         };
 
-        int columnCount = 4;    // 4 Columns
-        int spacing = 16;
-
-
-        // Create an anonymous class extending GridLayoutManager to disable recycler view scrolling
+        // Anonymous class extending GridLayoutManager to disable recycler view scrolling
         // This also maintains the ability to click on items
         recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount)
         {
             final boolean isScrollEnabled = false;
 
+            /**
+             * Disables vertical scrolling
+             * @return always returns false
+             */
             @Override
             public boolean canScrollVertically()
             {
@@ -88,26 +106,22 @@ public class CategoryCreatorFragment extends DialogFragment
             }
         });
 
-        // Handle getting the colour ID from a selected colour block
+        // Get the colour ID from the chosen list item
         ColorPickerAdapter colorPickerAdapter = new ColorPickerAdapter(context, List.of(colorIDs), selectedColour ->
         {
             // When a colour is selected, set it to "ticked" and get the colour from it
             colorChoice = selectedColour;
-            Log.v("CategoryCreatorFragment", "Read colour as " + colorChoice);
-
         });
 
-        // Set the spaces between colour items cleanly
+        // Space apart items in the grid
         recyclerView.addItemDecoration(new ColorGridDecoration(columnCount, spacing, false));
         recyclerView.setAdapter(colorPickerAdapter);
-
 
         // Add the click listener to the button
         addCategoryButton.setOnClickListener(v ->
         {
             String inputName = editTextCategory.getText().toString();
 
-            // Check that the category name field is not empty
             if (!inputName.isEmpty())
             {
                 // Check that colorChoice is not set to -1 (the default value, indicating no colour selection)
@@ -119,7 +133,7 @@ public class CategoryCreatorFragment extends DialogFragment
                         Bundle bundle = new Bundle();
                         String categoryName = editTextCategory.getText().toString();
                         bundle.putString("categoryName", categoryName);        // Attach the category name
-                        bundle.putInt("categoryColor", colorChoice);                                    // Attach the color ID
+                        bundle.putInt("categoryColor", colorChoice);           // Attach the color ID
 
                         // Use FragmentResult to send a message to the MainActivity
                         getParentFragmentManager().setFragmentResult("newCategory", bundle);
@@ -127,7 +141,6 @@ public class CategoryCreatorFragment extends DialogFragment
                         // Tell the user via a toast that a new category was added
                         Toast.makeText(context, "New category " + categoryName + " was added!", Toast.LENGTH_SHORT).show();
 
-                        // Close the window after the category was added
                         this.dismiss();
                     } else
                     {
@@ -146,7 +159,12 @@ public class CategoryCreatorFragment extends DialogFragment
         return view;
     }
 
-    // Method to check if the category already exists
+    /**
+     * Compares the category name to the list of categories to check if it already exists
+     * @param categoryName the name of the category to check
+     * @param categories a list of <code>Category</code> objects
+     * @return true if the category already exists, false otherwise
+     */
     private boolean categoryNameExists(String categoryName, List<Category> categories)
     {
         boolean exists = false;

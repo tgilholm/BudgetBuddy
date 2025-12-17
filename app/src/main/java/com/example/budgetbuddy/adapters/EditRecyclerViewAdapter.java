@@ -14,22 +14,39 @@ import com.example.budgetbuddy.entities.TransactionWithCategory;
 
 import java.util.List;
 
-// Extends the RecyclerViewAdapter to support removing transactions
+/**
+ * Extends RecyclerViewAdapter to provide transaction deletion functionality
+ */
 public class EditRecyclerViewAdapter extends RecyclerViewAdapter{
 
-    // Define a publicly accessible onDeleteClicked method through an interface
+    /**
+     * Classes using <code>EditRecyclerViewAdapter</code> must define behaviour for the delete button
+      */
     public interface OnDeleteClickListener {
         void onDeleteClicked(TransactionWithCategory transaction);
     }
     private final OnDeleteClickListener onDeleteClickListener;
 
+    /**
+     * Constructs a new <code>EditRecyclerViewAdapter</code>
+     * @param transactions A <code>List</code> of <code>TransactionWithCategory</code> objects
+     * @param onDeleteClickListener The behaviour for the delete button
+     * @param resource The layout.xml file for the items
+     */
     public EditRecyclerViewAdapter(List<TransactionWithCategory> transactions, OnDeleteClickListener onDeleteClickListener, int resource)
     {
         super(transactions, resource);
         this.onDeleteClickListener = onDeleteClickListener;
     }
 
-    // Override the onCreateViewHolder method to create the ViewHolder defined in this class
+
+    /**
+     * Gets a <code>ViewHolder</code> from the layout resource
+     * @param parent   The ViewGroup into which the new View will be added after it is bound to
+     *                 an adapter position.
+     * @param viewType The view type of the new View.
+     * @return A <code>ViewHolder</code> Object
+     */
     @NonNull
     @Override
     public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
@@ -37,7 +54,11 @@ public class EditRecyclerViewAdapter extends RecyclerViewAdapter{
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(resource, parent, false));
     }
 
-    // Override the onBindViewHolder method to use the ViewHolder defined here instead
+    /**
+     * Overrides <code>onBindViewHolder</code> in <code>RecyclerViewAdapter</code> to load the layout passed to this class instead
+     * @param holder a <code>RecyclerViewAdapter.ViewHolder</code> object to bind the transaction list to
+     * @param position The position in the list to bind the <code>ViewHolder to</code>
+     */
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewAdapter.ViewHolder holder, int position)
     {
@@ -50,28 +71,40 @@ public class EditRecyclerViewAdapter extends RecyclerViewAdapter{
         }
     }
 
-    // Extends the RecyclerViewAdapter.ViewHolder class by adding a delete button
+    /**
+     * Extends <code>RecyclerViewAdapter.ViewHolder</code> to inherit base functionality and implement the delete button
+     */
     public class ViewHolder extends RecyclerViewAdapter.ViewHolder
     {
-        ImageButton deleteButton;
+        private final ImageButton deleteButton;
+
+        /**
+         * Constructs a new <code>ViewHolder</code> for this object
+         * @param itemView the <code>View</code> to create the <code>ViewHolder</code> from
+         */
         public ViewHolder(@NonNull View itemView)
         {
             super(itemView);
             deleteButton = itemView.findViewById(R.id.deleteButton);
         }
 
+        /**
+         * Passes <code>transaction</code> to parent method.
+         * Passes <code>deleteButton</code> to <code>setDeleteButton</code>
+         * @param transaction a <code>TransactionWithCategory</code> object
+         */
         @Override
         public void bind(TransactionWithCategory transaction) {
-            super.bind(transaction);        // Call the bind method in RecyclerViewAdapter
-
-
-            // Extend the bind method by setting a click listener on the deleteButton
-            // Removes the transaction when the button is clicked
+            super.bind(transaction);
             setDeleteButton(deleteButton);
-
         }
 
-        private void setDeleteButton(ImageButton deleteButton) {
+        /**
+         * Defines the behaviour of the delete button on each view.
+         * Removes the item from the internal list and notifies observers
+         * @param deleteButton the <code>ImageButton</code> objects
+         */
+        private void setDeleteButton(@NonNull ImageButton deleteButton) {
             deleteButton.setOnClickListener(view ->
             {
                 int position = getBindingAdapterPosition();
@@ -79,16 +112,11 @@ public class EditRecyclerViewAdapter extends RecyclerViewAdapter{
                 if (position != RecyclerView.NO_POSITION  && onDeleteClickListener != null)
                 {
                     onDeleteClickListener.onDeleteClicked(_transactions.get(position));
-                    Log.v("EditRecyclerViewAdapter", "Deleting transaction " + _transactions.get(position).transaction.getId());
-
-                    // Remove from RecyclerView's internal list
-                    _transactions.remove(position);
-
-                    // Refresh the RecyclerView
-                    notifyItemRemoved(position);
+                    Log.v("EditRecyclerViewAdapter", "Deleted transaction " + _transactions.get(position).transaction.getId());
+                    _transactions.remove(position);             // Remove from RecyclerView's internal list
+                    notifyItemRemoved(position);                // Notify the RecyclerView observer
                 }
             });
         }
-
     }
 }

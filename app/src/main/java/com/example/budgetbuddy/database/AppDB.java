@@ -11,42 +11,42 @@ import com.example.budgetbuddy.entities.Category;
 import com.example.budgetbuddy.entities.Transaction;
 import com.example.budgetbuddy.utility.Converters;
 
+/**
+ * Extends <code>RoomDatabase</code>. Defines <code>Transaction</code> and <code>Category</code> entities
+ * Holds a static instance of the database. Provides methods to access the DAOs
+ */
 @Database(entities = {Transaction.class, Category.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDB extends RoomDatabase
 {
-    // Abstract access to the DAOs
+    // Abstract access methods for the DAOs
     public abstract TransactionDAO transactionDAO();
 
     public abstract CategoryDAO categoryDAO();
 
-
-    // Define the instance of the Database as volatile to ensure all fragments receive updates
-    // The DB_INSTANCE is defined "static" so only one instance exists across the application
+    // Defined as static to force a single instance, volatile to ensure threads receive updates
     private static volatile AppDB DB_INSTANCE;
 
-    // Publicly accessible method for threads to access the DB instance
+    /**
+     * Returns a singleton instance of the database. Double-checked locking ensures there is only one instance.
+     * If there is no instance, a new one is created.
+     * @param context The application context
+     * @return An instance of the database
+     */
     public static AppDB getDBInstance(final Context context)
     {
-        // DOUBLE-CHECKED-LOCKING
-        // First checks if the DB instance is null. If so, lock the method and continue.
-        // Otherwise, skips over it entirely and returns the DB instance
-
-        // If locked, check again to ensure another thread hasn't created an instance
-        // Finally call databaseBuilder and return the instance
-
+        // First check
         if (DB_INSTANCE == null)
         {
-            synchronized (AppDB.class) {
+            synchronized (AppDB.class) {    // Sync and check again
                 if (DB_INSTANCE == null) {
-                    // Create an instance of the type converter
-                    Converters converter = new Converters();
+                    Converters converter = new Converters();        // Get the type converter
 
                     // Build a new database
                     DB_INSTANCE = Room.databaseBuilder(
                             context.getApplicationContext(),
                             AppDB.class,
-                            "budgetbuddy_DB"  // Name of the DB itself
+                            "budgetbuddy_DB"  // Name of the DB
                     ).addTypeConverter(converter).build();
                 }
             }

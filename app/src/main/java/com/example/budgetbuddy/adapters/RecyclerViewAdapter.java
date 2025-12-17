@@ -21,23 +21,33 @@ import com.example.budgetbuddy.utility.Converters;
 import java.util.ArrayList;
 import java.util.List;
 
-// The adapter for the RecyclerView in OverviewFragment
-// Extends ListAdapter to improve performance- does not need to rewrite entire list on update
+/**
+ * Extends <code>RecyclerView.Adapter</code>to display the layout for each <code>TransactionWithCategory</code>
+ */
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>
 {
-    // The layout for the items in the RecyclerView
     @LayoutRes
     protected final int resource;
+    protected final List<TransactionWithCategory> _transactions = new ArrayList<>(); // Internal list
 
-    // Hold a list of transaction-category objects
-    protected final List<TransactionWithCategory> _transactions = new ArrayList<>();
-
+    /**
+     * Constructs a new adapter
+     * @param transactions a list of <code>TransactionWithCategory</code> objects
+     * @param resource the ID of the layout xml to load
+     */
     public RecyclerViewAdapter(List<TransactionWithCategory> transactions, @LayoutRes int resource)
     {
         this._transactions.addAll(transactions);    // Instantiate list with transactions
         this.resource = resource;                   // Instantiate layout
     }
 
+    /**
+     * Load the layout resource
+     * @param parent   The ViewGroup into which the new View will be added after it is bound to
+     *                 an adapter position.
+     * @param viewType The view type of the new View.
+     * @return The ViewHolder connected to the layout
+     */
     @NonNull
     @Override
     public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
@@ -47,6 +57,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return new ViewHolder(view);
     }
 
+    /**
+     * Bind the <code>TransactionWithCategory</code> at the passed <code>position</code> to the <code>ViewHolder</code>
+     * @param holder the <code>ViewHolder</code> object
+     * @param position the position in the list to select
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position)
     {
@@ -54,46 +69,62 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.bind(transaction);   // Set the data in the view elements
     }
 
+    /**
+     * @return the number of items in the list
+     */
     @Override
     public int getItemCount()
     {
         return _transactions.size();
     }
 
-    // Update a transaction without resetting the entire RecyclerView using DiffUtil
+    /**
+     * Takes the current list and the new list and passes them to <code>DiffUtil.DiffResult</code>
+     * to update only the changed items in the list, then dispatches to the internal list
+     * @param transactions the new list of <code>TransactionWithCategory</code> objects
+     */
     public void updateTransactions(List<TransactionWithCategory> transactions)
     {
         // Compare the list held in the Adapter with the new list
         final TransactionDiffCallback diffCallback = new TransactionDiffCallback(this._transactions, transactions);
-        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);    // Calculate the result of the operation
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
 
-        this._transactions.clear();                         // Clear the list held in the Adapter
-        this._transactions.addAll(transactions);            // Add the new list to the Adapter
-        diffResult.dispatchUpdatesTo(this);        // Tells the RecyclerView to update the display
+        this._transactions.clear();
+        this._transactions.addAll(transactions);           // Add the new list to the Adapter
+        diffResult.dispatchUpdatesTo(this);        // Pass the diffResult to the internal list
     }
 
 
-    // ViewHolder for the RecyclerView
+    /**
+     * Extends <code>RecyclerView.ViewHolder</code> to provide a custom layout for list items
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
         private final TextView textCategory;
         private final TextView textDateTime;
         private final TextView textAmount;
 
+        /**
+         * Constructs a new <code>ViewHolder</code>
+         * @param itemView the <code>View</code> object to construct from
+         */
         public ViewHolder(@NonNull View itemView)
         {
             super(itemView);
 
-            // Find the textViews from the layout
             textDateTime = itemView.findViewById(R.id.textDateTime);
             textCategory = itemView.findViewById(R.id.textCategory);
             textAmount = itemView.findViewById(R.id.textAmount);
         }
 
-        // Set layout elements to the transaction data
-        public void bind(TransactionWithCategory transactionWithCategory)
+
+        /**
+         * Sets the layout to the data in <code>transactionWithCategory</code>
+         * Sets colour for negative/positive transactions and updates text fields
+         * @param transactionWithCategory an item from the internal list
+         */
+        public void bind(@NonNull TransactionWithCategory transactionWithCategory)
         {
-            // Extract the transaction and category from the parameter
             Transaction t = transactionWithCategory.transaction;
             Category c = transactionWithCategory.category;
 
@@ -101,16 +132,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             textCategory.setText(c.getName());
             textAmount.setText(Converters.doubleToCurrencyString(t.getAmount()));
 
-            // For positive (income) transactions, set the color to green
+            // Positive transactions are green
             if (t.getType() == TransactionType.INCOMING)
             {
-                textAmount.setTextColor(ColorHandler.resolveColorID(ColorHandler.getColorARGB(itemView.getContext(), R.color.brightGreen)));
+                textAmount.setText(Converters.doubleToCurrencyString(t.getAmount()));
+                textAmount.setTextColor(ColorHandler.resolveColorID(itemView.getContext(), R.color.brightGreen));
             } else
             {
-                // For negative transactions set the color to red and prepend a '-'
-                String negatedString = "-" + textAmount.getText();
-                textAmount.setText(negatedString);
-                textAmount.setTextColor(ColorHandler.resolveColorID(ColorHandler.getColorARGB(itemView.getContext(), R.color.brightRed)));
+                // Negative transactions are red with a minus sign
+                textAmount.setText("-" + Converters.doubleToCurrencyString(t.getAmount()));
+                textAmount.setTextColor(ColorHandler.resolveColorID(itemView.getContext(), R.color.brightRed));
             }
             textDateTime.setText(t.getDateTimeString());
         }

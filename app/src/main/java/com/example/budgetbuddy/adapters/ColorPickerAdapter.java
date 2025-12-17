@@ -19,121 +19,150 @@ import com.example.budgetbuddy.utility.ColorHandler;
 
 import java.util.List;
 
-// Recycler view adapter to support the Color Picker
-public class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.ColorViewHolder>
-{
+/**
+ * Extends <code>RecyclerView.Adapter</code> to create a grid layout <code>RecyclerView</code>.
+ * Handles selection logic for items and sets colour.
+ */
+public class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.ColorViewHolder> {
 
-    // Interface to provide onClick
-    public interface OnItemClickListener
-    {
+    /**
+     * Classes that construct a <code>ColorPickerAdapter</code> must define the behaviour of clicking a list item.
+     */
+    public interface OnItemClickListener {
         void onItemClick(int color);
     }
 
     private final Context context;
     private final List<Integer> colorList;
     private final OnItemClickListener onItemClick;
+    private int selectedPosition = -1;  // Default pos, updated when a new item is selected
 
-    private int selectedPosition = -1;  // Nothing selected by default
 
-
-    public ColorPickerAdapter(Context context, List<Integer> colorList, OnItemClickListener onItemClick)
-    {
+    /**
+     * Constructs a new <code>ColorPickerAdapter</code>
+     *
+     * @param context     a <code>Context</code> object (from an Activity/Fragment/etc)
+     * @param colorList   the list of colours from which to create a grid
+     * @param onItemClick the <code>OnItemClickListener</code> implementation.
+     */
+    public ColorPickerAdapter(Context context, List<Integer> colorList, OnItemClickListener onItemClick) {
         this.context = context;
         this.colorList = colorList;
         this.onItemClick = onItemClick;
     }
 
 
-    // Create the ViewHolder class
+    /**
+     * Inflates the layout for each of the <code>ColorViewHolder</code> objects
+     *
+     * @param parent   The ViewGroup into which the new View will be added after it is bound to
+     *                 an adapter position.
+     * @param viewType The view type of the new View.
+     * @return the <code>ColorViewHolder</code> object
+     */
     @NonNull
     @Override
-    public ColorViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-    {
+    public ColorViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Load the layout for each item
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         View view = layoutInflater.inflate(R.layout.colour_picker_item, parent, false);
         return new ColorViewHolder(view);
     }
 
-    // Bind each of the colours to a position in the RecyclerView
+    /**
+     * Bind each of the colours to a position in the RecyclerView. Passes <code>position == selectedPosition</code>
+     * to the <code>bind</code> method to remove checkmarks on unselected objects.
+     *
+     * @param holder   a <code>ColorViewHolder</code> object
+     * @param position the position to bind to
+     */
     @Override
-    public void onBindViewHolder(@NonNull ColorViewHolder holder, int position)
-    {
+    public void onBindViewHolder(@NonNull ColorViewHolder holder, int position) {
         int colour = colorList.get(position);
 
-        // The isSelected logic prevents checkmarks remaining after another item is clicked
-        // It passes "position == selectedPosition" as a boolean, which is only true if
-        // another item has not been clicked
+        // Remains selected if the position has not changed
         holder.bind(colour, position == selectedPosition);
     }
 
+    /**
+     * Returns the amount of items in <code>colorList</code>
+     *
+     * @return an int value of the number of items
+     */
     @Override
-    public int getItemCount()
-    {
+    public int getItemCount() {
         return colorList.size();
     }
 
-    public class ColorViewHolder extends RecyclerView.ViewHolder
-    {
-        private final View colorView;   // The background colour block
-        private final View checkmarkView;   // The checkmark icon
+    /**
+     * Extends <code>RecyclerView.ViewHolder</code> to provide the view logic for each of the items in the list
+     */
+    public class ColorViewHolder extends RecyclerView.ViewHolder {
+        private final View colorView;   // Colour block
+        private final View checkmarkView;   // Checkmark icon
 
-        public ColorViewHolder(@NonNull View itemView)
-        {
+        /**
+         * Constructs the <code>ViewHolder</code>, instantiates the <code>View</code> objects
+         *
+         * @param itemView the <code>View</code> object for this entity
+         */
+        public ColorViewHolder(@NonNull View itemView) {
             super(itemView);
             colorView = itemView.findViewById(R.id.colorItem);
             checkmarkView = itemView.findViewById(R.id.checkmark);
         }
 
-        public void bind(final int colour, boolean isSelected)
-        {
+        /**
+         * Gets the <code>Drawable</code> colour_square and checkmark icon. Hides checkmark icon if
+         * <code>isSelected</code> is false. Defines the <code>onClick</code> behaviour for each item
+         *
+         * @param colour     the ID of the colour
+         * @param isSelected true if selected by user, false otherwise
+         */
+        public void bind(final int colour, boolean isSelected) {
             @ColorInt
             int backgroundColour = ColorHandler.getColorARGB(context, colour);
 
-            Drawable drawable = ContextCompat.getDrawable(context, R.drawable.colour_square);
-            if (drawable != null)
-            {
+            colorView.setBackground(createBackground(ContextCompat.getDrawable(context, R.drawable.colour_square),
+                    backgroundColour));
 
-                // Make the drawable mutable to differentiate it
-                drawable = drawable.mutate();
+            // Adjust checkmark colour on background luminance
+            checkmarkView.setBackground(createBackground(ContextCompat.getDrawable(context, R.drawable.checkmark),
+                    ColorHandler.resolveForegroundColor(context, backgroundColour)));
 
-                // Use a PorterDuff color filter to change the square's colour
-                drawable.setColorFilter(new PorterDuffColorFilter(backgroundColour, PorterDuff.Mode.SRC_IN));
-                colorView.setBackground(drawable);
-            }
-
-            // Adapt the colour of the checkmark icon depending on the luminance of the background
-            drawable = ContextCompat.getDrawable(context, R.drawable.checkmark);
-            if (drawable != null)
-            {
-
-                // Make the drawable mutable to differentiate it
-                drawable = drawable.mutate();
-
-                // Adapt the colour of the checkmark icon depending on the luminance of the background
-
-
-                drawable.setColorFilter(new PorterDuffColorFilter(ColorHandler.resolveForegroundColor(context, backgroundColour), PorterDuff.Mode.SRC_IN));
-                checkmarkView.setBackground(drawable);
-            }
-
-            // If this item is selected, display a checkmark- if not, hide it completely
+            // Show checkmark if item selected
             checkmarkView.setVisibility(isSelected ? View.VISIBLE : View.GONE);
 
-            // Set the onClick listener
+
             itemView.setOnClickListener(v ->
             {
+                // Update the selected position
                 int previousPosition = selectedPosition;
                 selectedPosition = getAbsoluteAdapterPosition();
 
                 notifyItemChanged(previousPosition);
                 notifyItemChanged(selectedPosition);
 
-                if (onItemClick != null)
-                {
+                if (onItemClick != null) {
                     onItemClick.onItemClick(colour);
                 }
             });
+        }
+
+        /**
+         * Sets the colour of a <code>Drawable</code> object with a <code>@ColorInt int</code>
+         * @param drawable the <code>Drawable</code> object to modify
+         * @param colour the <code>int</code> ID of the colour
+         * @return the modified <code>Drawable</code>
+         */
+        private Drawable createBackground(Drawable drawable, @ColorInt int colour) {
+            if (drawable != null) {
+                drawable = drawable.mutate();      // Make the drawable mutable to differentiate it
+
+                // Set colour with PorterDuffColorFilter
+                drawable.setColorFilter(new PorterDuffColorFilter(colour, PorterDuff.Mode.SRC_IN));
+            }
+            return drawable;
         }
     }
 }

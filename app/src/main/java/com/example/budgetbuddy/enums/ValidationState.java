@@ -1,7 +1,8 @@
 package com.example.budgetbuddy.enums;
 
-// Defines "error codes" returned by validation methods
-// 0 is a success
+/**
+ * Enumeration of possible <code>ValidationState</code> values for use as "error codes".
+ */
 public enum ValidationState
 {
     NONE,               // Success

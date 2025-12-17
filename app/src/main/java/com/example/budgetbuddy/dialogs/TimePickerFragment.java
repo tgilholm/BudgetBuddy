@@ -12,17 +12,30 @@ import androidx.fragment.app.DialogFragment;
 import java.util.Calendar;
 import java.util.Locale;
 
-// Extend the DialogFragment class to contain a time picker element
-// The DialogFragment will float in the foreground of the activity
+/**
+ * Extends <code>DialogFragment</code>, implements methods from <code>TimePickerDialog.OnTimeSetListener</code>.
+ * Prompts a user to input a time and returns the result.
+ */
 public class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 
     private final Context context;
 
+    /**
+     * Constructs a new TimePickerFragment
+     * @param context The application context
+     */
     public TimePickerFragment(Context context)
     {
         this.context = context;
     }
 
+    /**
+     * Called to create the TimePicker dialog. Passes the current time to the dialog
+     * @param savedInstanceState The last saved instance state of the Fragment,
+     * or null if this is a freshly created Fragment.
+     *
+     * @return A new <code>TimePickerDialog</code> instance to be displayed by the Fragment.
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
@@ -34,16 +47,19 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         return new TimePickerDialog(context, this, hour, minute, true);
     }
 
+    /**
+     * Called when the user sets the time int he dialog. Passes the time value to a parent fragment through a bundle
+     * and <code>setFragmentResult()</code>.
+     * @param view the view associated with this listener
+     * @param hourOfDay the hour that was set
+     * @param minute the minute that was set
+     */
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        // Use setFragmentResult() to send the result of the timePicker back to addFragment
-        // This is done using a bundle, which contains a key, "timeKey", and the selected time
-
         Bundle bundle = new Bundle();
 
         // Always use 00:00 format for time
         bundle.putString("timeKey", String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute));
         getParentFragmentManager().setFragmentResult("timeKey", bundle); // Set the fragment result
-
     }
 }

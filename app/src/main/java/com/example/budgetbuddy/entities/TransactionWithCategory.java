@@ -1,13 +1,14 @@
 package com.example.budgetbuddy.entities;
 
-
 import androidx.room.Embedded;
 import androidx.room.Relation;
 
-// Room performs a SQL JOIN on the Transaction and Category entities
-// This allows accessing the category name in a Transaction
-public class TransactionWithCategory
-{
+/**
+ * Joins together transaction and category, linked by the category ID.
+ * Room performs a SQL JOIN on the Transaction and Category entities.
+ * This allows accessing the category data in a Transaction context.
+ */
+public class TransactionWithCategory {
     @Embedded
     public Transaction transaction;
 

@@ -24,13 +24,12 @@ public final class ChipHandler
         chip.setCheckable(true);
         chip.setClickable(true);
 
-        int backgroundColor = ColorHandler.getColorARGB(context, category.getColorID());
 
         // Set the background color of the chip top the category's colour
-        chip.setChipBackgroundColor(ColorHandler.resolveColorID(backgroundColor));
+        chip.setChipBackgroundColor(ColorHandler.resolveColorID(context, category.getColorID()));
 
         // Set the chip text colour to adapt to the chip background colour
-        chip.setTextColor(ColorHandler.resolveForegroundColor(context, backgroundColor));
+        chip.setTextColor(ColorHandler.resolveForegroundColor(context, ColorHandler.getColorARGB(context, category.getColorID())));
 
         // Set the "tag" parameter of the Chip to the category ID
         // This facilitates the category selection logic

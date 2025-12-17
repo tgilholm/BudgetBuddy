@@ -12,26 +12,38 @@ import com.example.budgetbuddy.entities.TransactionWithCategory;
 
 import java.util.List;
 
-// The Data Access Object for the Transaction entity
-// Abstracts the SQL calls behind methods
+/**
+ * Data Access Object for the Transaction Entity. Defines CRUD methods
+ */
 @Dao
 public interface TransactionDAO {
-    // Define each of the transactions needed here
 
-    // Return the entire table
+    /**
+     * Gets all the transactions
+     * @return a <code>LiveData</code> object containing a list of <code>Transaction</code> objects
+     */
     @Query("SELECT * FROM 'transaction'")
     LiveData<List<Transaction>> getAll();
 
-    // Return the table joined with the category table
+    /**
+     * Gets the list of transactions with the category they belong to
+     * @return a <code>LiveData</code> object containing a list of <code>TransactionWithCategory</code> objects
+     */
     @androidx.room.Transaction
     @Query("SELECT * FROM 'transaction'")
     LiveData<List<TransactionWithCategory>> getTransactionCategory();
 
-    // Ellipsis after the parameter allows adding any number of transactions
+    /**
+     * Inserts new <code>Transaction</code> objects into the table
+     * @param transaction the <code>Transaction</code> object to insert
+     */
     @Insert
     void insertTransaction(Transaction... transaction);
 
-    // Removes a transaction from the table
+    /**
+     * Deletes a <code>Transaction</code> object from the table
+     * @param transaction the <code>Transaction</code> object to delete
+     */
     @Delete
     void delete(Transaction transaction);
 
