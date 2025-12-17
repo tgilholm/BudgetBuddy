@@ -217,7 +217,6 @@ public class OverviewFragment extends Fragment
     {
         if (transactions == null || transactions.isEmpty())
         {
-            pieChart.setData(new PieData());
             return;
         }
 

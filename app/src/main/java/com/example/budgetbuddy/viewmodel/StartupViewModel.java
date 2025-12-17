@@ -88,11 +88,14 @@ public class StartupViewModel extends AndroidViewModel
 
     private void updatePreferences(@NonNull Double newBudget)
     {
-
-        prefs.edit().putFloat("budget", newBudget.floatValue());
-        prefs.edit().putBoolean("notFirstRun", true);
-        prefs.edit().apply(); // Commit the changes
+        prefs.edit().putFloat("budget", newBudget.floatValue()).apply();
+        prefs.edit().putBoolean("firstRun", false).apply();
 
         Log.v("FirstTimeStartupActivity", "Updated appPreferences");
+    }
+
+    public boolean getFirstRun()
+    {
+        return prefs.getBoolean("firstRun", false);
     }
 }

@@ -58,6 +58,7 @@ public class FirstTimeStartupActivity extends AppCompatActivity
         {
             case NONE:
                 goToMain();
+                startupViewModel.addDefaultCategories(); // Add default categories
                 break;
             case INVALID_AMOUNT:
                 Toast.makeText(this, "Invalid budget! (Format must be XXX.YY)", Toast.LENGTH_SHORT).show();
@@ -69,7 +70,7 @@ public class FirstTimeStartupActivity extends AppCompatActivity
     }
 
     /**
-     * Starts an <code>Intent</code> to return to MainActivity
+     * Starts an <code>Intent</code> to go to <code>MainActivity</code>
      */
     private void goToMain()
     {

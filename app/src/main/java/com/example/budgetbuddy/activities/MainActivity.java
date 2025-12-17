@@ -1,8 +1,6 @@
 package com.example.budgetbuddy.activities;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -13,66 +11,45 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.PreferenceManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.budgetbuddy.R;
-import com.example.budgetbuddy.viewmodel.BudgetViewModel;
 import com.example.budgetbuddy.adapters.AppFragmentStateAdapter;
 import com.example.budgetbuddy.viewmodel.StartupViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-/*
- * The main class of the program. Responsibilities:
- *  Initialises a ViewPager2 and a AppFragmentStateAdaptor to handle the swipe view functionality
- *  Fragments are attached to MainActivity- the layout in activity_main.xml is shown behind them
- *  Attaches these to a TabLayout to enable the user to switch between the three tabs without swiping
- *  Title bar is automatically updated to reflect fragment title
+/**
+ * Contains the fragments within a <code>ViewPager2</code> attached to a <code>TabLayout</code> for top-bar navigation and automatically updates title bar text.
+ * Also handles first time startup logic via the <code>StartupViewModel</code>
  */
-
-
-// TODO trigger observers on budget change in preferences
-// todo fix recyclerview jankiness
-
-
-public class MainActivity extends AppCompatActivity
-{
-    BudgetViewModel budgetViewModel;
-
+public class MainActivity extends AppCompatActivity {
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
         EdgeToEdge.enable(this);
 
-        // Set the default preferences for the app
-        PreferenceManager.setDefaultValues(this, "appPreferences", Context.MODE_PRIVATE, R.xml.preferences, true);
+        // Initialise viewmodel
+        StartupViewModel startupViewModel = new ViewModelProvider(this).get(StartupViewModel.class);
 
-        // Get an instance of the BudgetViewModel
-        budgetViewModel = new ViewModelProvider(this).get(BudgetViewModel.class);
 
-        // Open the appPreferences SharedPreferences file
-        SharedPreferences prefs = this.getSharedPreferences("appPreferences", Context.MODE_PRIVATE);
+        // Get views from layout
+        MaterialToolbar toolbar = findViewById(R.id.title_bar);
+        ViewPager2 viewPager = findViewById(R.id.swipePager);
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
 
-        // Search prefs for a "firstRun" key-value pair
-        // If there is none, it is assumed that the app is on first time startup
-        boolean notFirstRun = prefs.getBoolean("notFirstRun", false);
-        Log.v("MainActivity", "Read notFirstRun property as: " + notFirstRun);
 
-        // If it IS the first run, send the user to first startup activity
-        if (!notFirstRun)
-        {
+        // If first run, go to onboard activity
+        if (startupViewModel.getFirstRun()) {
             firstTimeStartup();
             Log.v("MainActivity", "First startup, moving to onboarding activity");
         }
 
-        // Check if there are any categories- if not, add the defaults
-        StartupViewModel startupViewModel = new ViewModelProvider(this).get(StartupViewModel.class);
-        startupViewModel.addDefaultCategories();
 
+        // Set window insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) ->
         {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -81,24 +58,15 @@ public class MainActivity extends AppCompatActivity
             return insets;
         });
 
-        // Connect to the MaterialToolbar to dynamically change the page title
-        MaterialToolbar toolbar = findViewById(R.id.title_bar);
-        toolbar.setTitle(R.string.title_overview);
 
-        // Create the ViewPager and attach an AppFragmentStateAdaptor to it
-        ViewPager2 vp = findViewById(R.id.swipePager);
-        vp.setAdapter(new
+        // Set adapter on viewPager
+        viewPager.setAdapter(new AppFragmentStateAdapter(this));
+        new TabLayoutMediator(tabLayout, viewPager,
 
-                AppFragmentStateAdapter(this));
-
-        // Attach the ViewPager to the TabLayout with a TabLayoutMediator
-        new TabLayoutMediator(findViewById(R.id.tab_layout), vp,
-
-                // Create a TabConfigurationStrategy to set the text for each tab
+                // Set the tab to the selected fragment title
                 (tab, position) ->
                 {
-                    switch (position)
-                    {
+                    switch (position) {
                         case 0:
                             tab.setText(R.string.title_overview);
                             break;
@@ -111,18 +79,14 @@ public class MainActivity extends AppCompatActivity
                         case 3:
                             tab.setText(R.string.title_settings);
                     }
-                }).
+                }).attach();
 
-                attach();
 
-        // Update the title bar to the name of the currently-displayed fragment
-        vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback()
-        {
+        // Set the title bar text to the currently selected fragment
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
-            public void onPageSelected(int position)
-            {
-                switch (position)
-                {
+            public void onPageSelected(int position) {
+                switch (position) {
                     case 0:
                         toolbar.setTitle(R.string.title_overview);
                         break;
@@ -140,21 +104,21 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-        // Start a FragmentResultListener to handle the button press within the OverviewFragment
+        // Change currently active fragment to AddFragment if add button pressed
         getSupportFragmentManager().setFragmentResultListener("addPage", this, (requestKey, result) ->
         {
-            if (result.getInt(requestKey) == 1)
-            {
+            if (result.getInt(requestKey) == 1) {
                 toolbar.setTitle(R.string.title_add);
             }
-            vp.setCurrentItem(1, true); // Set the ViewPager to the addFragment using a smooth scroll
+            viewPager.setCurrentItem(1, true); // Set the ViewPager to the addFragment using a smooth scroll
         });
+
     }
 
-    // Creates an Intent to take the user to the FirstTimeStartup activity
-    private void firstTimeStartup()
-    {
-        Intent intent = new Intent(this, FirstTimeStartupActivity.class);
-        startActivity(intent);
+    /**
+     * Starts an <code>Intent</code> to go to the <code>FirstTimeStartupActivity</code>
+     */
+    private void firstTimeStartup() {
+        startActivity(new Intent(this, FirstTimeStartupActivity.class));
     }
 }

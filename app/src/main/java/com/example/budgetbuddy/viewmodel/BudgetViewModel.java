@@ -54,8 +54,8 @@ public class BudgetViewModel extends AndroidViewModel
     private void getBudgetFromPrefs()
     {
         // preferences.xml always stores the budget as a string
-        Log.v("BudgetViewModel", "getBudgetFromPrefs fired, read budget as " + prefs.getString("budget", "0"));
-        budget.postValue(Double.parseDouble(prefs.getString("budget", "0"))); // default to 0
+        Log.v("BudgetViewModel", "getBudgetFromPrefs fired, read budget as " + prefs.getFloat("budget", 0));
+        budget.postValue((double) prefs.getFloat("budget", 0)); // default to 0
     }
 
     // Return the value of the budget
