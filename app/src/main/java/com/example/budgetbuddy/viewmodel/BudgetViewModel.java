@@ -64,12 +64,6 @@ public class BudgetViewModel extends AndroidViewModel
         return budget;
     }
 
-    public void setBudget(double _budget)
-    {
-        // Take a double parameter and set the "budget" field in app preferences
-        prefs.edit().putString("budget", "" + _budget).apply();
-    }
-
     @Override
     protected void onCleared()
     {

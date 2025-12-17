@@ -1,14 +1,19 @@
 package com.example.budgetbuddy.viewmodel;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.Observer;
+import androidx.preference.PreferenceManager;
 
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.entities.Category;
+import com.example.budgetbuddy.enums.ValidationState;
 import com.example.budgetbuddy.repositories.DataRepository;
+import com.example.budgetbuddy.utility.InputValidator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,12 +24,15 @@ public class StartupViewModel extends AndroidViewModel
 
     private final DataRepository dataRepository;
 
+    private final SharedPreferences prefs;
+
     public StartupViewModel(Application application)
     {
         super(application);
 
         // Get an instance of the DataRepository
         dataRepository = DataRepository.getInstance(application);
+        this.prefs = PreferenceManager.getDefaultSharedPreferences(application);
     }
 
     // Query the database to check if there are any categories- if not, add them
@@ -54,5 +62,37 @@ public class StartupViewModel extends AndroidViewModel
                 dataRepository.getAllCategories().removeObserver(this);
             }
         });
+    }
+
+    @NonNull
+    public ValidationState setBudget(@NonNull String input)
+    {
+        // Check if empty
+        if (!input.isEmpty())
+        {
+            // Validate the input
+            if (InputValidator.validateCurrencyInput(input))
+            {
+                updatePreferences(Double.parseDouble(input));
+                return ValidationState.NONE;
+            } else
+            {
+                return ValidationState.INVALID_AMOUNT;
+            }
+        }
+        else {
+            return ValidationState.EMPTY;
+        }
+    }
+
+
+    private void updatePreferences(@NonNull Double newBudget)
+    {
+
+        prefs.edit().putFloat("budget", newBudget.floatValue());
+        prefs.edit().putBoolean("notFirstRun", true);
+        prefs.edit().apply(); // Commit the changes
+
+        Log.v("FirstTimeStartupActivity", "Updated appPreferences");
     }
 }

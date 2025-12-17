@@ -1,12 +1,10 @@
 package com.example.budgetbuddy.activities;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,22 +12,23 @@ import androidx.core.view.WindowCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.budgetbuddy.R;
-import com.example.budgetbuddy.utility.InputValidator;
-import com.example.budgetbuddy.viewmodel.BudgetViewModel;
+import com.example.budgetbuddy.viewmodel.StartupViewModel;
 
-// The FirstTimeStartup activity handles the case where the
-// "notFirstRun" flag is false in the Preferences
-
-// It is responsible for prompting the user to enter their preferred budget
-// and updating the SharedPreferences
-
-// It is ONLY ran on first startup
+/**
+ * Activity to run on the first startup of the application. Accepts user-defined budget & passes
+ * budget values to StartupViewModel.
+ */
 public class FirstTimeStartupActivity extends AppCompatActivity
 {
-    private EditText budgetText;
+    private StartupViewModel startupViewModel;
 
-    private BudgetViewModel budgetViewModel;
-
+    /**
+     * Initialises <code>budgetText</code> and <code>startupViewModel</code>
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -40,60 +39,40 @@ public class FirstTimeStartupActivity extends AppCompatActivity
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         EdgeToEdge.enable(this);
 
-        // Get the EditText from the view
-        budgetText = findViewById(R.id.editTextBudget);
 
-        // Get an instance of the BudgetViewModel
-        budgetViewModel = new ViewModelProvider(this).get(BudgetViewModel.class);
+        // Get an instance of the StartupViewModel
+        startupViewModel = new ViewModelProvider(this).get(StartupViewModel.class);
     }
 
-    // Handle the button press with input validation
+    /**
+     * Invoked when start button is pressed. Takes user input from budgetText & passes to <code>StartupViewModel</code>.
+     * Alerts user with <code>Toast</code> messages for invalid <code>ValidationState</code> values
+     * @param v the view
+     */
     public void startButtonPressed(View v)
     {
-        double validatedInput = 0;
-        String inputText = budgetText.getText().toString();
+        EditText budgetText = findViewById(R.id.editTextBudget);        // Get the EditText from the view
 
-        // Check if empty
-        if (!inputText.isEmpty())
+        // Get the input text and pass to the ViewModel
+        switch(startupViewModel.setBudget(budgetText.getText().toString()))
         {
-            // Validate the input
-            if (InputValidator.validateCurrencyInput(inputText))
-            {
-                validatedInput = Double.parseDouble(inputText);
-                Log.v("FirstTimeStartupActivity", "Budget set: " + inputText);
-            } else
-            {
-                Log.v("FirstTimeStartupActivity", "Invalid input: " + inputText);
-            }
+            case NONE:
+                goToMain();
+                break;
+            case INVALID_AMOUNT:
+                Toast.makeText(this, "Invalid budget! (Format must be XXX.YY)", Toast.LENGTH_SHORT).show();
+                break;
+            case EMPTY:
+                Toast.makeText(this, "Please enter a budget!", Toast.LENGTH_SHORT).show();
+                break;
         }
-
-        updatePreferences(validatedInput); // Call updatePreferences before returning
-        returnToMain();
     }
 
-    // Start an intent to return to the MainActivity
-    private void returnToMain()
+    /**
+     * Starts an <code>Intent</code> to return to MainActivity
+     */
+    private void goToMain()
     {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
-    // Set the firstRun flag to false and add the "budget" flag with the user amount
-    private void updatePreferences(double budget)
-    {
-        // Get the shared preferences
-        SharedPreferences prefs = this.getSharedPreferences("appPreferences", Context.MODE_PRIVATE);
-
-        // Create an editor for the shared preferences
-        SharedPreferences.Editor editor = prefs.edit();
-
-        // Set the notFirstRun flag to false
-        editor.putBoolean("notFirstRun", true);
-        editor.apply(); // Commit the changes
-
-        // Update the budget through the BudgetViewModel
-        budgetViewModel.setBudget(budget);
-
-        Log.v("FirstTimeStartupActivity", "Updated appPreferences");
+        startActivity(new Intent(this, MainActivity.class));
     }
 }

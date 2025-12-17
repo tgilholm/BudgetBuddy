@@ -8,4 +8,5 @@ public enum ValidationState
     INVALID_AMOUNT,     // <= 0 or non-numeric
     INVALID_DATE,       // Unparseable date/time
     NO_CATEGORY,        // No chip selected
+    EMPTY               // No text selected
 }

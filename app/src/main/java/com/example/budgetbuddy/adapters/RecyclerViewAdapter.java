@@ -67,7 +67,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         final TransactionDiffCallback diffCallback = new TransactionDiffCallback(this._transactions, transactions);
         final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);    // Calculate the result of the operation
 
-
         this._transactions.clear();                         // Clear the list held in the Adapter
         this._transactions.addAll(transactions);            // Add the new list to the Adapter
         diffResult.dispatchUpdatesTo(this);        // Tells the RecyclerView to update the display
