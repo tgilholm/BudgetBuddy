@@ -23,6 +23,7 @@ import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.entities.TransactionWithCategory;
 import com.example.budgetbuddy.utility.ColorHandler;
 import com.example.budgetbuddy.utility.Converters;
+import com.example.budgetbuddy.utility.PieChartHandler;
 import com.example.budgetbuddy.utility.TransactionCalculator;
 import com.example.budgetbuddy.viewmodel.BudgetViewModel;
 import com.example.budgetbuddy.viewmodel.OverviewViewModel;
@@ -39,10 +40,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The fragment subclass for the Overview section of the app
+ * The fragment subclass for the Overview section of the app.
  * Connects to fragment_overview.xml to provide layout
  */
-
 public class OverviewFragment extends Fragment
 {
     private RecyclerViewAdapter recyclerViewAdapter;
@@ -54,23 +54,33 @@ public class OverviewFragment extends Fragment
     private TextView txtTotalBudget;
 
 
-    // A MediatorLiveData is used to link together the LiveData from the budget and transaction list
+    // Links the budget and transaction LiveData
     private final MediatorLiveData<Pair<Double, Double>> budgetTransactionMediator = new MediatorLiveData<>();
 
 
+    /**
+     * Instantiates the <code>View</code>. Gets the layout elements, sets up the <code>ViewModels</code>.
+     * Sets up the <code>FloatingActionButton</code> to direct the user to the <code>AddFragment</code>.
+     * Observes the transaction list and updates the <code>RecyclerView</code> and <code>PieChart</code>.
+     * Observes the <code>MediatorLiveData</code> combining the two to update the remaining budget.
+     *
+     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
 
         // Get the Views from the layout
-        pieChart = view.findViewById(R.id.pieChart);                                // Get the pie chart from the layout
-        txtBudgetRemaining = view.findViewById(R.id.tvBudgetRemaining);            // Get the budget remaining text from the layout
-        txtTotalBudget = view.findViewById(R.id.tvTotalBudget);                    // Get the total budget text from the layout
-        RecyclerView rvPartialHistory = view.findViewById(R.id.rvPartialHistory);   // Get the recycler view from the layout
-        FloatingActionButton addButton = view.findViewById(R.id.overviewAddButton); // Get the FloatingActionButton from the layout
+        pieChart = view.findViewById(R.id.pieChart);
+        txtBudgetRemaining = view.findViewById(R.id.tvBudgetRemaining);
+        txtTotalBudget = view.findViewById(R.id.tvTotalBudget);
+        RecyclerView rvPartialHistory = view.findViewById(R.id.rvPartialHistory);
+        FloatingActionButton addButton = view.findViewById(R.id.overviewAddButton);
 
-        setupPieChart();    // Set the PieChart styling options
+        PieChartHandler.setupPieChart(pieChart, ColorHandler.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
 
 
         // Set up the Transaction and Budget ViewModels
@@ -148,13 +158,14 @@ public class OverviewFragment extends Fragment
         });
     }
 
-    // Helper method to calculate the remaining budget
-    // The budget needs to be recalculated if either the budget changes or a new transaction is added
-    // This method is invoked whenever the MediatorLiveData updates
+    /**
+     * Helper method to calculate the remaining budget and update the UI
+     *
+     * @param totalBudget <code>Double</code> value representing total budget
+     * @param remainingBudget <code>Double</code> value representing remaining budget
+     */
     private void updateRemainingBudget(Double totalBudget, Double remainingBudget)
     {
-        Log.v("OverviewFragment", "updateRemainingBudget called");
-
         // Display the remaining budget
         txtBudgetRemaining.setText(Converters.doubleToCurrencyString(remainingBudget));
 
@@ -167,6 +178,18 @@ public class OverviewFragment extends Fragment
     }
 
 
+    /**
+     * Called to inflate the layout to create the view
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return the View for the fragment's UI, or null.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -175,44 +198,11 @@ public class OverviewFragment extends Fragment
     }
 
 
-    // Sets up the styling of the pie chart
-    private void setupPieChart()
-    {
-        // Set pie chart properties
-        pieChart.setUsePercentValues(true);                             // Calculate by category percentage
-        pieChart.getDescription().setEnabled(false);                    // Remove the description label
-        pieChart.setDrawHoleEnabled(true);
-        pieChart.setHoleColor(Color.TRANSPARENT);                       // Sets a hole in the middle of the cart
-        pieChart.setHoleRadius(40f);                                    // Make the hole smaller
-        pieChart.setDrawEntryLabels(false);                             // Remove the labels from slices
-
-
-        // Set the legend of the pie chart
-        Legend legend = pieChart.getLegend();
-        legend.setEnabled(true);
-        legend.setTextSize(12f);
-
-        // Set the colour to the dynamic foreground colour
-        legend.setTextColor(ColorHandler.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
-        legend.setTypeface(Typeface.MONOSPACE);                         // Use a monospace font so string padding works properly
-
-        // Set the alignment to be to the centre right of the chart
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
-        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        legend.setOrientation(Legend.LegendOrientation.VERTICAL);       // Stack the legend vertically
-
-        // Set the draw location of the legend
-        legend.setDrawInside(false);
-        legend.setXEntrySpace(0f);     // X offset
-        legend.setYEntrySpace(0f);      // Y offset
-    }
-
-
-    // Add new data to the pie chart
-    // Displays only the top three categories by name, then aggregates the rest as "other"
-    // Also displays a legend of categories and the percentage they take up
-    // Pads the label with spaces between the category name and percentage for readability
-
+    /**
+     * Updates the PieChart with the new data
+     *
+     * @param transactions a list of <code>TransactionWithCategory</code> objects to update the chart with
+     */
     private void updatePieChart(List<TransactionWithCategory> transactions)
     {
         if (transactions == null || transactions.isEmpty())

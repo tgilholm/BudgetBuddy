@@ -36,8 +36,9 @@ import java.util.List;
 
 
 /**
- * The fragment subclass for the Add section of the app.
- * Connects to fragment_add.xml to provide layout
+ * The fragment class for the Add section of the app.
+ * Connects to fragment_add.xml to provide layout and event listeners.
+ * Takes user input and passes it to the ViewModel for validation.
  */
 public class AddFragment extends Fragment
 {
@@ -51,7 +52,20 @@ public class AddFragment extends Fragment
     private String pendingCategory = "";    // Holds the name of a new category to be selected
 
 
-    // Creates the layout and event listeners for the fragment
+    /**
+     * Called to instantiate the fragment view. Gets Views from the layout, sets click listeners and result listeners,
+     * and connects the AddViewModel to get the list of categories
+
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return Return the View for the fragment's UI, or null.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -71,12 +85,9 @@ public class AddFragment extends Fragment
         radioGroupType = v.findViewById(R.id.radioGroupSelectType);
         radioGroupRepeat = v.findViewById(R.id.radioGroupSelectRepeat);
 
-
-        // Connect the AddViewModel
-        addViewModel = new ViewModelProvider(requireActivity()).get(AddViewModel.class);
+        addViewModel = new ViewModelProvider(requireActivity()).get(AddViewModel.class);        // Connect the AddViewModel
 
 
-        // Set the onClickListener for the time and date pickers
         dateText.setOnClickListener(v1 ->
         {
             // Open a date picker
@@ -93,18 +104,14 @@ public class AddFragment extends Fragment
         addButton.setOnClickListener(this::onAddPressed);
 
 
-        // FRAGMENT RESULT LISTENERS
-        /*
-        Connects the date and time picker fragments to the parent fragment manager
-        onFragmentResult is used to take the bundled date or time from the fragment
-        and pass it to AddFragment
-         */
+        // Get the result from the datePicker and update dateText
         getParentFragmentManager().setFragmentResultListener("dateKey", this, (requestKey, bundle) ->
         {
             String result = bundle.getString("dateKey");
             dateText.setText(result);   // Update the dateText field with the requested date
         });
 
+        // Get the result from the timePicker and update timeText
         getParentFragmentManager().setFragmentResultListener("timeKey", this, (requestKey, bundle) ->
         {
             String result = bundle.getString("timeKey");
@@ -123,8 +130,7 @@ public class AddFragment extends Fragment
         });
 
 
-        // Set up the observer on the categories list
-        // When new categories are added, refresh the category list
+        // Refreshes the chipGroup with new categories
         addViewModel.getCategories().observe(getViewLifecycleOwner(), categories ->
         {
             categoryList = categories;
@@ -250,7 +256,9 @@ public class AddFragment extends Fragment
 
 
     /**
-     * Get the amount string from the EditText with whitespace removed
+     * Get the amount string from the EditText with whitespace removed.
+     *
+     * @return the amount string
      */
     @NonNull
     private String getAmount()
@@ -260,6 +268,8 @@ public class AddFragment extends Fragment
 
     /**
      * Get the transaction type from the RadioGroup
+     *
+     * @return the transaction type
      */
     private TransactionType getType()
     {
@@ -275,7 +285,8 @@ public class AddFragment extends Fragment
 
     /**
      * Returns the category ID stored in the tag of the selected chip.
-     * Returns a long categoryID if found, -1 if no chip is selected
+     *
+     * @return the category ID or -1
      */
     private long getSelectedCategoryID()
     {
@@ -296,6 +307,8 @@ public class AddFragment extends Fragment
 
     /**
      * Gets the date from the EditText
+     *
+     * @return the date string
      */
     @NonNull
     private String getDate()
@@ -306,6 +319,8 @@ public class AddFragment extends Fragment
 
     /**
      * Gets the time from the EditText
+     *
+     * @return the time string
      */
     @NonNull
     private String getTime()
@@ -316,6 +331,8 @@ public class AddFragment extends Fragment
 
     /**
      * Get the repeat duration from the radio group
+     *
+     * @return the repeat duration
      */
     private RepeatDuration getRepeatDuration()
     {
