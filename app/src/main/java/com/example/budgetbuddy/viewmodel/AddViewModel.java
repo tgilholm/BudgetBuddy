@@ -56,7 +56,7 @@ public class AddViewModel extends AndroidViewModel
         }
 
         // Validate the category
-        if (categoryID <= 0)
+        if (categoryID < 0)
         {
             return ValidationState.NO_CATEGORY;
         }

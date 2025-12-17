@@ -67,19 +67,22 @@ public class EditRecyclerViewAdapter extends RecyclerViewAdapter{
 
             // Extend the bind method by setting a click listener on the deleteButton
             // Removes the transaction when the button is clicked
-            setDeleteButton(deleteButton, transaction);
+            setDeleteButton(deleteButton);
 
         }
 
-        private void setDeleteButton(ImageButton deleteButton, TransactionWithCategory transactionWithCategory) {
+        private void setDeleteButton(ImageButton deleteButton) {
             deleteButton.setOnClickListener(view ->
             {
                 int position = getBindingAdapterPosition();
 
                 if (position != RecyclerView.NO_POSITION  && onDeleteClickListener != null)
                 {
-                    onDeleteClickListener.onDeleteClicked(transactionWithCategory);
-                    Log.v("EditRecyclerViewAdapter", "Deleting transaction " + transactionWithCategory.transaction.getId());
+                    onDeleteClickListener.onDeleteClicked(_transactions.get(position));
+                    Log.v("EditRecyclerViewAdapter", "Deleting transaction " + _transactions.get(position).transaction.getId());
+
+                    // Remove from RecyclerView's internal list
+                    _transactions.remove(position);
 
                     // Refresh the RecyclerView
                     notifyItemRemoved(position);
