@@ -34,12 +34,9 @@ public class BudgetViewModel extends AndroidViewModel
 
         listener = (sharedPreferences, key) ->
         {
-            Log.v("BudgetViewModel", "SharedPreferences updated");
-            Log.v("BudgetViewModel", "Key = " + key);
             // Update the budget when a change is made
             if (key != null && key.equals("budget"))
             {
-                Log.v("BudgetViewModel", prefs.getString(key, "0"));
                 getBudgetFromPrefs();
             }
         };
@@ -54,7 +51,8 @@ public class BudgetViewModel extends AndroidViewModel
     private void getBudgetFromPrefs()
     {
         // preferences.xml always stores the budget as a string
-        Log.v("BudgetViewModel", "getBudgetFromPrefs fired, read budget as " + prefs.getFloat("budget", 0));
+        //Log.v("BudgetViewModel", "getBudgetFromPrefs fired, read budget as " + prefs.getFloat("budget", 0));
+        //Log.v("BudgetViewModel", "prefs.getString " + prefs.getString("budget", "0"));
         budget.postValue((double) prefs.getFloat("budget", 0)); // default to 0
     }
 

@@ -96,6 +96,6 @@ public class StartupViewModel extends AndroidViewModel
 
     public boolean getFirstRun()
     {
-        return prefs.getBoolean("firstRun", false);
+        return prefs.getBoolean("firstRun", true);
     }
 }

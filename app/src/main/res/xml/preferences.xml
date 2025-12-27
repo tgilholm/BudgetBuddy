@@ -13,7 +13,7 @@
         <EditTextPreference
             android:key="budget"
             android:title="Edit budget"
-            android:defaultValue="0"
+            android:defaultValue= "@dimen/default_budget"
             android:inputType="numberDecimal"/>
 
     </androidx.preference.PreferenceCategory>

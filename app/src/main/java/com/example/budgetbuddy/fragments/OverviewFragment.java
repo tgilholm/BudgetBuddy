@@ -1,7 +1,5 @@
 package com.example.budgetbuddy.fragments;
 
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,7 +27,6 @@ import com.example.budgetbuddy.viewmodel.BudgetViewModel;
 import com.example.budgetbuddy.viewmodel.OverviewViewModel;
 import com.example.budgetbuddy.adapters.RecyclerViewAdapter;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.formatter.PercentFormatter;

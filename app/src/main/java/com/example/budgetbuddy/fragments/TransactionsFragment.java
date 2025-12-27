@@ -22,19 +22,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The fragment subclass for the Transaction section of the app
- * Connects to fragment_transactions.xml to provide layout
- * Displays a RecyclerView with delete options for each transaction
+ * The fragment subclass for the Transactions section of the app.
+ * Connects to fragment_transactions.xml to provide layout.
+ * Displays a <code>RecyclerView</code> with deletable transaction history
  */
-
 public class TransactionsFragment extends Fragment
 {
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        }
-
+    /**
+     * Inflates thet layout for the fragment
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return the View for the fragment's UI, or null.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -42,6 +47,12 @@ public class TransactionsFragment extends Fragment
         return inflater.inflate(R.layout.fragment_transactions, container, false);
     }
 
+    /**
+     * Connects to the TransactionViewModel, connects transaction history to the RecyclerView.
+     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     */
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
