@@ -13,6 +13,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.preference.PreferenceManager;
 
+import com.example.budgetbuddy.utility.InputValidator;
+
 
 // Implements OnSharedPreferenceChangeListener to listen to changes made to the budget from the settings menu
 // This means that the changes made will be propagated throughout the application correctly
@@ -47,16 +49,26 @@ public class BudgetViewModel extends AndroidViewModel
         getBudgetFromPrefs();   // Update the budget value
     }
 
-    // Retrieve the "budget" field from the SharedPreferences
+    /**
+     * Retrieve the user-defined budget from shared preferences, cast to double
+     * and update the internal budget of this <code>BudgetViewModel</code> instance
+     */
     private void getBudgetFromPrefs()
     {
-        // preferences.xml always stores the budget as a string
-        //Log.v("BudgetViewModel", "getBudgetFromPrefs fired, read budget as " + prefs.getFloat("budget", 0));
-        //Log.v("BudgetViewModel", "prefs.getString " + prefs.getString("budget", "0"));
-        budget.postValue((double) prefs.getFloat("budget", 0)); // default to 0
+        // Get the budget as a string from prefs
+        String stringBudget = prefs.getString("budget", "0");
+
+        // Attempt to parse to a double (should be fine but double check)
+        if (InputValidator.validateCurrencyInput(stringBudget))
+        {
+            budget.postValue(Double.parseDouble(stringBudget));
+        }
+        else {
+            Log.e("BudgetViewModel", "Failed to load string budget from prefs");
+        }
     }
 
-    // Return the value of the budget
+
     public MutableLiveData<Double> getBudget()
     {
         return budget;

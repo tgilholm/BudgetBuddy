@@ -24,8 +24,8 @@ public final class InputValidator
      * <pre>
      * [0-9]+          Matches if the string contains one-or-more numbers- i.e. 50<br>
      * [.]             Matches if the string contains a decimal point<br>
-     * [0-9]{2}        Matches if numeric and ONLY 2 d.p.<br>
-     * ([.][0-9]{2})?  Matches if numeric after the d.p (optional) <br>
+     * [0-9]{1, 2}        Matches if numeric and at most 2 d.p.<br>
+     * ([.][0-9]{1,2})?  Matches if numeric after the d.p (optional) <br>
      * Complete Regex: [0-9]+([.][0-9]{2})?
      * </pre>
      *
@@ -41,7 +41,8 @@ public final class InputValidator
         }
 
         // Checks the input against the regex
-        return input.matches("[0-9]+([.][0-9]{2})?");
+        Log.v("InputValidator", "Input String: " + input + ", matches regex: " + input.matches("[0-9]+([.][0-9]{1,2})?"));
+        return input.matches("[0-9]+([.][0-9]{1,2})?");
     }
 
     /**
@@ -103,4 +104,5 @@ public final class InputValidator
                 return null;
         }
     }
+
 }

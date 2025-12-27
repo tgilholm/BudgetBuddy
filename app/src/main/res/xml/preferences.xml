@@ -9,12 +9,10 @@
 
         <!-- An EditTextPreference to select the budget -->
         <!-- This opens a prompt where the user can type in a budget amount -->
-        <!-- Stores the default budget as a float with value 0 -->
         <EditTextPreference
             android:key="budget"
             android:title="Edit budget"
-            android:defaultValue= "@dimen/default_budget"
-            android:inputType="numberDecimal"/>
+            android:defaultValue= "0.0"/>
 
     </androidx.preference.PreferenceCategory>
 

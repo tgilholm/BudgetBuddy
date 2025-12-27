@@ -21,6 +21,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
     /**
      * Gets the preferences from preferences.xml. Intercepts new preferences with a
      * <code>onPreferenceChangeListener</code>.
+     *
      * @param savedInstanceState If the fragment is being re-created from a previous saved state,
      *                           this is the state.
      * @param rootKey            If non-null, this preference fragment should be rooted at the
@@ -33,7 +34,11 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
         // Validate input before saving
         EditTextPreference budgetPreference = findPreference("budget");
-        if (budgetPreference != null) {
+        if (budgetPreference == null)
+        {
+            Log.e("SettingsFragment", "Failed to load budget preference");
+        } else
+        {
             budgetPreference.setOnPreferenceChangeListener((preference, newValue) ->
             {
                 String validatedInput;
@@ -43,7 +48,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
                     validatedInput = ((String) newValue).trim();
 
                     // Validate the input and show a toast if successful
-                    if (InputValidator.validateCurrencyInput(validatedInput)) {
+                    if (InputValidator.validateCurrencyInput(validatedInput))
+                    {
                         Toast.makeText(getContext(), "Budget changed to: £" + validatedInput, Toast.LENGTH_SHORT).show();
                         return true;
                     }

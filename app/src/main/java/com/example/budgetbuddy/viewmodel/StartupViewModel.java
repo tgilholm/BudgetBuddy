@@ -86,9 +86,13 @@ public class StartupViewModel extends AndroidViewModel
     }
 
 
+    /**
+     * Helper method to set the budget requested by a user and update the firstRun flag
+     * @param newBudget the new budget set by the user
+     */
     private void updatePreferences(@NonNull Double newBudget)
     {
-        prefs.edit().putFloat("budget", newBudget.floatValue()).apply();
+        prefs.edit().putString("budget", String.valueOf(newBudget)).apply();
         prefs.edit().putBoolean("firstRun", false).apply();
 
         Log.v("FirstTimeStartupActivity", "Updated appPreferences");

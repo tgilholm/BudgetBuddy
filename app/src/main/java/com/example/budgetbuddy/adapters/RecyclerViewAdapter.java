@@ -140,7 +140,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             } else
             {
                 // Negative transactions are red with a minus sign
-                textAmount.setText("-" + Converters.doubleToCurrencyString(t.getAmount()));
+                textAmount.setText(String.format("-%s", Converters.doubleToCurrencyString(t.getAmount())));
                 textAmount.setTextColor(ColorHandler.resolveColorID(itemView.getContext(), R.color.brightRed));
             }
             textDateTime.setText(t.getDateTimeString());
