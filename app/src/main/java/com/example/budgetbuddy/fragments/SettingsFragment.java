@@ -5,12 +5,15 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.utility.InputValidator;
+import com.example.budgetbuddy.viewmodel.BudgetViewModel;
+import com.example.budgetbuddy.viewmodel.StartupViewModel;
 
 /**
  * Extends PreferenceFragmentCompat. Loads <code>preferences.xml</code> to create the options,
@@ -30,39 +33,38 @@ public class SettingsFragment extends PreferenceFragmentCompat
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey)
     {
+        // Get an instance of the BudgetViewModel
+        BudgetViewModel budgetViewModel = new ViewModelProvider(this).get(BudgetViewModel.class);
+
+        // Load the preferences from the xml file
         addPreferencesFromResource(R.xml.preferences);
 
-        // Validate input before saving
+        // Null-check
         EditTextPreference budgetPreference = findPreference("budget");
         if (budgetPreference == null)
         {
             Log.e("SettingsFragment", "Failed to load budget preference");
         } else
         {
+            // Send new budgets to the BudgetViewModel to save & validate
             budgetPreference.setOnPreferenceChangeListener((preference, newValue) ->
             {
-                String validatedInput;
-                try
+                switch (budgetViewModel.validateBudget(newValue))
                 {
-                    // Attempt to cast to a String
-                    validatedInput = ((String) newValue).trim();
-
-                    // Validate the input and show a toast if successful
-                    if (InputValidator.validateCurrencyInput(validatedInput))
-                    {
-                        Toast.makeText(getContext(), "Budget changed to: £" + validatedInput, Toast.LENGTH_SHORT).show();
-                        return true;
-                    }
-                    Log.v("SettingsFragment", "Failed to set preferences");
-                    return false;
-
-                } catch (Exception e)
-                {
-                    Toast.makeText(getContext(), "Invalid input!", Toast.LENGTH_SHORT).show();
-                    return false;
+                    case NONE:
+                        Toast.makeText(getContext(), "Budget changed to: £" + newValue, Toast.LENGTH_SHORT).show();
+                        Log.v("SettingsFragment", "Updated budget to: " + newValue);
+                        return true; // Accept the new budget, update preferences
+                    case INVALID_AMOUNT:
+                        Toast.makeText(getContext(), "Invalid amount! (Format must be XXX.YY)", Toast.LENGTH_SHORT).show();
+                        return false;
+                    case EMPTY:
+                        Toast.makeText(getContext(), "No budget selected!)", Toast.LENGTH_SHORT).show();
+                        return false;
+                    default:
+                        return false;   // Only accept change if "NONE" validation state received
                 }
             });
         }
-
     }
 }

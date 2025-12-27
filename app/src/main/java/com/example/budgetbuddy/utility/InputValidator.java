@@ -41,7 +41,6 @@ public final class InputValidator
         }
 
         // Checks the input against the regex
-        Log.v("InputValidator", "Input String: " + input + ", matches regex: " + input.matches("[0-9]+([.][0-9]{1,2})?"));
         return input.matches("[0-9]+([.][0-9]{1,2})?");
     }
 
@@ -104,5 +103,4 @@ public final class InputValidator
                 return null;
         }
     }
-
 }

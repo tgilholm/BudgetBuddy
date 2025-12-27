@@ -13,6 +13,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.preference.PreferenceManager;
 
+import com.example.budgetbuddy.enums.ValidationState;
 import com.example.budgetbuddy.utility.InputValidator;
 
 
@@ -62,8 +63,8 @@ public class BudgetViewModel extends AndroidViewModel
         if (InputValidator.validateCurrencyInput(stringBudget))
         {
             budget.postValue(Double.parseDouble(stringBudget));
-        }
-        else {
+        } else
+        {
             Log.e("BudgetViewModel", "Failed to load string budget from prefs");
         }
     }
@@ -80,5 +81,34 @@ public class BudgetViewModel extends AndroidViewModel
         super.onCleared();
         // Unregister the Preference listener
         prefs.unregisterOnSharedPreferenceChangeListener(listener);
+    }
+
+    public ValidationState validateBudget(Object budget)
+    {
+        String validatedInput = null;
+
+        // Cast to string
+        try
+        {
+            validatedInput = ((String) budget).trim();
+        } catch (Exception e)
+        {
+            return ValidationState.INVALID_AMOUNT;
+        }
+
+        // Check if empty
+        if (validatedInput.isEmpty())
+        {
+            return ValidationState.EMPTY;
+        }
+
+        // Validate budget amount
+        if (InputValidator.validateCurrencyInput(validatedInput))
+        {
+            return ValidationState.NONE;
+        } else
+        {
+            return ValidationState.INVALID_AMOUNT;
+        }
     }
 }
