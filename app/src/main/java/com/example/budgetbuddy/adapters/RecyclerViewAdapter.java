@@ -32,8 +32,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     /**
      * Constructs a new adapter
+     *
      * @param transactions a list of <code>TransactionWithCategory</code> objects
-     * @param resource the ID of the layout xml to load
+     * @param resource     the ID of the layout xml to load
      */
     public RecyclerViewAdapter(List<TransactionWithCategory> transactions, @LayoutRes int resource)
     {
@@ -43,6 +44,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     /**
      * Load the layout resource
+     *
      * @param parent   The ViewGroup into which the new View will be added after it is bound to
      *                 an adapter position.
      * @param viewType The view type of the new View.
@@ -59,7 +61,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     /**
      * Bind the <code>TransactionWithCategory</code> at the passed <code>position</code> to the <code>ViewHolder</code>
-     * @param holder the <code>ViewHolder</code> object
+     *
+     * @param holder   the <code>ViewHolder</code> object
      * @param position the position in the list to select
      */
     @Override
@@ -81,6 +84,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     /**
      * Takes the current list and the new list and passes them to <code>DiffUtil.DiffResult</code>
      * to update only the changed items in the list, then dispatches to the internal list
+     *
      * @param transactions the new list of <code>TransactionWithCategory</code> objects
      */
     public void updateTransactions(List<TransactionWithCategory> transactions)
@@ -106,6 +110,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         /**
          * Constructs a new <code>ViewHolder</code>
+         *
          * @param itemView the <code>View</code> object to construct from
          */
         public ViewHolder(@NonNull View itemView)
@@ -121,6 +126,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         /**
          * Sets the layout to the data in <code>transactionWithCategory</code>
          * Sets colour for negative/positive transactions and updates text fields
+         *
          * @param transactionWithCategory an item from the internal list
          */
         public void bind(@NonNull TransactionWithCategory transactionWithCategory)

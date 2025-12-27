@@ -12,8 +12,9 @@ import com.example.budgetbuddy.fragments.TransactionsFragment;
 
 /**
  * Extends <code>FragmentStateAdapter</code> to create all the fragments
-  */
-public class AppFragmentStateAdapter extends FragmentStateAdapter {
+ */
+public class AppFragmentStateAdapter extends FragmentStateAdapter
+{
 
     public AppFragmentStateAdapter(@NonNull FragmentActivity fragmentActivity)
     {
@@ -22,15 +23,18 @@ public class AppFragmentStateAdapter extends FragmentStateAdapter {
 
     /**
      * Get the number of fragment entities
+     *
      * @return int value of fragment count
      */
     @Override
-    public int getItemCount() {
+    public int getItemCount()
+    {
         return 4;
     }
 
     /**
      * Returns the <code>Fragment</code> corresponding to the <code>position</code> passed to it
+     *
      * @param position the index of the fragment
      * @return the corresponding fragment
      */
@@ -39,7 +43,8 @@ public class AppFragmentStateAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position)
     {
         // Switch to select which of the fragments to return
-        switch (position) {
+        switch (position)
+        {
             case 3:
                 return new SettingsFragment();
             case 2:

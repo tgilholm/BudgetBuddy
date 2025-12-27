@@ -11,9 +11,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
 import com.example.budgetbuddy.R;
-import com.example.budgetbuddy.utility.InputValidator;
 import com.example.budgetbuddy.viewmodel.BudgetViewModel;
-import com.example.budgetbuddy.viewmodel.StartupViewModel;
 
 /**
  * Extends PreferenceFragmentCompat. Loads <code>preferences.xml</code> to create the options,

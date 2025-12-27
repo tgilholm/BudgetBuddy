@@ -40,6 +40,7 @@ public class BudgetViewModel extends AndroidViewModel
             // Update the budget when a change is made
             if (key != null && key.equals("budget"))
             {
+                Log.d("BudgetViewModel", "SharedPreferences updated, refreshing internal value");
                 getBudgetFromPrefs();
             }
         };

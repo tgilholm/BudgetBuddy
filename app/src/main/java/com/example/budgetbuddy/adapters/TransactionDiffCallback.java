@@ -19,6 +19,7 @@ public class TransactionDiffCallback extends DiffUtil.Callback
 
     /**
      * Takes an old and new list of <code>TransactionWithCategory</code> objects
+     *
      * @param oldTransactionList the old list
      * @param newTransactionList the new list
      */
@@ -30,6 +31,7 @@ public class TransactionDiffCallback extends DiffUtil.Callback
 
     /**
      * Get the size of the old list
+     *
      * @return <code>int</code> size value
      */
     @Override
@@ -40,6 +42,7 @@ public class TransactionDiffCallback extends DiffUtil.Callback
 
     /**
      * Get the size of the new list
+     *
      * @return <code>int</code> size value
      */
     @Override
@@ -50,6 +53,7 @@ public class TransactionDiffCallback extends DiffUtil.Callback
 
     /**
      * Compares two items in a list by their ID
+     *
      * @param oldItemPosition The position of the item in the old list
      * @param newItemPosition The position of the item in the new list
      * @return true if the IDs are the same, false if not
@@ -62,6 +66,7 @@ public class TransactionDiffCallback extends DiffUtil.Callback
 
     /**
      * Compares two Transactions by their date and time
+     *
      * @param oldItemPosition The position of the item in the old list
      * @param newItemPosition The position of the item in the new list which replaces the
      *                        oldItem

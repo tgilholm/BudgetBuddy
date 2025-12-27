@@ -24,9 +24,11 @@ import com.google.android.material.tabs.TabLayoutMediator;
  * Contains the fragments within a <code>ViewPager2</code> attached to a <code>TabLayout</code> for top-bar navigation and automatically updates title bar text.
  * Also handles first time startup logic via the <code>StartupViewModel</code>
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+{
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
@@ -43,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         // If first run, go to onboard activity
-        if (startupViewModel.getFirstRun()) {
+        if (startupViewModel.getFirstRun())
+        {
             firstTimeStartup();
             Log.v("MainActivity", "First startup, moving to onboarding activity");
         }
@@ -66,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
                 // Set the tab to the selected fragment title
                 (tab, position) ->
                 {
-                    switch (position) {
+                    switch (position)
+                    {
                         case 0:
                             tab.setText(R.string.title_overview);
                             break;
@@ -83,10 +87,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Set the title bar text to the currently selected fragment
-        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback()
+        {
             @Override
-            public void onPageSelected(int position) {
-                switch (position) {
+            public void onPageSelected(int position)
+            {
+                switch (position)
+                {
                     case 0:
                         toolbar.setTitle(R.string.title_overview);
                         break;
@@ -107,7 +114,8 @@ public class MainActivity extends AppCompatActivity {
         // Change currently active fragment to AddFragment if add button pressed
         getSupportFragmentManager().setFragmentResultListener("addPage", this, (requestKey, result) ->
         {
-            if (result.getInt(requestKey) == 1) {
+            if (result.getInt(requestKey) == 1)
+            {
                 toolbar.setTitle(R.string.title_add);
             }
             viewPager.setCurrentItem(1, true); // Set the ViewPager to the addFragment using a smooth scroll
@@ -118,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Starts an <code>Intent</code> to go to the <code>FirstTimeStartupActivity</code>
      */
-    private void firstTimeStartup() {
+    private void firstTimeStartup()
+    {
         startActivity(new Intent(this, FirstTimeStartupActivity.class));
     }
 }

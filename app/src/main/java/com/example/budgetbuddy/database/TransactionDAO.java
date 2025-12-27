@@ -16,10 +16,12 @@ import java.util.List;
  * Data Access Object for the Transaction Entity. Defines CRUD methods
  */
 @Dao
-public interface TransactionDAO {
+public interface TransactionDAO
+{
 
     /**
      * Gets all the transactions
+     *
      * @return a <code>LiveData</code> object containing a list of <code>Transaction</code> objects
      */
     @Query("SELECT * FROM 'transaction'")
@@ -27,6 +29,7 @@ public interface TransactionDAO {
 
     /**
      * Gets the list of transactions with the category they belong to
+     *
      * @return a <code>LiveData</code> object containing a list of <code>TransactionWithCategory</code> objects
      */
     @androidx.room.Transaction
@@ -35,6 +38,7 @@ public interface TransactionDAO {
 
     /**
      * Inserts new <code>Transaction</code> objects into the table
+     *
      * @param transaction the <code>Transaction</code> object to insert
      */
     @Insert
@@ -42,6 +46,7 @@ public interface TransactionDAO {
 
     /**
      * Deletes a <code>Transaction</code> object from the table
+     *
      * @param transaction the <code>Transaction</code> object to delete
      */
     @Delete
