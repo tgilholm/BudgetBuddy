@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,7 @@ import android.view.ViewGroup;
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.adapters.EditRecyclerViewAdapter;
 import com.example.budgetbuddy.entities.TransactionWithCategory;
-import com.example.budgetbuddy.utility.TransactionCalculator;
+import com.example.budgetbuddy.utility.TransactionUtils;
 import com.example.budgetbuddy.viewmodel.TransactionViewModel;
 
 import java.util.ArrayList;
@@ -55,6 +56,9 @@ public class TransactionsFragment extends Fragment
      */
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
+        Log.d("TransactionsFragment", "Loaded TransactionsFragment");
+
+
         super.onViewCreated(view, savedInstanceState);
 
 
@@ -77,8 +81,10 @@ public class TransactionsFragment extends Fragment
         // Set an observer on the transaction list to update the Recycler View
         transactionViewModel.getTransactions().observe(getViewLifecycleOwner(), transactionList ->
         {
+            Log.d("TransactionsFragment", "Updating Transaction List");
+
             // Add the list to the recyclerView on update
-            editRecyclerViewAdapter.updateTransactions(TransactionCalculator.sortTransactions(transactionList));
+            editRecyclerViewAdapter.updateTransactions(TransactionUtils.sortTransactions(transactionList));
 
             // Scroll back to the top of the RecyclerView to show the new transaction
             if (rvFullHistory.getLayoutManager() != null)

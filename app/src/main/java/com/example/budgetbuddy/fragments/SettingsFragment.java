@@ -31,6 +31,9 @@ public class SettingsFragment extends PreferenceFragmentCompat
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey)
     {
+        Log.d("SettingsFragment", "Loaded SettingsFragment");
+
+
         // Get an instance of the BudgetViewModel
         BudgetViewModel budgetViewModel = new ViewModelProvider(this).get(BudgetViewModel.class);
 

@@ -1,14 +1,27 @@
 package com.example.budgetbuddy.utility;
 
+import androidx.annotation.NonNull;
+
 import java.util.Locale;
 
-// Stateless utility class for string operations such as padding and formatting.
+/**
+ * Utility class to handle string formatting
+ */
 public final class StringUtils
 {
+    // Final class, no instantiation
     private StringUtils() {}
 
     // Returns a string padded with spaces to a specified length
-    private static String padRight(String s, int l)
+
+    /**
+     * Pads a string with a specified amount of spaces
+     * @param s the <code>String</code> to pad
+     * @param l an <code>int</code> for the amount of spaces
+     * @return a formatted <code>String</code>
+     */
+    @NonNull
+    private static String padRight(@NonNull String s, int l)
     {
         if (s.length() >= l)
         {
@@ -19,13 +32,16 @@ public final class StringUtils
         }
     }
 
-    // Takes a string and a double and formats them like so
-    // CategoryName        xx%
+    /**
+     * Formats a string for use in a PieChart label
+     * @param s the <code>String</code> to pad
+     * @param n an <code>int</code> for the amount of spaces
+     * @return a formatted <code>String</code>
+     */
+    @NonNull
     public static String formatLabel(String s, double n)
     {
         return String.format(Locale.getDefault(), "%s %.1f%%",
                 padRight(s, 16), n);
     }
-
-
 }

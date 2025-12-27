@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.dialogs.CategoryCreatorFragment;
 import com.example.budgetbuddy.entities.Category;
+import com.example.budgetbuddy.utility.TransactionUtils;
 import com.example.budgetbuddy.viewmodel.AddViewModel;
 import com.example.budgetbuddy.dialogs.DatePickerFragment;
 import com.example.budgetbuddy.utility.ChipHandler;
@@ -55,20 +56,21 @@ public class AddFragment extends Fragment
     /**
      * Called to instantiate the fragment view. Gets Views from the layout, sets click listeners and result listeners,
      * and connects the AddViewModel to get the list of categories
-
-     * @param inflater The LayoutInflater object that can be used to inflate
-     * any views in the fragment,
-     * @param container If non-null, this is the parent view that the fragment's
-     * UI should be attached to.  The fragment should not add the view itself,
-     * but this can be used to generate the LayoutParams of the view.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
      *
+     * @param inflater           The LayoutInflater object that can be used to inflate
+     *                           any views in the fragment,
+     * @param container          If non-null, this is the parent view that the fragment's
+     *                           UI should be attached to.  The fragment should not add the view itself,
+     *                           but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     *                           from a previous saved state as given here.
      * @return Return the View for the fragment's UI, or null.
      */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        Log.d("AddFragment", "Loaded AddFragment");
+
         // Instantiate a new View with the inflated XML layout
         View v = inflater.inflate(R.layout.fragment_add, container, false);
 
@@ -92,6 +94,7 @@ public class AddFragment extends Fragment
         {
             // Open a date picker
             DatePickerFragment datePicker = new DatePickerFragment(getContext());
+            Log.d("AddFragment", "Opening datePicker");
             datePicker.show(getParentFragmentManager(), "datePicker");
         });
 
@@ -99,6 +102,7 @@ public class AddFragment extends Fragment
         {
             // Open a time picker
             TimePickerFragment timePicker = new TimePickerFragment(getContext());
+            Log.d("AddFragment", "Opening timePicker");
             timePicker.show(getParentFragmentManager(), "timePicker");
         });
         addButton.setOnClickListener(this::onAddPressed);
@@ -109,6 +113,8 @@ public class AddFragment extends Fragment
         {
             String result = bundle.getString("dateKey");
             dateText.setText(result);   // Update the dateText field with the requested date
+
+            Log.d("AddFragment", "Received date from picker: " + result);
         });
 
         // Get the result from the timePicker and update timeText
@@ -116,6 +122,8 @@ public class AddFragment extends Fragment
         {
             String result = bundle.getString("timeKey");
             timeText.setText(result);   // Update the timeText field with the requested date
+
+            Log.d("AddFragment", "Received time from picker: " + result);
         });
 
         // Start the fragment result listener for the category creator
@@ -127,6 +135,8 @@ public class AddFragment extends Fragment
             // Send the category name and color to the AddViewModel to add a new category
             addViewModel.addCategory(categoryName, categoryColor);
             pendingCategory = categoryName;
+
+            Log.d("AddFragment", "Received new category from creator: " + categoryName);
         });
 
 
@@ -135,7 +145,6 @@ public class AddFragment extends Fragment
         {
             categoryList = categories;
             populateChipGroup(categories);
-
         });
 
         resetDateTime();   // Sets default values for the date and time fields
@@ -188,6 +197,8 @@ public class AddFragment extends Fragment
             }
         }
         chipGroupCategories.addView(addChip);
+
+        Log.d("AddFragment", "Populated ChipGroup with " + categories.size() + " categories");
     }
 
 
@@ -227,6 +238,7 @@ public class AddFragment extends Fragment
             case NONE:
                 // Successful add- clear the fields for the next transaction
                 Toast.makeText(getContext(), "Added new transaction!", Toast.LENGTH_SHORT).show();
+                Log.v("AddFragment", "Added new transaction with amount: " + amount);
                 resetFields();
                 break;
             case INVALID_AMOUNT:
@@ -234,8 +246,6 @@ public class AddFragment extends Fragment
                 break;
             case NO_CATEGORY:
                 Toast.makeText(getContext(), "No category selected!", Toast.LENGTH_SHORT).show();
-
-
         }
 
     }
@@ -252,6 +262,7 @@ public class AddFragment extends Fragment
         resetDateTime();                    // Reset the date and time
         radioGroupRepeat.clearCheck();
         rbNever.setChecked(true);           // Reset the repeat duration
+        Log.d("AddFragment", "Reset all input fields");
     }
 
 
@@ -344,6 +355,6 @@ public class AddFragment extends Fragment
         RadioButton rbSelected = radioGroupSelectRepeat.findViewById(selectedRadioButtonID);
 
         // Pass the rbSelected field to the selectRepeatDuration method in InputValidator
-        return InputValidator.selectRepeatDuration(rbSelected.getText().toString());
+        return TransactionUtils.selectRepeatDuration(rbSelected.getText().toString());
     }
 }

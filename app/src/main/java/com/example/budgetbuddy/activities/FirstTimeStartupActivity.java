@@ -55,7 +55,7 @@ public class FirstTimeStartupActivity extends AppCompatActivity
         EditText budgetText = findViewById(R.id.editTextBudget);        // Get the EditText from the view
 
         // Get the input text and pass to the ViewModel
-        switch (startupViewModel.setBudget(budgetText.getText().toString()))
+        switch (startupViewModel.validateBudget(budgetText.getText().toString()))
         {
             case NONE:
                 goToMain();

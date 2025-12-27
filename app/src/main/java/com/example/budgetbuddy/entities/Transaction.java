@@ -18,7 +18,8 @@ import com.example.budgetbuddy.enums.TransactionType;
  * and is incremented each time a new object is created.
  */
 @Entity(tableName = "transaction")
-public final class Transaction {
+public final class Transaction
+{
     private static long nextID;                     // Unique ID generator
 
     @PrimaryKey
@@ -49,7 +50,8 @@ public final class Transaction {
      * @param categoryID     a <code>long</code> value for the categoryID
      * @param repeatDuration a <code>RepeatDuration</code> value for the repeat duration
      */
-    public Transaction(double amount, TransactionType type, Calendar dateTime, long categoryID, RepeatDuration repeatDuration) {
+    public Transaction(double amount, TransactionType type, Calendar dateTime, long categoryID, RepeatDuration repeatDuration)
+    {
         this.id = nextID++; // Increment the ID counter by 1
         this.amount = amount;
         this.type = type;
@@ -63,7 +65,8 @@ public final class Transaction {
      *
      * @return the transaction ID
      */
-    public long getId() {
+    public long getId()
+    {
         return id;
     }
 
@@ -72,7 +75,8 @@ public final class Transaction {
      *
      * @param id the transaction ID
      */
-    public void setId(long id) {
+    public void setId(long id)
+    {
         this.id = id;
     }
 
@@ -81,7 +85,8 @@ public final class Transaction {
      *
      * @return the transaction amount
      */
-    public double getAmount() {
+    public double getAmount()
+    {
         return amount;
     }
 
@@ -90,7 +95,8 @@ public final class Transaction {
      *
      * @return the transaction type
      */
-    public TransactionType getType() {
+    public TransactionType getType()
+    {
         return type;
     }
 
@@ -99,7 +105,8 @@ public final class Transaction {
      *
      * @return a <code>Calendar</code> object containing the date and time
      */
-    public Calendar getDateTime() {
+    public Calendar getDateTime()
+    {
         return dateTime;
     }
 
@@ -108,7 +115,8 @@ public final class Transaction {
      *
      * @return the category ID
      */
-    public long getCategoryID() {
+    public long getCategoryID()
+    {
         return categoryID;
     }
 
@@ -117,7 +125,8 @@ public final class Transaction {
      *
      * @return the repeat duration
      */
-    public RepeatDuration getRepeatDuration() {
+    public RepeatDuration getRepeatDuration()
+    {
         return repeatDuration;
     }
 
@@ -127,17 +136,20 @@ public final class Transaction {
      * @return a <code>String</code> object combining all transaction data
      */
     @NonNull
-    public String toString() {
+    public String toString()
+    {
         return String.format(Locale.getDefault(), "ID: %s, Amount: %.2f, Type: %s, Date: %s", id, amount, type, dateTime.toString());
     }
 
     /**
      * Compares two transactions by their <code>dateTime</code> in milliseconds
-     * @param o   the reference object with which to compare.
+     *
+     * @param o the reference object with which to compare.
      * @return true if the objects are equal, false otherwise
      */
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o)
+    {
         if (this == o) return true; // Check if the two objects are exactly the same in memory
         if (o == null || getClass() != o.getClass())
             return false; // Check if the other object is not a Transaction or is null
@@ -150,10 +162,12 @@ public final class Transaction {
 
     /**
      * Generates a unique hashcode for this <code>Transaction</code> using all of its fields
+     *
      * @return a <code>int</code> value representing the hashcode
      */
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return Objects.hash(id, amount, type, dateTime, categoryID, repeatDuration);
     }
 
@@ -163,10 +177,9 @@ public final class Transaction {
      * @return a <code>String</code> object combining the date and time
      */
     @NonNull
-    public String getDateTimeString() {
-        return String.format(Locale.getDefault(), "%02d:%02d %02d/%02d/%d",
-                dateTime.get(Calendar.HOUR_OF_DAY), dateTime.get(Calendar.MINUTE),
-                dateTime.get(Calendar.DAY_OF_MONTH), dateTime.get(Calendar.MONTH) + 1, dateTime.get(Calendar.YEAR));
+    public String getDateTimeString()
+    {
+        return String.format(Locale.getDefault(), "%02d:%02d %02d/%02d/%d", dateTime.get(Calendar.HOUR_OF_DAY), dateTime.get(Calendar.MINUTE), dateTime.get(Calendar.DAY_OF_MONTH), dateTime.get(Calendar.MONTH) + 1, dateTime.get(Calendar.YEAR));
     }
 
 

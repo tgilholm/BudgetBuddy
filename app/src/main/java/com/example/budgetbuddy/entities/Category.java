@@ -10,7 +10,8 @@ import androidx.room.PrimaryKey;
  * It is shared by all <code>Category</code> objects and is incremented each time a new object is created.
  */
 @Entity(tableName = "category")
-public final class Category {
+public final class Category
+{
     private static long nextID;         // Static ID generator
 
     @PrimaryKey
@@ -30,7 +31,8 @@ public final class Category {
      * @param name    the name of the category
      * @param colorID the id of the colour (found in colors.xml)
      */
-    public Category(String name, int colorID) {
+    public Category(String name, int colorID)
+    {
         this.categoryID = nextID++; //
         this.name = name;
         this.colorID = colorID;
@@ -38,33 +40,41 @@ public final class Category {
 
     /**
      * Returns the category ID
+     *
      * @return the category ID
      */
-    public long getCategoryID() {
+    public long getCategoryID()
+    {
         return categoryID;
     }
 
     /**
      * Sets the category ID
+     *
      * @param id the category ID
      */
-    public void setCategoryID(long id) {
+    public void setCategoryID(long id)
+    {
         this.categoryID = id;
     }
 
     /**
      * Returns the category name
+     *
      * @return the category name
      */
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
     /**
      * Returns the colour ID
+     *
      * @return the colour ID
      */
-    public int getColorID() {
+    public int getColorID()
+    {
         return colorID;
     }
 }

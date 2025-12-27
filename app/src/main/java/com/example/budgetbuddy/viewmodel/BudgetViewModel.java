@@ -10,6 +10,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.preference.PreferenceManager;
 
@@ -17,11 +18,11 @@ import com.example.budgetbuddy.enums.ValidationState;
 import com.example.budgetbuddy.utility.InputValidator;
 
 
-// Implements OnSharedPreferenceChangeListener to listen to changes made to the budget from the settings menu
-// This means that the changes made will be propagated throughout the application correctly
+/**
+ * ViewModel interfacing with SharedPreferences to get and modify budget values
+ */
 public class BudgetViewModel extends AndroidViewModel
 {
-
     private final MutableLiveData<Double> budget = new MutableLiveData<>();
 
     private final SharedPreferences prefs;
@@ -30,11 +31,17 @@ public class BudgetViewModel extends AndroidViewModel
     private final SharedPreferences.OnSharedPreferenceChangeListener listener;
 
 
+    /**
+     * Constructs a new <code>BudgetViewModel</code>
+     *
+     * @param application the application context
+     */
     public BudgetViewModel(@NonNull Application application)
     {
         super(application);
         prefs = PreferenceManager.getDefaultSharedPreferences(application);
 
+        // Observe the sharedPreferences. If the budget changes, update the internal budget value
         listener = (sharedPreferences, key) ->
         {
             // Update the budget when a change is made
@@ -70,12 +77,20 @@ public class BudgetViewModel extends AndroidViewModel
         }
     }
 
-
-    public MutableLiveData<Double> getBudget()
+    /**
+     * Return an immutable <code>LiveData</code> version of the budget value
+     *
+     * @return a <code>LiveData</code> <code>double</code>
+     */
+    public LiveData<Double> getBudget()
     {
         return budget;
     }
 
+    /**
+     * Overrides <code>onCleared()</code> from superclass.
+     * Unregisters the preference listener to prevent memory leaks
+     */
     @Override
     protected void onCleared()
     {
@@ -84,6 +99,12 @@ public class BudgetViewModel extends AndroidViewModel
         prefs.unregisterOnSharedPreferenceChangeListener(listener);
     }
 
+    /**
+     * Validates a newly-set budget <code>Object</code>
+     *
+     * @param budget an <code>Object</code>
+     * @return <code>ValidationState.NONE</code> if succeeded. Otherwise, <code>INVALID_AMOUNT</code> or <code>EMPTY</code>
+     */
     public ValidationState validateBudget(Object budget)
     {
         String validatedInput = null;

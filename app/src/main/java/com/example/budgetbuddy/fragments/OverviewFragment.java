@@ -22,7 +22,7 @@ import com.example.budgetbuddy.entities.TransactionWithCategory;
 import com.example.budgetbuddy.utility.ColorHandler;
 import com.example.budgetbuddy.utility.Converters;
 import com.example.budgetbuddy.utility.PieChartHandler;
-import com.example.budgetbuddy.utility.TransactionCalculator;
+import com.example.budgetbuddy.utility.TransactionUtils;
 import com.example.budgetbuddy.viewmodel.BudgetViewModel;
 import com.example.budgetbuddy.viewmodel.OverviewViewModel;
 import com.example.budgetbuddy.adapters.RecyclerViewAdapter;
@@ -61,13 +61,15 @@ public class OverviewFragment extends Fragment
      * Observes the transaction list and updates the <code>RecyclerView</code> and <code>PieChart</code>.
      * Observes the <code>MediatorLiveData</code> combining the two to update the remaining budget.
      *
-     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param view               The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
+     *                           from a previous saved state as given here.
      */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
+        Log.d("OverviewFragment", "Loaded overview fragment");
+
         super.onViewCreated(view, savedInstanceState);
 
         // Get the Views from the layout
@@ -77,8 +79,8 @@ public class OverviewFragment extends Fragment
         RecyclerView rvPartialHistory = view.findViewById(R.id.rvPartialHistory);
         FloatingActionButton addButton = view.findViewById(R.id.overviewAddButton);
 
+        // Set up the pieChart
         PieChartHandler.setupPieChart(pieChart, ColorHandler.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
-
 
         // Set up the Transaction and Budget ViewModels
         BudgetViewModel budgetViewModel = new ViewModelProvider(requireActivity()).get(BudgetViewModel.class);
@@ -97,17 +99,20 @@ public class OverviewFragment extends Fragment
         // The Runnable is executed when either the Transaction list or Budget is updated
         Runnable combinedData = () ->
         {
-            Log.v("OverviewFragment", "runnable combinedData called");
             Double currentBudget = budgetSource.getValue();
             List<TransactionWithCategory> currentTransactions = transactionSource.getValue();
 
             // Null check
             if (currentBudget != null && currentTransactions != null)
             {
-                double remainingBudget = overviewViewModel.getBudgetRemaining(currentBudget, currentTransactions);
+                Log.d("OverviewFragment", "Executing combinedData. Budget: " + currentBudget + " Transaction list size: " + currentTransactions.size());
+                double remainingBudget = TransactionUtils.getBudgetRemaining(currentBudget, currentTransactions);
 
                 // Pass the remaining budget to the mediatorLiveData and trigger the observer
                 budgetTransactionMediator.setValue(new Pair<>(currentBudget, remainingBudget));
+            } else
+            {
+                Log.e("OverviewFragment", "Failed to recalculate current budget!");
             }
 
         };
@@ -130,7 +135,7 @@ public class OverviewFragment extends Fragment
         {
 
             // Update the RecyclerView
-            recyclerViewAdapter.updateTransactions(TransactionCalculator.sortTransactions(transactionWithCategories));
+            recyclerViewAdapter.updateTransactions(TransactionUtils.sortTransactions(transactionWithCategories));
 
             // Update the PieChart
             updatePieChart(transactionWithCategories);
@@ -158,13 +163,14 @@ public class OverviewFragment extends Fragment
     /**
      * Helper method to calculate the remaining budget and update the UI
      *
-     * @param totalBudget <code>Double</code> value representing total budget
+     * @param totalBudget     <code>Double</code> value representing total budget
      * @param remainingBudget <code>Double</code> value representing remaining budget
      */
     private void updateRemainingBudget(Double totalBudget, Double remainingBudget)
     {
         // Display the remaining budget
         txtBudgetRemaining.setText(Converters.doubleToCurrencyString(remainingBudget));
+        Log.d("OverviewFragment", "Recalculated remaining budget: " + remainingBudget + " of: " + totalBudget);
 
         // Display the total budget
         String outputString = "Monthly Budget: " + Converters.doubleToCurrencyString(totalBudget);
@@ -177,14 +183,14 @@ public class OverviewFragment extends Fragment
 
     /**
      * Called to inflate the layout to create the view
-     * @param inflater The LayoutInflater object that can be used to inflate
-     * any views in the fragment,
-     * @param container If non-null, this is the parent view that the fragment's
-     * UI should be attached to.  The fragment should not add the view itself,
-     * but this can be used to generate the LayoutParams of the view.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
      *
+     * @param inflater           The LayoutInflater object that can be used to inflate
+     *                           any views in the fragment,
+     * @param container          If non-null, this is the parent view that the fragment's
+     *                           UI should be attached to.  The fragment should not add the view itself,
+     *                           but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     *                           from a previous saved state as given here.
      * @return the View for the fragment's UI, or null.
      */
     @Override
@@ -204,12 +210,11 @@ public class OverviewFragment extends Fragment
     {
         if (transactions == null || transactions.isEmpty())
         {
-            return;
+            Log.e("OverviewFragment", "Failed to update pie chart");
         }
 
         // Get the PieEntries from the ViewModel
-        PieDataSet dataSet = overviewViewModel.getPieData(transactions);
-
+        PieDataSet dataSet = PieChartHandler.getPieData(getContext(), transactions);
 
         // Style the dataset
         dataSet.setValueFormatter(new PercentFormatter(pieChart));
