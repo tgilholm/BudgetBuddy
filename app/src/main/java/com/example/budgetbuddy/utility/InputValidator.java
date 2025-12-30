@@ -8,24 +8,30 @@ package com.example.budgetbuddy.utility;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import org.jetbrains.annotations.Contract;
-import com.example.budgetbuddy.enums.RepeatDuration;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+
+/**
+ * Utility class to handle input validation
+ */
 public final class InputValidator
 {
+    // Final class, no instantiation
+    private InputValidator() {}
+
+
     /**
      * Validates that a string is not empty and conforms to the format set out by the regex. <br><br>
      * Regex breakdown: <br>
      * <pre>
-     * [0-9]+          Matches if the string contains one-or-more numbers- i.e. 50<br>
-     * [.]             Matches if the string contains a decimal point<br>
-     * [0-9]{2}        Matches if numeric and ONLY 2 d.p.<br>
-     * ([.][0-9]{2})?  Matches if numeric after the d.p (optional) <br>
+     * [0-9]+               Matches if the string contains one-or-more numbers- i.e. 50<br>
+     * [.]                  Matches if the string contains a decimal point<br>
+     * [0-9]{1, 2}          Matches if numeric and at most 2 d.p.<br>
+     * ([.][0-9]{1,2})?     Matches if numeric after the d.p (optional) <br>
      * Complete Regex: [0-9]+([.][0-9]{2})?
      * </pre>
      *
@@ -41,7 +47,7 @@ public final class InputValidator
         }
 
         // Checks the input against the regex
-        return input.matches("[0-9]+([.][0-9]{2})?");
+        return input.matches("[0-9]+([.][0-9]{1,2})?");
     }
 
     /**
@@ -75,32 +81,6 @@ public final class InputValidator
         {
             Log.e("AddFragment", "Error parsing date & time: " + e.getMessage());
             return null;
-        }
-    }
-
-    /**
-     * Converts an <code>input</code> into a <code>RepeatDuration</code>
-     * @param input a name in the enum
-     * @return a <code>RepeatDuration</code> type
-     */
-    @Nullable
-    @Contract(pure = true)
-    public static RepeatDuration selectRepeatDuration(@NonNull String input)
-    {
-        switch (input)
-        {
-            case "Never":
-                return RepeatDuration.NEVER;
-            case "Day":
-                return RepeatDuration.DAILY;
-            case "Week":
-                return RepeatDuration.WEEKLY;
-            case "Month":
-                return RepeatDuration.MONTHLY;
-            case "Year":
-                return RepeatDuration.YEARLY;
-            default:
-                return null;
         }
     }
 }

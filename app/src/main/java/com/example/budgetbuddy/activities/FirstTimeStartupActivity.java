@@ -24,9 +24,10 @@ public class FirstTimeStartupActivity extends AppCompatActivity
 
     /**
      * Initialises <code>budgetText</code> and <code>startupViewModel</code>
+     *
      * @param savedInstanceState If the activity is being re-initialized after
-     *     previously being shut down then this Bundle contains the data it most
-     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
      *
      */
     @Override
@@ -39,7 +40,6 @@ public class FirstTimeStartupActivity extends AppCompatActivity
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         EdgeToEdge.enable(this);
 
-
         // Get an instance of the StartupViewModel
         startupViewModel = new ViewModelProvider(this).get(StartupViewModel.class);
     }
@@ -47,6 +47,7 @@ public class FirstTimeStartupActivity extends AppCompatActivity
     /**
      * Invoked when start button is pressed. Takes user input from budgetText & passes to <code>StartupViewModel</code>.
      * Alerts user with <code>Toast</code> messages for invalid <code>ValidationState</code> values
+     *
      * @param v the view
      */
     public void startButtonPressed(View v)
@@ -54,7 +55,7 @@ public class FirstTimeStartupActivity extends AppCompatActivity
         EditText budgetText = findViewById(R.id.editTextBudget);        // Get the EditText from the view
 
         // Get the input text and pass to the ViewModel
-        switch(startupViewModel.setBudget(budgetText.getText().toString()))
+        switch (startupViewModel.validateBudget(budgetText.getText().toString()))
         {
             case NONE:
                 goToMain();

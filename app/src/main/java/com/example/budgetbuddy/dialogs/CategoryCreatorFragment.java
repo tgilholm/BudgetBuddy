@@ -3,6 +3,7 @@ package com.example.budgetbuddy.dialogs;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,8 @@ public class CategoryCreatorFragment extends DialogFragment
 
     /**
      * Constructs a new CategoryCreatorFragment
-     * @param context The application context
+     *
+     * @param context    The application context
      * @param categories A list of <code>Category</code> objects
      */
     public CategoryCreatorFragment(Context context, List<Category> categories)
@@ -46,19 +48,21 @@ public class CategoryCreatorFragment extends DialogFragment
 
     /**
      * Called to instantiate the fragment view.
-     * @param inflater The LayoutInflater object that can be used to inflate
-     * any views in the fragment,
-     * @param container If non-null, this is the parent view that the fragment's
-     * UI should be attached to.  The fragment should not add the view itself,
-     * but this can be used to generate the LayoutParams of the view.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
      *
+     * @param inflater           The LayoutInflater object that can be used to inflate
+     *                           any views in the fragment,
+     * @param container          If non-null, this is the parent view that the fragment's
+     *                           UI should be attached to.  The fragment should not add the view itself,
+     *                           but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     *                           from a previous saved state as given here.
      * @return Return the View for the fragment's UI, or null.
      */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        Log.v("CategoryCreatorFragment", "Starting category creator");
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_category_creator, container, false);
 
@@ -95,10 +99,7 @@ public class CategoryCreatorFragment extends DialogFragment
         {
             final boolean isScrollEnabled = false;
 
-            /**
-             * Disables vertical scrolling
-             * @return always returns false
-             */
+            // Disables vertical scrolling
             @Override
             public boolean canScrollVertically()
             {
@@ -122,66 +123,79 @@ public class CategoryCreatorFragment extends DialogFragment
         {
             String inputName = editTextCategory.getText().toString();
 
-            if (!inputName.isEmpty())
-            {
-                // Check that colorChoice is not set to -1 (the default value, indicating no colour selection)
-                if (colorChoice != -1)
-                {
-                    if (!categoryNameExists(inputName, categories))
-                    {
-                        // If all checks succeeded, send the category name and colour back to the AddFragment
-                        Bundle bundle = new Bundle();
-                        String categoryName = editTextCategory.getText().toString();
-                        bundle.putString("categoryName", categoryName);        // Attach the category name
-                        bundle.putInt("categoryColor", colorChoice);           // Attach the color ID
-
-                        // Use FragmentResult to send a message to the MainActivity
-                        getParentFragmentManager().setFragmentResult("newCategory", bundle);
-
-                        // Tell the user via a toast that a new category was added
-                        Toast.makeText(context, "New category " + categoryName + " was added!", Toast.LENGTH_SHORT).show();
-
-                        this.dismiss();
-                    } else
-                    {
-                        editTextCategory.setError(inputName + " category already exists!");
-                    }
-                } else
-                {
-                    editTextCategory.setError("Please select a colour!");
-                }
-            } else
+            // Check that category name is not empty
+            if (inputName.isEmpty())
             {
                 editTextCategory.setError("Please type in a category name!");
+                Log.d("CategoryCreatorFragment", "Failed to create new category: no name");
+                return;
             }
+
+            // Check that colorChoice is not set to -1 (the default value, indicating no colour selection)
+            if (colorChoice == -1)
+            {
+                editTextCategory.setError("Please select a colour!");
+                Log.d("CategoryCreatorFragment", "Failed to create new category: no colour picked");
+                return;
+            }
+
+            // Check if category name exists
+            if (categoryNameExists(inputName, categories))
+            {
+                editTextCategory.setError(inputName + " category already exists!");
+                Log.d("CategoryCreatorFragment", "Failed to create new category: category already exists");
+                return;
+            }
+
+            // If all checks succeeded, send the category name and colour back to the AddFragment
+            Bundle bundle = new Bundle();
+            String categoryName = editTextCategory.getText().toString();
+            bundle.putString("categoryName", categoryName);        // Attach the category name
+            bundle.putInt("categoryColor", colorChoice);           // Attach the color ID
+
+            // Use FragmentResult to send a message to the MainActivity
+            getParentFragmentManager().setFragmentResult("newCategory", bundle);
+
+            // Tell the user via a toast that a new category was added
+            Toast.makeText(context, "New category " + categoryName + " was added!", Toast.LENGTH_SHORT).show();
+            Log.v("CategoryCreatorFragment", "Added new category: " + categoryName);
+
+            // Hide the dialog
+            this.dismiss();
         });
+
 
         return view;
     }
 
     /**
      * Compares the category name to the list of categories to check if it already exists
+     *
      * @param categoryName the name of the category to check
-     * @param categories a list of <code>Category</code> objects
+     * @param categories   a list of <code>Category</code> objects
      * @return true if the category already exists, false otherwise
      */
     private boolean categoryNameExists(String categoryName, List<Category> categories)
     {
-        boolean exists = false;
-
-        if (categories != null)
+        if (categories == null)
         {
+            Log.d("CategoryCreatorFragment", "Could not unique-check " + categoryName + " category list is null");
+            return false;
+        } else
+        {
+            boolean exists = false;
             for (Category category : categories)
             {
                 // Use equalsIgnoreCase for more rigorous checking
                 if (category.getName().trim().equalsIgnoreCase(categoryName.trim()))
                 {
                     exists = true;
+                    Log.d("CategoryCreatorFragment", "Found existing category with name: " + categoryName);
                     break;  // Break the loop if found
                 }
             }
+            return exists;
         }
-
-        return exists;
     }
 }
+

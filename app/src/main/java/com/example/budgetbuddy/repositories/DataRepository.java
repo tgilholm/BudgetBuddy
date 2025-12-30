@@ -15,19 +15,28 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-// Provides a layer of abstraction over the Transaction and Category DAOs.
 
-// Transaction, Overview and Add fragments interact with the DataRepository via UseCases
-// The repository interacts with both the Transaction and Category tables (not User)
-// Follows a singleton pattern to only permit ONE instance of the repository
-public class DataRepository {
-    private final TransactionDAO transactionDAO;  // Holds an instance of the transactionDAO
-    private final CategoryDAO categoryDAO;  // Holds an instance of the categoryDAO
-    private final ExecutorService executorService; // Uses executorService to delegate DB operations to a thread pool
-    private static volatile DataRepository INSTANCE;    // The only instance of DataRepository
+/**
+ * Abstracts access to <code>TransactionDAO</code> and <code>CategoryDAO</code>.
+ * Follows a singleton pattern- only one instance of the repository exists at once time
+ */
+public class DataRepository
+{
 
-    // Constructor
-    private DataRepository(Application application) {
+    // Hold instances of DAOs, the executorService and this instance
+    private final TransactionDAO transactionDAO;
+    private final CategoryDAO categoryDAO;
+    private final ExecutorService executorService;
+    private static volatile DataRepository INSTANCE;
+
+
+    /**
+     * Initialises the DAOs and executorService, connects to the DB
+     *
+     * @param application the application context
+     */
+    private DataRepository(Application application)
+    {
         AppDB appDB = AppDB.getDBInstance(application); // Get an instance of the database
 
         // Initialise the DAOs and executorService
@@ -36,10 +45,21 @@ public class DataRepository {
         executorService = Executors.newSingleThreadExecutor();
     }
 
-    public static DataRepository getInstance(Application application) {
-        if (INSTANCE == null) {
-            synchronized (DataRepository.class) {
-                if (INSTANCE == null) {
+    /**
+     * Gets an instance of the <code>DataRepository</code>. Provides double-checked locking
+     * to prevent unnecessary synchronisation and return repository instances.
+     *
+     * @param application the application context
+     * @return an instance of the <code>DataRepository</code>
+     */
+    public static DataRepository getInstance(Application application)
+    {
+        if (INSTANCE == null)
+        {
+            synchronized (DataRepository.class)
+            {
+                if (INSTANCE == null)
+                {
                     INSTANCE = new DataRepository(application);
                 }
             }
@@ -47,27 +67,54 @@ public class DataRepository {
         return INSTANCE;
     }
 
-    // Return the joined Transaction and Category tables
-    public LiveData<List<TransactionWithCategory>> getAllTransactions() {
+    /**
+     * Gets the joined <code>Transaction</code> and <code>Category</code> tables
+     *
+     * @return a <code>LiveData</code> list of <code>TransactionWithCategory</code> objects
+     */
+    public LiveData<List<TransactionWithCategory>> getAllTransactions()
+    {
         return transactionDAO.getTransactionCategory();
     }
 
-    public void insertTransaction(Transaction transaction) {
+    /**
+     * Adds a new transaction
+     *
+     * @param transaction the <code>Transaction</code> object to add
+     */
+    public void insertTransaction(Transaction transaction)
+    {
         // Run in a separate thread
         executorService.execute(() -> transactionDAO.insertTransaction(transaction));
     }
 
-    public void deleteTransaction(Transaction transaction) {
+    /**
+     * Removes a transaction
+     *
+     * @param transaction the <code>Transaction</code> object to remove
+     */
+    public void deleteTransaction(Transaction transaction)
+    {
         executorService.execute(() -> transactionDAO.delete(transaction));
     }
 
 
-    // CategoryDAO interface methods
-    public LiveData<List<Category>> getAllCategories() {
+    /**
+     * Gets the list of categories
+     * @return a <code>LiveData</code> list of <code>Category</code> objects
+     */
+    public LiveData<List<Category>> getAllCategories()
+    {
         return categoryDAO.getAll();
     }
 
-    public void insertCategory(Category category) {
+    /**
+     * Adds a new category
+     *
+     * @param category the <code>Category</code> object to add
+     */
+    public void insertCategory(Category category)
+    {
         executorService.execute(() -> categoryDAO.insertCategory(category));
     }
 }

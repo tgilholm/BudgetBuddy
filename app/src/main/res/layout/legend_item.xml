@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingVertical="5dp"
+    android:paddingEnd="10dp"
+    android:paddingStart="10dp">
+
+    <!-- The "colour block" for category colour -->
+    <View
+        android:id="@+id/colorBlock"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:background="@drawable/colour_square"
+        android:padding="4dp"/>
+
+
+    <TextView
+        android:id="@+id/txtLegendName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="14sp"
+        tools:text="Groceries"
+        android:ellipsize="end"
+        android:maxLines="1" />
+
+    <TextView
+        android:id="@+id/txtLegendPercentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="45.5%"
+        android:ellipsize="end"
+        android:maxLines="1" />
+
+</LinearLayout>

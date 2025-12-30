@@ -19,6 +19,7 @@ public interface CategoryDAO
 {
     /**
      * Get all categories
+     *
      * @return a <code>LiveData</code> object containing a list of <code>Category</code> objects
      */
     @Query("SELECT * FROM 'category'")
@@ -26,6 +27,7 @@ public interface CategoryDAO
 
     /**
      * Get a category by its ID
+     *
      * @param id the ID of the category
      * @return a <code>Category</code> object
      */
@@ -34,6 +36,7 @@ public interface CategoryDAO
 
     /**
      * Insert a new category into the database
+     *
      * @param categories the <code>Category</code> object to insert
      */
     @Insert
@@ -41,6 +44,7 @@ public interface CategoryDAO
 
     /**
      * Delete a category from the database
+     *
      * @param category the <code>Category</code> object to delete
      */
     @Delete

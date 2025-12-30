@@ -10,15 +10,19 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.preference.PreferenceManager;
 
+import com.example.budgetbuddy.enums.ValidationState;
+import com.example.budgetbuddy.utility.InputValidator;
 
-// Implements OnSharedPreferenceChangeListener to listen to changes made to the budget from the settings menu
-// This means that the changes made will be propagated throughout the application correctly
+
+/**
+ * ViewModel interfacing with SharedPreferences to get and modify budget values
+ */
 public class BudgetViewModel extends AndroidViewModel
 {
-
     private final MutableLiveData<Double> budget = new MutableLiveData<>();
 
     private final SharedPreferences prefs;
@@ -27,16 +31,23 @@ public class BudgetViewModel extends AndroidViewModel
     private final SharedPreferences.OnSharedPreferenceChangeListener listener;
 
 
+    /**
+     * Constructs a new <code>BudgetViewModel</code>
+     *
+     * @param application the application context
+     */
     public BudgetViewModel(@NonNull Application application)
     {
         super(application);
         prefs = PreferenceManager.getDefaultSharedPreferences(application);
 
+        // Observe the sharedPreferences. If the budget changes, update the internal budget value
         listener = (sharedPreferences, key) ->
         {
             // Update the budget when a change is made
             if (key != null && key.equals("budget"))
             {
+                Log.d("BudgetViewModel", "SharedPreferences updated, refreshing internal value");
                 getBudgetFromPrefs();
             }
         };
@@ -47,26 +58,79 @@ public class BudgetViewModel extends AndroidViewModel
         getBudgetFromPrefs();   // Update the budget value
     }
 
-    // Retrieve the "budget" field from the SharedPreferences
+    /**
+     * Retrieve the user-defined budget from shared preferences, cast to double
+     * and update the internal budget of this <code>BudgetViewModel</code> instance
+     */
     private void getBudgetFromPrefs()
     {
-        // preferences.xml always stores the budget as a string
-        //Log.v("BudgetViewModel", "getBudgetFromPrefs fired, read budget as " + prefs.getFloat("budget", 0));
-        //Log.v("BudgetViewModel", "prefs.getString " + prefs.getString("budget", "0"));
-        budget.postValue((double) prefs.getFloat("budget", 0)); // default to 0
+        // Get the budget as a string from prefs
+        String stringBudget = prefs.getString("budget", "0");
+
+        // Attempt to parse to a double (should be fine but double check)
+        if (InputValidator.validateCurrencyInput(stringBudget))
+        {
+            budget.postValue(Double.parseDouble(stringBudget));
+        } else
+        {
+            Log.e("BudgetViewModel", "Failed to load string budget from prefs");
+        }
     }
 
-    // Return the value of the budget
-    public MutableLiveData<Double> getBudget()
+    /**
+     * Return an immutable <code>LiveData</code> version of the budget value
+     *
+     * @return a <code>LiveData</code> <code>double</code>
+     */
+    public LiveData<Double> getBudget()
     {
         return budget;
     }
 
+    /**
+     * Overrides <code>onCleared()</code> from superclass.
+     * Unregisters the preference listener to prevent memory leaks
+     */
     @Override
     protected void onCleared()
     {
         super.onCleared();
         // Unregister the Preference listener
         prefs.unregisterOnSharedPreferenceChangeListener(listener);
+    }
+
+    /**
+     * Validates a newly-set budget <code>Object</code>
+     *
+     * @param budget an <code>Object</code>
+     * @return <code>ValidationState.NONE</code> if succeeded. Otherwise, <code>INVALID_AMOUNT</code> or <code>EMPTY</code>
+     */
+    public ValidationState validateBudget(Object budget)
+    {
+        String validatedInput = null;
+
+        // Cast to string
+        try
+        {
+            validatedInput = ((String) budget).trim();
+        } catch (Exception e)
+        {
+            return ValidationState.INVALID_AMOUNT;
+        }
+
+        // Check if empty
+        if (validatedInput.isEmpty())
+        {
+            return ValidationState.EMPTY;
+        }
+
+        // Validate budget amount
+        if (InputValidator.validateCurrencyInput(validatedInput))
+        {
+            return ValidationState.NONE;
+        } else
+        {
+            return ValidationState.INVALID_AMOUNT;
+        }
     }
 }

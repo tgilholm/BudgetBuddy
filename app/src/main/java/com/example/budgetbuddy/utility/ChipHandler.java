@@ -9,11 +9,21 @@ import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.entities.Category;
 import com.google.android.material.chip.Chip;
 
-// Handles the instantiation of new Chips
+/**
+ * Utility class, handles the creation of new Material chips.
+ */
 public final class ChipHandler
 {
+    // Final class- no instantiation
+    private ChipHandler () {}
 
-    // Takes a category and generates a chip
+
+    /**
+     * Generates a new <code>Chip</code> from <code>Category</code> data
+     * @param context the application context
+     * @param category the <code>Category</code> object to take data from
+     * @return a <code>Chip</code>
+     */
     @NonNull
     public static Chip createChip(@NonNull Context context, @NonNull Category category)
     {
@@ -23,7 +33,6 @@ public final class ChipHandler
         chip.setText(category.getName());
         chip.setCheckable(true);
         chip.setClickable(true);
-
 
         // Set the background color of the chip top the category's colour
         chip.setChipBackgroundColor(ColorHandler.resolveColorID(context, category.getColorID()));
@@ -37,7 +46,13 @@ public final class ChipHandler
         return chip;
     }
 
-    // Creates a chip with an add icon and an onclick to create a new category
+
+    /**
+     * Creates the "add chip" for creating new categories
+     * @param context the application context
+     * @return a <code>Chip</code>
+     */
+    @NonNull
     public static Chip createAddCategoryChip(@NonNull Context context)
     {
         ContextThemeWrapper newContext = new ContextThemeWrapper(context, R.style.ThemeOverlay_BudgetTracker_AddChip);

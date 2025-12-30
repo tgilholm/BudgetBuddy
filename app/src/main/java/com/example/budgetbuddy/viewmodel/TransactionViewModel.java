@@ -11,25 +11,43 @@ import com.example.budgetbuddy.repositories.DataRepository;
 
 import java.util.List;
 
-// ViewModel corresponding to TransactionFragment
-// Exposes list of transactions and supports deletion method
-public class TransactionViewModel extends AndroidViewModel {
-
+/**
+ * ViewModel for interacting with the <code>TransactionFragment</code>
+ * Interfaces with the <code>DataRepository</code>
+ */
+public class TransactionViewModel extends AndroidViewModel
+{
     private final DataRepository dataRepository;
 
-    public TransactionViewModel(@NonNull Application application) {
+    /**
+     * Constructs a new <code>TransactionViewModel</code>
+     *
+     * @param application the application context
+     */
+    public TransactionViewModel(@NonNull Application application)
+    {
         super(application);
 
         dataRepository = DataRepository.getInstance(application);
     }
 
-    // Exposes the LiveData version of the transaction list to the fragments
+
+    /**
+     * Exposes an immutable list of transactions
+     *
+     * @return a list of <code>TransactionWithCategory</code> objects
+     */
     public LiveData<List<TransactionWithCategory>> getTransactions()
     {
         return dataRepository.getAllTransactions();
     }
 
-    // Delete a transaction
+
+    /**
+     * Deletes a transaction from the <code>DataRepository</code>
+     *
+     * @param transactionWithCategory a <code>TransactionWithCategory</code> object
+     */
     public void deleteTransaction(@NonNull TransactionWithCategory transactionWithCategory)
     {
         dataRepository.deleteTransaction(transactionWithCategory.transaction);
