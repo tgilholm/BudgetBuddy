@@ -1,12 +1,14 @@
 package com.example.budgetbuddy.viewmodel;
 
 import android.app.Application;
+import android.content.Intent;
 import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.preference.PreferenceManager;
 
+import com.example.budgetbuddy.activities.MainActivity;
 import com.example.budgetbuddy.database.AppDB;
 
 /**
@@ -34,16 +36,19 @@ public class SettingsViewModel extends AndroidViewModel
      */
     public void resetDB()
     {
-        db.
-
-
+        AppDB.databaseWriteExecutor.execute(() ->
+        {
+            db.clearAllTables();
+            resetSharedPrefs();
+        });
     }
+
 
     /**
      * Resets the SharedPreferences budget & firstRun to default values.
      * This is done on the main thread.
      */
-    public void resetSharedPrefs()
+    private void resetSharedPrefs()
     {
         // Reset SharedPreferences
         getApplication().getMainExecutor()

@@ -52,10 +52,11 @@ public abstract class AppDB extends RoomDatabase
             {    // Sync and check again
                 if (DB_INSTANCE == null)
                 {
+                    Converters converter = new Converters();        // Get the type converter
 
                     // Build a new database
                     DB_INSTANCE = Room.databaseBuilder(context.getApplicationContext(), AppDB.class, "budgetbuddy_DB"  // Name of the DB
-                    ).build();
+                    ).addTypeConverter(converter).build();
                 }
             }
         }
