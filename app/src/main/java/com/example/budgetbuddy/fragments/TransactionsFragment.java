@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.adapters.EditRecyclerViewAdapter;
@@ -31,14 +32,14 @@ public class TransactionsFragment extends Fragment
 {
     /**
      * Inflates thet layout for the fragment
-     * @param inflater The LayoutInflater object that can be used to inflate
-     * any views in the fragment,
-     * @param container If non-null, this is the parent view that the fragment's
-     * UI should be attached to.  The fragment should not add the view itself,
-     * but this can be used to generate the LayoutParams of the view.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
      *
+     * @param inflater           The LayoutInflater object that can be used to inflate
+     *                           any views in the fragment,
+     * @param container          If non-null, this is the parent view that the fragment's
+     *                           UI should be attached to.  The fragment should not add the view itself,
+     *                           but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     *                           from a previous saved state as given here.
      * @return the View for the fragment's UI, or null.
      */
     @Override
@@ -50,16 +51,18 @@ public class TransactionsFragment extends Fragment
 
     /**
      * Connects to the TransactionViewModel, connects transaction history to the RecyclerView.
-     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     *
+     * @param view               The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
+     *                           from a previous saved state as given here.
      */
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
         Log.d("TransactionsFragment", "Loaded TransactionsFragment");
-
-
         super.onViewCreated(view, savedInstanceState);
+
+        TextView txtTitle = view.findViewById(R.id.txtTitle);
+        View emptyView = view.findViewById(R.id.transactionEmptyState);     // Instance of empty layout for no-transaction state
 
 
         // Connect the TransactionViewModel
@@ -69,9 +72,7 @@ public class TransactionsFragment extends Fragment
         List<TransactionWithCategory> emptyList = new ArrayList<>();
 
         // Set up the editRecyclerViewAdapter
-        EditRecyclerViewAdapter editRecyclerViewAdapter = new EditRecyclerViewAdapter(
-                emptyList, transactionViewModel::deleteTransaction, R.layout.editable_transaction_item
-        );
+        EditRecyclerViewAdapter editRecyclerViewAdapter = new EditRecyclerViewAdapter(emptyList, transactionViewModel::deleteTransaction, R.layout.editable_transaction_item);
 
         // Get the recycler view from the layout and set the adapter
         RecyclerView rvFullHistory = view.findViewById(R.id.rvFullHistory);
@@ -79,18 +80,30 @@ public class TransactionsFragment extends Fragment
         rvFullHistory.setAdapter(editRecyclerViewAdapter);
 
         // Set an observer on the transaction list to update the Recycler View
-        transactionViewModel.getTransactions().observe(getViewLifecycleOwner(), transactionList ->
-        {
-            Log.d("TransactionsFragment", "Updating Transaction List");
+        transactionViewModel.getTransactions()
+                .observe(getViewLifecycleOwner(), transactionList ->
+                {
+                    // Check if the transaction list is null/empty
+                    boolean listEmpty = transactionList == null || transactionList.isEmpty();
 
-            // Add the list to the recyclerView on update
-            editRecyclerViewAdapter.updateTransactions(TransactionUtils.sortTransactions(transactionList));
+                    // Hide the views and show the empty screen if so
+                    rvFullHistory.setVisibility(listEmpty ? View.GONE : View.VISIBLE);
+                    txtTitle.setVisibility(listEmpty ? View.GONE : View.VISIBLE);
+                    emptyView.setVisibility(listEmpty ? View.VISIBLE : View.GONE);
 
-            // Scroll back to the top of the RecyclerView to show the new transaction
-            if (rvFullHistory.getLayoutManager() != null)
-            {
-                rvFullHistory.getLayoutManager().scrollToPosition(0);
-            }
-        });
+                    if (!listEmpty)
+                    {
+                        // Add the list to the recyclerView on update
+                        editRecyclerViewAdapter.updateTransactions(TransactionUtils.sortTransactions(transactionList));
+
+                        // Scroll back to the top of the RecyclerView to show the new transaction
+                        if (rvFullHistory.getLayoutManager() != null)
+                        {
+                            rvFullHistory.getLayoutManager()
+                                    .scrollToPosition(0);
+                        }
+                    }
+                    Log.d("TransactionsFragment", "Updating Transaction List");
+                });
     }
 }

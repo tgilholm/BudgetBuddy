@@ -91,6 +91,11 @@
 
     </LinearLayout>
 
+    <!-- Include the empty layout for no-transaction state-->
+    <include
+        android:id="@+id/overviewEmptyState"
+        layout="@layout/empty_layout"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/overviewAddButton"
         android:layout_width="wrap_content"

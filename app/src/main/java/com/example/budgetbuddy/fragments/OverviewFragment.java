@@ -43,8 +43,7 @@ import java.util.List;
 public class OverviewFragment extends Fragment
 {
     private RecyclerViewAdapter recyclerViewAdapter;
-    private OverviewViewModel overviewViewModel;
-
+    private View emptyView;     // Instance of empty layout for no-transaction state
     private PieChart pieChart;
 
     private TextView txtBudgetRemaining;
@@ -74,17 +73,18 @@ public class OverviewFragment extends Fragment
 
         // Get the Views from the layout
         pieChart = view.findViewById(R.id.pieChart);
+        TextView txtRecentTransactions = view.findViewById(R.id.tvRecentTransactions);
         txtBudgetRemaining = view.findViewById(R.id.tvBudgetRemaining);
         txtTotalBudget = view.findViewById(R.id.tvTotalBudget);
         RecyclerView rvPartialHistory = view.findViewById(R.id.rvPartialHistory);
         FloatingActionButton addButton = view.findViewById(R.id.overviewAddButton);
+        emptyView = view.findViewById(R.id.overviewEmptyState);     // Get the empty layout
 
-        // Set up the pieChart
-        PieChartHandler.setupPieChart(pieChart, ColorHandler.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
 
-        // Set up the Transaction and Budget ViewModels
+        // Set up the Overview and Budget ViewModels
         BudgetViewModel budgetViewModel = new ViewModelProvider(requireActivity()).get(BudgetViewModel.class);
-        overviewViewModel = new ViewModelProvider(requireActivity()).get(OverviewViewModel.class);
+        OverviewViewModel overviewViewModel = new ViewModelProvider(requireActivity()).get(OverviewViewModel.class);
+        PieChartHandler.setupPieChart(pieChart, ColorHandler.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
 
 
         // Instantiate the RecyclerView with an empty list (the observer will update it)
@@ -93,6 +93,7 @@ public class OverviewFragment extends Fragment
         rvPartialHistory.setAdapter(recyclerViewAdapter);                               // Connect to the recyclerViewAdapter
 
 
+        // Get the data sources for the mediator
         LiveData<List<TransactionWithCategory>> transactionSource = overviewViewModel.getTransactions();
         LiveData<Double> budgetSource = budgetViewModel.getBudget();
 
@@ -133,17 +134,28 @@ public class OverviewFragment extends Fragment
         // Transaction list observer- Updates RecyclerView and PieChart only
         transactionSource.observe(getViewLifecycleOwner(), transactionWithCategories ->
         {
+            // Check if the transaction list is null/empty
+            boolean listEmpty = transactionWithCategories == null || transactionWithCategories.isEmpty();
 
-            // Update the RecyclerView
-            recyclerViewAdapter.updateTransactions(TransactionUtils.sortTransactions(transactionWithCategories));
+            // If empty, hide the views
+            pieChart.setVisibility(listEmpty ? View.GONE : View.VISIBLE);   // Gone if empty, visible if not
+            rvPartialHistory.setVisibility(listEmpty ? View.GONE : View.VISIBLE);
+            txtRecentTransactions.setVisibility(listEmpty ? View.GONE : View.VISIBLE);
+            emptyView.setVisibility(listEmpty ? View.VISIBLE : View.GONE);  // Visible if empty, gone if not
 
-            // Update the PieChart
-            updatePieChart(transactionWithCategories);
 
-            // Scroll back to the top of the RecyclerView to show the new transaction
-            if (rvPartialHistory.getLayoutManager() != null)
+            // If not, update the pieChart and recyclerview
+            if (!listEmpty)
             {
-                rvPartialHistory.getLayoutManager().scrollToPosition(0);
+                recyclerViewAdapter.updateTransactions(TransactionUtils.sortTransactions(transactionWithCategories));
+                updatePieChart(transactionWithCategories);
+
+                // Scroll back to the top of the RecyclerView to show the new transaction
+                if (rvPartialHistory.getLayoutManager() != null)
+                {
+                    rvPartialHistory.getLayoutManager()
+                            .scrollToPosition(0);
+                }
             }
         });
 
