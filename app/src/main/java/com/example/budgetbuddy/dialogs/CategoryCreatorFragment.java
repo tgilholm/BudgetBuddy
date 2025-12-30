@@ -132,7 +132,7 @@ public class CategoryCreatorFragment extends DialogFragment
             }
 
             // Check that colorChoice is not set to -1 (the default value, indicating no colour selection)
-            if (colorChoice != -1)
+            if (colorChoice == -1)
             {
                 editTextCategory.setError("Please select a colour!");
                 Log.d("CategoryCreatorFragment", "Failed to create new category: no colour picked");
