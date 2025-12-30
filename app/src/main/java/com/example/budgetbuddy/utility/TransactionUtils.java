@@ -1,6 +1,5 @@
 package com.example.budgetbuddy.utility;
 
-import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;

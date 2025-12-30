@@ -11,6 +11,9 @@ import com.example.budgetbuddy.entities.Category;
 import com.example.budgetbuddy.entities.Transaction;
 import com.example.budgetbuddy.utility.Converters;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * Extends <code>RoomDatabase</code>. Defines <code>Transaction</code> and <code>Category</code> entities
  * Holds a static instance of the database. Provides methods to access the DAOs
@@ -29,6 +32,9 @@ public abstract class AppDB extends RoomDatabase
 
     // Defined as static to force a single instance, volatile to ensure threads receive updates
     private static volatile AppDB DB_INSTANCE;
+
+    private static final int NUMBER_OF_THREADS = 4;
+    public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);    // Used for long DB queries
 
     /**
      * Returns a singleton instance of the database. Double-checked locking ensures there is only one instance.
