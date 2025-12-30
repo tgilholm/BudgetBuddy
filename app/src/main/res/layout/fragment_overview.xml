@@ -9,13 +9,6 @@
     tools:context=".fragments.OverviewFragment">
 
 
-    <!-- Display the remaining budget -->
-
-    <!-- Display the pie chart -->
-
-
-    <!-- Display the most recent transactions in a RecyclerView -->
-
     <LinearLayout
         android:id="@+id/overviewLinearLayout"
         android:layout_width="match_parent"
@@ -66,17 +59,29 @@
 
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/pieChart"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="start" />
+                android:layout_weight="1" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pieChartLegend"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                tools:itemCount="4"
+                tools:listitem="@layout/legend_item">
+
+            </androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
 
         <TextView
             android:id="@+id/tvRecentTransactions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
             android:layout_gravity="center"
+            android:layout_marginTop="24dp"
             android:text="@string/label_recent_transactions"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="16sp" />
@@ -94,7 +99,7 @@
     <!-- Include the empty layout for no-transaction state-->
     <include
         android:id="@+id/overviewEmptyState"
-        layout="@layout/empty_layout"/>
+        layout="@layout/empty_layout" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/overviewAddButton"
@@ -106,9 +111,9 @@
         android:contentDescription="@string/cd_add_transaction"
         android:focusable="true"
         android:src="@drawable/add_icon"
-        app:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:tint="@color/white"
         tools:ignore="ClassNameCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>

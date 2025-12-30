@@ -1,17 +1,16 @@
 package com.example.budgetbuddy.utility;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
+import android.util.Pair;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.entities.Category;
+import com.example.budgetbuddy.entities.PieChartData;
+import com.example.budgetbuddy.entities.PieChartLegendItem;
 import com.example.budgetbuddy.entities.TransactionWithCategory;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 
@@ -22,108 +21,110 @@ import java.util.Map;
 /**
  * Utility class to handle MPAndroidChart PieCharts
  */
-public final class PieChartHandler {
+public final class PieChartHandler
+{
+    private static final int MAX_CATEGORIES = 3;    // Avoids hard-coding, max categories can be changed later
 
-    private PieChartHandler() {}
+    // Final class, no instantiation
+    private PieChartHandler()
+    {
+    }
 
     /**
-     * Styles <code>PieChart</code> objects
+     * Sets styling for <code>PieChart</code> objects
+     *
      * @param pieChart The PieChart to style
-     * @param colour The colour to use for the legend
      */
-    public static void setupPieChart(@NonNull PieChart pieChart, @ColorInt int colour)
+    public static void setupPieChart(@NonNull PieChart pieChart)
     {
         // Set pie chart properties
         pieChart.setUsePercentValues(true);                             // Calculate by category percentage
-        pieChart.getDescription().setEnabled(false);                    // Remove the description label
+        pieChart.getDescription()
+                .setEnabled(false);                    // Remove the description label
         pieChart.setDrawHoleEnabled(true);
         pieChart.setHoleColor(Color.TRANSPARENT);                       // Sets a hole in the middle of the cart
         pieChart.setHoleRadius(40f);                                    // Make the hole smaller
         pieChart.setDrawEntryLabels(false);                             // Remove the labels from slices
 
-
-        // Set the legend of the pie chart
-        Legend legend = pieChart.getLegend();
-        legend.setEnabled(true);
-        legend.setTextSize(12f);
-
-        // Set the colour to the dynamic foreground colour
-        legend.setTextColor(colour);
-        legend.setTypeface(Typeface.MONOSPACE);                         // Use a monospace font so string padding works properly
-
-        // Set the alignment to be to the centre right of the chart
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
-        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        legend.setOrientation(Legend.LegendOrientation.VERTICAL);       // Stack the legend vertically
-
-        // Set the draw location of the legend
-        legend.setDrawInside(false);
-        legend.setXEntrySpace(0f);     // X offset
-        legend.setYEntrySpace(0f);      // Y offset
+        // Disable the legend (RecyclerView used instead)
+        pieChart.getLegend()
+                .setEnabled(false);
     }
 
     /**
-     * Converts a list of <code>TransactionWithCategory</code> objects into a <code>PieDataSet</code>
-     * @param context the application context
+     * Overloads <code>getPieData</code>, abstracts topN setting from callers.
      * @param transactions a list of <code>TransactionWithCategory</code> objects
-     * @return a <code>PieDataSet</code> for use in a <code>PieChart</code>
+     * @return a <code>PieChartData</code> object for use in a <code>PieChart</code>
      */
     @NonNull
-    public static PieDataSet getPieData(Context context, List<TransactionWithCategory> transactions)
+    public static PieChartData getPieData(List<TransactionWithCategory> transactions)
     {
-        // DataSet
-        PieDataSet dataSet = new PieDataSet(new ArrayList<>(), "");
+        return getPieData(transactions, MAX_CATEGORIES);
+    }
 
+
+
+    /**
+     * Converts a list of <code>TransactionWithCategory</code> objects into a <code>PieDataSet</code>
+     * Note - the resulting colorList in the PieChartData object will consist of unresolved Color IDs.
+     * Resolve these by calling <code>ColorHandler.getColorARGB</code>. (Avoids context needed here)
+     *
+     * @param transactions a list of <code>TransactionWithCategory</code> objects
+     * @param topN         the number beyond which categories will be grouped into "other"
+     * @return a <code>PieChartData</code> object for use in a <code>PieChart</code>
+     *
+     *
+     */
+    @NonNull
+    private static PieChartData getPieData(List<TransactionWithCategory> transactions, int topN)
+    {
+        List<PieEntry> entries = new ArrayList<>();
+        List<PieChartLegendItem> legendItems = new ArrayList<>();
         List<Integer> colorList = new ArrayList<>();
 
-        // Get total spending
         double totalSpend = TransactionUtils.getTotalSpend(transactions);
 
-        // Gets the total per category as a map
-        Map<Category, Double> categoryTotals = TransactionUtils.getCategoryTotals(transactions);
-
-        // Convert to a list for sorting
-        List<Map.Entry<Category, Double>> entryList = new ArrayList<>(categoryTotals.entrySet());
-        entryList.sort((lhs, rhs) -> rhs.getValue().compareTo(lhs.getValue())); // Sort the list by value (amount)
-
-        // Hold the other total as the value of the other category
-        double otherTotal = 0;
-
-        // Adds everything up to 3 to its own category
-        for (int i = 0; i < entryList.size(); i++)
+        // If no transactions, return everything empty
+        if (transactions.isEmpty())
         {
-            Map.Entry<Category, Double> entry = entryList.get(i);
-
-            if (i < 3) // if less than the limit
-            {
-                // Add a new entry to the PieEntries
-                String label = StringUtils.formatLabel(entry.getKey().getName(), entry.getValue() / totalSpend * 100);
-
-                // Add a colour to the dataSet
-                colorList.add(ColorHandler.getColorARGB(context, entry.getKey().getColorID()));
-
-                // Add the entry to the dataset
-                dataSet.addEntry(new PieEntry(entry.getValue().floatValue(), label));
-            } else
-            {
-                otherTotal += entry.getValue();
-            }
+            return new PieChartData(new PieDataSet(new ArrayList<>(), ""), colorList, new ArrayList<>());
         }
 
-        // Add everything else to "other"
-        if (otherTotal > 0)
-        {
-            String label = StringUtils.formatLabel("Other",  otherTotal / totalSpend * 100);
-            dataSet.addEntry(new PieEntry((float) otherTotal, label));
+        // Get the topN pair
+        Pair<List<Map.Entry<Category, Double>>, Map.Entry<String, Double>> namedAndOther = TransactionUtils.getTopNCategoryTotals(transactions, topN);
 
-            colorList.add(ColorHandler.getColorARGB(context, R.color.budgetBlue));
+        // Extract named & other
+        List<Map.Entry<Category, Double>> namedCategories = namedAndOther.first;
+        Map.Entry<String, Double> otherCategory = namedAndOther.second;
+
+        // Add named to dataset
+        for (Map.Entry<Category, Double> entry : namedCategories)
+        {
+            Category category = entry.getKey();                                 // Extract key to category
+            Double amount = entry.getValue();                                   // Extract value to double
+
+            // Add to dataset
+            entries.add(new PieEntry(amount.floatValue(), category.getName()));
+            colorList.add(category.getColorID());   // Needs to be resolved to ARGB later
+
+            // Add to legend
+            String percentage = String.format("%.1f%%", amount / totalSpend * 100);
+            legendItems.add(new PieChartLegendItem(category.getName(), percentage, category.getColorID()));
         }
 
-        // Add the colourList to the dataset
-        dataSet.setColors(colorList);
+        // Add "other" to dataset;
+        if (otherCategory.getValue() > 0)
+        {
+            String percentage = String.format("%.1f%%", (otherCategory.getValue() / totalSpend) * 100);
+            entries.add(new PieEntry(otherCategory.getValue().floatValue(), "Other")); // Cast to float
+            colorList.add(R.color.budgetBlue);  // Needs to be resolved to ARGB later
+            legendItems.add(new PieChartLegendItem("Other", percentage, R.color.budgetBlue));
+        }
 
-        // Return the dataSet
-        return dataSet;
+        // Create the dataset
+        PieDataSet dataSet = new PieDataSet(entries, "dataset");
+        return new PieChartData(dataSet, colorList, legendItems);
 
     }
+
 }

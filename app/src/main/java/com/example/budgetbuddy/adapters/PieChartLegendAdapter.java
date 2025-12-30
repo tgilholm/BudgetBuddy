@@ -9,10 +9,12 @@ import android.widget.TextView;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.entities.PieChartLegendItem;
+import com.example.budgetbuddy.entities.TransactionWithCategory;
 import com.example.budgetbuddy.utility.ColorHandler;
 
 import java.util.List;
@@ -65,6 +67,14 @@ public class PieChartLegendAdapter extends RecyclerView.Adapter<PieChartLegendAd
         holder.txtLegendName.setText(item.getName());
         holder.txtLegendPercentage.setText(item.getPercentage());
         holder.colorBlock.setBackground(ColorHandler.createBackground(ContextCompat.getDrawable(context, R.drawable.colour_square), backgroundColour));
+    }
+
+    public void updateLegendItems(List<PieChartLegendItem> legendItems)
+    {
+        // Clear the list and redraw
+        this.legendItems.clear();
+        this.legendItems.addAll(legendItems);
+        notifyDataSetChanged();
     }
 
     @Override

@@ -12,11 +12,10 @@
     <!-- The "colour block" for category colour -->
     <View
         android:id="@+id/colorBlock"
-        android:layout_height="48dp"
-        android:layout_width="48dp"
-        android:padding="4dp"
-        android:background="@drawable/colour_square">
-    </View>
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:background="@drawable/colour_square"
+        android:padding="4dp"/>
 
 
     <TextView
@@ -27,7 +26,9 @@
         android:layout_weight="1"
         android:textColor="?attr/colorOnSurface"
         android:textSize="14sp"
-        tools:text="Groceries" />
+        tools:text="Groceries"
+        android:ellipsize="end"
+        android:maxLines="1" />
 
     <TextView
         android:id="@+id/txtLegendPercentage"
@@ -36,6 +37,8 @@
         android:textColor="?attr/colorOnSurfaceVariant"
         android:textSize="14sp"
         android:textStyle="bold"
-        tools:text="45.5%" />
+        tools:text="45.5%"
+        android:ellipsize="end"
+        android:maxLines="1" />
 
 </LinearLayout>

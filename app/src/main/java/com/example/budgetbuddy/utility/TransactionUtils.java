@@ -1,5 +1,8 @@
 package com.example.budgetbuddy.utility;
 
+import android.util.Log;
+import android.util.Pair;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -11,7 +14,9 @@ import com.example.budgetbuddy.enums.TransactionType;
 
 import org.jetbrains.annotations.Contract;
 
-import java.util.HashMap;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -117,6 +122,7 @@ public final class TransactionUtils
 
 
     /**
+     * Helper method.
      * Gets the sum of outgoing amounts from a list of <code>TransactionWithCategory</code> objects,
      * and aggregates them into a map of <code>Category</code> and <code>Double</code> objects
      *
@@ -124,13 +130,65 @@ public final class TransactionUtils
      * @return a <code>Map</code> of <code>Category</code> and <code>Double</code> objects with aggregated spending
      */
     @NonNull
-    public static Map<Category, Double> getCategoryTotals(@NonNull List<TransactionWithCategory> transactions)
+    private static Map<Category, Double> getCategoryTotals(@NonNull List<TransactionWithCategory> transactions)
     {
-        // todo convert to stream
         return transactions.stream()
                 .filter(t -> t.transaction.getType() == TransactionType.OUTGOING)   // Only consider outgoing values
-                .collect(Collectors.groupingBy(t -> t.category,                     // The "key"
-                        Collectors.summingDouble(t -> t.transaction.getAmount())    // The "amount", as the sum of the amounts
+                .collect(Collectors.groupingBy(t -> t.category,                     // Group by the key
+                        Collectors.summingDouble(t -> t.transaction.getAmount())    // Sum up the amounts, return total
                 ));
+    }
+
+
+    /**
+     * Helper method.
+     * Gets the list of category totals, sorts them and returns a list of map entries
+     *
+     * @param transactions a list of <code>TransactionWithCategory</code> objects
+     * @return a sorted list of <code>Map.Entry</code> objects (<code>Category, Double</code>)
+     */
+    @NonNull
+    private static List<Map.Entry<Category, Double>> getSortedCategoryTotals(@NonNull List<TransactionWithCategory> transactions)
+    {
+        return getCategoryTotals(transactions).entrySet()                               // Get the set of Map entries
+                .stream()                                                               // Iterate through the set
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))          // Sort "backwards", largest first, smallest last
+                .collect(Collectors.toList());                                          // Collect each pair into a Map entry and add to the list
+    }
+
+
+    /**
+     * Gets the list of transactions, passes them to be sorted into map entries, then groups them into named categories BELOW <code>topN</code>
+     * and an "other" category for the last entry.
+     *
+     * @param transactions a list of <code>TransactionWithCategory</code> objects
+     * @return a <code>Pair</code>, where the first item is a a sorted list of <code>Map.Entry</code> objects (<code>Category, Double</code>)
+     * (This represents the "named categories"), and the second item is a <code>Map.Entry</code> object (<code>String, Double</code>) containing
+     * the "other" data
+     */
+    @NonNull
+    public static Pair<List<Map.Entry<Category, Double>>, Map.Entry<String, Double>> getTopNCategoryTotals(@NonNull List<TransactionWithCategory> transactions, int topN)
+    {
+        // Get the sorted totals
+        List<Map.Entry<Category, Double>> sortedCategoryTotals = TransactionUtils.getSortedCategoryTotals(transactions);
+        int limit = Math.min(sortedCategoryTotals.size(), topN); // Math.min ensures no out-of-bounds
+
+        // From the start of the list to the limit
+        List<Map.Entry<Category, Double>> namedCategories = new ArrayList<>(sortedCategoryTotals.subList(0, limit));
+
+        // Get the other total
+        double otherTotal = 0.0;
+        if (sortedCategoryTotals.size() > topN)
+        {
+            // Gets the sum of all categories beyond topN
+            otherTotal = sortedCategoryTotals.subList(topN, sortedCategoryTotals.size())
+                    .stream()
+                    .mapToDouble(Map.Entry::getValue)
+                    .sum();
+        }
+
+        Map.Entry<String, Double> otherEntry = new AbstractMap.SimpleEntry<>("Other", otherTotal);
+
+        return new Pair<>(namedCategories, otherEntry);
     }
 }

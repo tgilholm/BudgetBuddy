@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.budgetbuddy.R;
+import com.example.budgetbuddy.adapters.PieChartLegendAdapter;
+import com.example.budgetbuddy.entities.PieChartData;
 import com.example.budgetbuddy.entities.TransactionWithCategory;
 import com.example.budgetbuddy.utility.ColorHandler;
 import com.example.budgetbuddy.utility.Converters;
@@ -45,6 +47,7 @@ public class OverviewFragment extends Fragment
     private RecyclerViewAdapter recyclerViewAdapter;
     private View emptyView;     // Instance of empty layout for no-transaction state
     private PieChart pieChart;
+    private PieChartLegendAdapter pieLegendAdapter;
 
     private TextView txtBudgetRemaining;
     private TextView txtTotalBudget;
@@ -77,6 +80,7 @@ public class OverviewFragment extends Fragment
         txtBudgetRemaining = view.findViewById(R.id.tvBudgetRemaining);
         txtTotalBudget = view.findViewById(R.id.tvTotalBudget);
         RecyclerView rvPartialHistory = view.findViewById(R.id.rvPartialHistory);
+        RecyclerView pieChartLegend = view.findViewById(R.id.pieChartLegend);
         FloatingActionButton addButton = view.findViewById(R.id.overviewAddButton);
         emptyView = view.findViewById(R.id.overviewEmptyState);     // Get the empty layout
 
@@ -84,13 +88,18 @@ public class OverviewFragment extends Fragment
         // Set up the Overview and Budget ViewModels
         BudgetViewModel budgetViewModel = new ViewModelProvider(requireActivity()).get(BudgetViewModel.class);
         OverviewViewModel overviewViewModel = new ViewModelProvider(requireActivity()).get(OverviewViewModel.class);
-        PieChartHandler.setupPieChart(pieChart, ColorHandler.getThemeColor(requireContext(), com.google.android.material.R.attr.colorOnSurfaceVariant));
+        PieChartHandler.setupPieChart(pieChart);
 
 
         // Instantiate the RecyclerView with an empty list (the observer will update it)
         recyclerViewAdapter = new RecyclerViewAdapter(new ArrayList<>(), R.layout.transaction_item);
         rvPartialHistory.setLayoutManager(new LinearLayoutManager(getContext()));       // Use a vertical LinearLayout as the layout manager
         rvPartialHistory.setAdapter(recyclerViewAdapter);                               // Connect to the recyclerViewAdapter
+
+        // Instantiate the Pie Chart legend
+        pieLegendAdapter = new PieChartLegendAdapter(new ArrayList<>(), getContext());
+        pieChartLegend.setLayoutManager(new LinearLayoutManager(getContext()));
+        pieChartLegend.setAdapter(pieLegendAdapter);
 
 
         // Get the data sources for the mediator
@@ -140,6 +149,7 @@ public class OverviewFragment extends Fragment
             // If empty, hide the views
             pieChart.setVisibility(listEmpty ? View.GONE : View.VISIBLE);   // Gone if empty, visible if not
             rvPartialHistory.setVisibility(listEmpty ? View.GONE : View.VISIBLE);
+            pieChartLegend.setVisibility(listEmpty ? View.GONE : View.VISIBLE);
             txtRecentTransactions.setVisibility(listEmpty ? View.GONE : View.VISIBLE);
             emptyView.setVisibility(listEmpty ? View.VISIBLE : View.GONE);  // Visible if empty, gone if not
 
@@ -225,17 +235,22 @@ public class OverviewFragment extends Fragment
             Log.e("OverviewFragment", "Failed to update pie chart");
         }
 
-        // Get the PieEntries from the ViewModel
-        PieDataSet dataSet = PieChartHandler.getPieData(getContext(), transactions);
+        // Get the PieChartData
+        PieChartData pieData = PieChartHandler.getPieData(transactions);
+        PieDataSet dataSet = pieData.getDataSet();
 
         // Style the dataset
         dataSet.setValueFormatter(new PercentFormatter(pieChart));
         dataSet.setSliceSpace(2f);
         dataSet.setDrawValues(false); // Remove the labels on the slices themselves
 
-        pieChart.setData(new PieData(dataSet));
-        pieChart.invalidate();
+        // Set the dataSet colours
+        dataSet.setColors(ColorHandler.getColorARGBList(getContext(), pieData.getColours()));
+
+        // Update the recyclerView
+        pieLegendAdapter.updateLegendItems(pieData.getLegendItems());
+
+        pieChart.setData(new PieData(dataSet));     // Set the slices
+        pieChart.invalidate();                      // Redraw
     }
-
-
 }

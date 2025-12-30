@@ -6,11 +6,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.util.TypedValue;
 import android.widget.TextView;
 
-import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -18,17 +15,23 @@ import androidx.core.graphics.ColorUtils;
 
 import com.example.budgetbuddy.R;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Utility class for handling color methods
  */
 public final class ColorHandler
 {
     // Final class- no instantiation
-    private ColorHandler() {}
+    private ColorHandler()
+    {
+    }
 
 
     /**
      * Converts a color from colors.xml to a usable <code>ColorStateList</code>
+     *
      * @param context the application context
      * @param colorID an id of a color in colors.xml
      * @return a <code>ColorStateList</code> object
@@ -41,6 +44,7 @@ public final class ColorHandler
 
     /**
      * Returns the ARGB of a color in colors.xml
+     *
      * @param context the application context
      * @param colorID an id of a color in colors.xml
      * @return an <code>int</code> representing the ARGB of the colour
@@ -50,25 +54,26 @@ public final class ColorHandler
         return ContextCompat.getColor(context, colorID);
     }
 
-
     /**
-     * Resolves an attribute colour from colors.xml into a colour integer (annotated @ColorInt)
+     * Resolves the ARGB of a list of colours in colors.xml
      * @param context the application context
-     * @param attributeColour an id of an attribute color in colors.xml
-     * @return a colour <code>int</code>
+     * @param colorIDs a list of color ids
+     * @return a list of resolved color ints
      */
-    @ColorInt
-    public static int getThemeColor(@NonNull Context context, @AttrRes int attributeColour) {
-        TypedValue typedValue = new TypedValue();
-        context.getTheme().resolveAttribute(attributeColour, typedValue, true);
-        return typedValue.data;
+    public static List<Integer> getColorARGBList(Context context, @NonNull List<Integer> colorIDs)
+    {
+        return colorIDs.stream()
+                .map(colorID -> getColorARGB(context, colorID))          // For each item, get the ARGB
+                .collect(Collectors.toList());                                  // Then collect them all into the list and return
     }
+
 
     /**
      * Sets the text colour of a <code>TextView</code> to red if <code>amount</code>
      * is negative, and green otherwise
+     *
      * @param textView the <code>TextView</code> to edit
-     * @param amount a <code>double</code> quantity
+     * @param amount   a <code>double</code> quantity
      */
     public static void setAmountColour(@NonNull TextView textView, double amount)
     {
@@ -81,7 +86,8 @@ public final class ColorHandler
     /**
      * Gets the luminance of <code>backgroundColour</code> and returns black or white text.
      * Prevents hard-to-read text or icons.
-     * @param context the application context
+     *
+     * @param context          the application context
      * @param backgroundColour a <code>ColorInt</code> colour
      * @return a color <code>ARGB</code> of white if luminance is low, black otherwise
      */
@@ -95,8 +101,8 @@ public final class ColorHandler
         if (luminance > 0.5)
         {
             return getColorARGB(context, R.color.text_fixed_dark);
-        }
-        else {
+        } else
+        {
             return Color.WHITE;
         }
 
