@@ -3,6 +3,9 @@ package com.example.budgetbuddy.utility;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.TextView;
@@ -97,5 +100,24 @@ public final class ColorHandler
             return Color.WHITE;
         }
 
+    }
+
+    /**
+     * Sets the colour of a <code>Drawable</code> object with a <code>@ColorInt int</code>
+     *
+     * @param drawable the <code>Drawable</code> object to modify
+     * @param colour   the <code>int</code> ID of the colour
+     * @return the modified <code>Drawable</code>
+     */
+    public static Drawable createBackground(Drawable drawable, @ColorInt int colour)
+    {
+        if (drawable != null)
+        {
+            drawable = drawable.mutate();      // Make the drawable mutable to differentiate it
+
+            // Set colour with PorterDuffColorFilter
+            drawable.setColorFilter(new PorterDuffColorFilter(colour, PorterDuff.Mode.SRC_IN));
+        }
+        return drawable;
     }
 }

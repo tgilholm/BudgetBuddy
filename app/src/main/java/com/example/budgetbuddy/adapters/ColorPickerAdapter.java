@@ -131,10 +131,10 @@ public class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.
         {
             @ColorInt int backgroundColour = ColorHandler.getColorARGB(context, colour);
 
-            colorView.setBackground(createBackground(ContextCompat.getDrawable(context, R.drawable.colour_square), backgroundColour));
+            colorView.setBackground(ColorHandler.createBackground(ContextCompat.getDrawable(context, R.drawable.colour_square), backgroundColour));
 
             // Adjust checkmark colour on background luminance
-            checkmarkView.setBackground(createBackground(ContextCompat.getDrawable(context, R.drawable.checkmark), ColorHandler.resolveForegroundColor(context, backgroundColour)));
+            checkmarkView.setBackground(ColorHandler.createBackground(ContextCompat.getDrawable(context, R.drawable.checkmark), ColorHandler.resolveForegroundColor(context, backgroundColour)));
 
             // Show checkmark if item selected
             checkmarkView.setVisibility(isSelected ? View.VISIBLE : View.GONE);
@@ -156,23 +156,6 @@ public class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.
             });
         }
 
-        /**
-         * Sets the colour of a <code>Drawable</code> object with a <code>@ColorInt int</code>
-         *
-         * @param drawable the <code>Drawable</code> object to modify
-         * @param colour   the <code>int</code> ID of the colour
-         * @return the modified <code>Drawable</code>
-         */
-        private Drawable createBackground(Drawable drawable, @ColorInt int colour)
-        {
-            if (drawable != null)
-            {
-                drawable = drawable.mutate();      // Make the drawable mutable to differentiate it
 
-                // Set colour with PorterDuffColorFilter
-                drawable.setColorFilter(new PorterDuffColorFilter(colour, PorterDuff.Mode.SRC_IN));
-            }
-            return drawable;
-        }
     }
 }
