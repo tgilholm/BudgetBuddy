@@ -6,8 +6,10 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.example.budgetbuddy.entities.PieChartData;
 import com.example.budgetbuddy.entities.TransactionWithCategory;
 import com.example.budgetbuddy.repositories.DataRepository;
+import com.example.budgetbuddy.utility.PieChartHandler;
 
 import java.util.List;
 
@@ -39,6 +41,17 @@ public class OverviewViewModel extends AndroidViewModel
     public LiveData<List<TransactionWithCategory>> getTransactions()
     {
         return dataRepository.getAllTransactions();
+    }
+
+    /**
+     * Retrieves the PieChartData from the PieChartHandler. Allows the utility
+     * class to be modified without changing access for fragments.
+     * @param transactions a list of <code>TransactionWithCategory</code> objects
+     * @return a <code>PieChartData</code> object for use in a <code>PieChart</code>
+     */
+    public PieChartData getPieData(List<TransactionWithCategory> transactions)
+    {
+        return PieChartHandler.getPieData(transactions);
     }
 
 }

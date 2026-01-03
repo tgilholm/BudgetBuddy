@@ -48,7 +48,7 @@ public class OverviewFragment extends Fragment
     private View emptyView;     // Instance of empty layout for no-transaction state
     private PieChart pieChart;
     private PieChartLegendAdapter pieLegendAdapter;
-
+    private OverviewViewModel overviewViewModel;
     private TextView txtBudgetRemaining;
     private TextView txtTotalBudget;
 
@@ -87,7 +87,7 @@ public class OverviewFragment extends Fragment
 
         // Set up the Overview and Budget ViewModels
         BudgetViewModel budgetViewModel = new ViewModelProvider(requireActivity()).get(BudgetViewModel.class);
-        OverviewViewModel overviewViewModel = new ViewModelProvider(requireActivity()).get(OverviewViewModel.class);
+        overviewViewModel = new ViewModelProvider(requireActivity()).get(OverviewViewModel.class);
         PieChartHandler.setupPieChart(pieChart);
 
 
@@ -236,7 +236,7 @@ public class OverviewFragment extends Fragment
         }
 
         // Get the PieChartData
-        PieChartData pieData = PieChartHandler.getPieData(transactions);
+        PieChartData pieData = overviewViewModel.getPieData(transactions);
         PieDataSet dataSet = pieData.getDataSet();
 
         // Style the dataset

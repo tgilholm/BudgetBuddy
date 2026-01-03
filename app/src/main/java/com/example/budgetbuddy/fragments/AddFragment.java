@@ -22,7 +22,6 @@ import com.example.budgetbuddy.utility.TransactionUtils;
 import com.example.budgetbuddy.viewmodel.AddViewModel;
 import com.example.budgetbuddy.dialogs.DatePickerFragment;
 import com.example.budgetbuddy.utility.ChipHandler;
-import com.example.budgetbuddy.utility.InputValidator;
 import com.example.budgetbuddy.dialogs.TimePickerFragment;
 import com.example.budgetbuddy.enums.RepeatDuration;
 import com.example.budgetbuddy.enums.TransactionType;

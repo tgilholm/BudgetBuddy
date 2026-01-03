@@ -28,7 +28,7 @@ public final class InputValidator
      * Validates that a string is not empty and conforms to the format set out by the regex. <br><br>
      * Regex breakdown: <br>
      * <pre>
-     * [0-9]+               Matches if the string contains one-or-more numbers- i.e. 50<br>
+     * [0-9]+               Matches if the string contains one-or-more numbers<br>
      * [.]                  Matches if the string contains a decimal point<br>
      * [0-9]{1, 2}          Matches if numeric and at most 2 d.p.<br>
      * ([.][0-9]{1,2})?     Matches if numeric after the d.p (optional) <br>

@@ -9,12 +9,10 @@ import android.widget.TextView;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.entities.PieChartLegendItem;
-import com.example.budgetbuddy.entities.TransactionWithCategory;
 import com.example.budgetbuddy.utility.ColorHandler;
 
 import java.util.List;
