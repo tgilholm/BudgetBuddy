@@ -129,7 +129,7 @@ public final class TransactionUtils
      * @return a <code>Map</code> of <code>Category</code> and <code>Double</code> objects with aggregated spending
      */
     @NonNull
-    private static Map<Category, Double> getCategoryTotals(@NonNull List<TransactionWithCategory> transactions)
+    static Map<Category, Double> getCategoryTotals(@NonNull List<TransactionWithCategory> transactions)
     {
         return transactions.stream()
                 .filter(t -> t.transaction.getType() == TransactionType.OUTGOING)   // Only consider outgoing values
@@ -147,7 +147,7 @@ public final class TransactionUtils
      * @return a sorted list of <code>Map.Entry</code> objects (<code>Category, Double</code>)
      */
     @NonNull
-    private static List<Map.Entry<Category, Double>> getSortedCategoryTotals(@NonNull List<TransactionWithCategory> transactions)
+    static List<Map.Entry<Category, Double>> getSortedCategoryTotals(@NonNull List<TransactionWithCategory> transactions)
     {
         return getCategoryTotals(transactions).entrySet()                               // Get the set of Map entries
                 .stream()                                                               // Iterate through the set

@@ -76,7 +76,7 @@ public final class PieChartHandler
      *
      */
     @NonNull
-    private static PieChartData getPieData(List<TransactionWithCategory> transactions, int topN)
+    static PieChartData getPieData(List<TransactionWithCategory> transactions, int topN)
     {
         List<PieEntry> entries = new ArrayList<>();
         List<PieChartLegendItem> legendItems = new ArrayList<>();

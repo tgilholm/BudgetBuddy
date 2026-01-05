@@ -17,7 +17,6 @@ import com.example.budgetbuddy.database.AppDB;
  */
 public class SettingsViewModel extends AndroidViewModel
 {
-    private final Application application;
     private final SharedPreferences sharedPreferences;
     private final AppDB db;
 
@@ -25,7 +24,6 @@ public class SettingsViewModel extends AndroidViewModel
     {
         super(application);
 
-        this.application = application;
         db = AppDB.getDBInstance(application);
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(application);
     }
