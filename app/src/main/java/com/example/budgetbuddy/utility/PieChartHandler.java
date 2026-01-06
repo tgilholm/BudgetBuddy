@@ -1,7 +1,7 @@
 package com.example.budgetbuddy.utility;
 
 import android.graphics.Color;
-import android.util.Pair;
+import androidx.core.util.Pair;
 
 import androidx.annotation.NonNull;
 
@@ -47,12 +47,12 @@ public final class PieChartHandler
         pieChart.setDrawEntryLabels(false);                             // Remove the labels from slices
 
         // Disable the legend (RecyclerView used instead)
-        pieChart.getLegend()
-                .setEnabled(false);
+        pieChart.getLegend().setEnabled(false);
     }
 
     /**
      * Overloads <code>getPieData</code>, abstracts topN setting from callers.
+     *
      * @param transactions a list of <code>TransactionWithCategory</code> objects
      * @return a <code>PieChartData</code> object for use in a <code>PieChart</code>
      */
@@ -61,7 +61,6 @@ public final class PieChartHandler
     {
         return getPieData(transactions, MAX_CATEGORIES);
     }
-
 
 
     /**
@@ -93,9 +92,16 @@ public final class PieChartHandler
         // Get the topN pair
         Pair<List<Map.Entry<Category, Double>>, Map.Entry<String, Double>> namedAndOther = TransactionUtils.getTopNCategoryTotals(transactions, topN);
 
+        // Null-check
+        if (namedAndOther.first == null || namedAndOther.second == null)
+        {
+            // Break early if null
+            return new PieChartData(new PieDataSet(new ArrayList<>(), ""), new ArrayList<>(), new ArrayList<>());
+        }
         // Extract named & other
         List<Map.Entry<Category, Double>> namedCategories = namedAndOther.first;
         Map.Entry<String, Double> otherCategory = namedAndOther.second;
+
 
         // Add named to dataset
         for (Map.Entry<Category, Double> entry : namedCategories)
@@ -116,7 +122,8 @@ public final class PieChartHandler
         if (otherCategory.getValue() > 0)
         {
             String percentage = String.format("%.1f%%", (otherCategory.getValue() / totalSpend) * 100);
-            entries.add(new PieEntry(otherCategory.getValue().floatValue(), "Other")); // Cast to float
+            entries.add(new PieEntry(otherCategory.getValue()
+                    .floatValue(), "Other")); // Cast to float
             colorList.add(R.color.budgetBlue);  // Needs to be resolved to ARGB later
             legendItems.add(new PieChartLegendItem("Other", percentage, R.color.budgetBlue));
         }

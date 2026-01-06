@@ -4,6 +4,9 @@ import junit.framework.TestCase;
 
 import java.util.Calendar;
 
+/**
+ * Tests the methods in the InputValidator utility class using arrange-act-assert pattern
+ */
 public class InputValidatorTest extends TestCase
 {
     private Calendar calendar;
@@ -54,8 +57,5 @@ public class InputValidatorTest extends TestCase
 
         assertEquals(calendar.get(Calendar.HOUR_OF_DAY), parsedCalendar.get(Calendar.HOUR_OF_DAY));
         assertEquals(calendar.get(Calendar.MINUTE), parsedCalendar.get(Calendar.MINUTE));
-
-
-
     }
 }

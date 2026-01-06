@@ -1,6 +1,6 @@
 package com.example.budgetbuddy.utility;
 
-import android.util.Pair;
+import androidx.core.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -168,6 +168,13 @@ public final class TransactionUtils
     @NonNull
     public static Pair<List<Map.Entry<Category, Double>>, Map.Entry<String, Double>> getTopNCategoryTotals(@NonNull List<TransactionWithCategory> transactions, int topN)
     {
+        // Empty check
+        if (transactions.isEmpty())
+        {
+            // Break early
+            return new Pair<>(new ArrayList<>(), new AbstractMap.SimpleEntry<>("Other", 0.0));
+        }
+
         // Get the sorted totals
         List<Map.Entry<Category, Double>> sortedCategoryTotals = TransactionUtils.getSortedCategoryTotals(transactions);
         int limit = Math.min(sortedCategoryTotals.size(), topN); // Math.min ensures no out-of-bounds

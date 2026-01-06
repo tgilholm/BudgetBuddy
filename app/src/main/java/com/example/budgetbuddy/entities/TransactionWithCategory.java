@@ -15,4 +15,11 @@ public class TransactionWithCategory
 
     @Relation(parentColumn = "category", entityColumn = "categoryID")
     public Category category;
+
+
+    public TransactionWithCategory(Transaction transaction, Category category)
+    {
+        this.transaction = transaction;
+        this.category = category;
+    }
 }
