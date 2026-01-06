@@ -1,3 +1,5 @@
+
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -46,8 +48,10 @@ dependencies {
 
     // Preference Fragment dependency
     implementation(libs.preference)
+    implementation(libs.core)
+    implementation(libs.ext.junit)
 
-    testImplementation(libs.junit)
+    testImplementation(libs.junit)text inside test cases
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     annotationProcessor(libs.room.compiler)

@@ -13,6 +13,7 @@ recyclerview = "1.4.0"
 roomRuntime = "2.8.3"
 roomCompiler = "2.8.3"
 viewpager2 = "1.1.0"
+core = "1.7.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -28,6 +29,7 @@ recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
+core = { group = "androidx.test", name = "core", version.ref = "core" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

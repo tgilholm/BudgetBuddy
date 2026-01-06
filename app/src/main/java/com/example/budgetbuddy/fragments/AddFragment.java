@@ -240,6 +240,9 @@ public class AddFragment extends Fragment
                 Log.v("AddFragment", "Added new transaction with amount: " + amount);
                 resetFields();
                 break;
+            case EMPTY:
+                Toast.makeText(getContext(), "Please enter an amount!", Toast.LENGTH_SHORT).show();
+                break;
             case INVALID_AMOUNT:
                 Toast.makeText(getContext(), "Invalid amount! (Format must be XXX.YY)", Toast.LENGTH_SHORT).show();
                 break;
