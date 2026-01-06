@@ -51,7 +51,7 @@ dependencies {
     implementation(libs.core)
     implementation(libs.ext.junit)
 
-    testImplementation(libs.junit)text inside test cases
+    testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     annotationProcessor(libs.room.compiler)
