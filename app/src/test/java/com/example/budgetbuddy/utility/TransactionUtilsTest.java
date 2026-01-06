@@ -26,16 +26,16 @@ public class TransactionUtilsTest extends TestCase {
         super.setUp();
 
         // Setup categories
-        cat1 = new Category("Groceries", R.color.red);
+        cat1 = new Category("Shopping", R.color.red);
         cat2 = new Category("Utilities", R.color.blue);
         cat3 = new Category("Entertainment", R.color.green);
         cat4 = new Category("Income", R.color.yellow);
 
-        // Setup transactions
+        // Setup transaction list
         transactions = new ArrayList<>();
         Calendar cal = Calendar.getInstance();
 
-        // Outgoing transactions
+        // Outgoings
         cal.set(2023, Calendar.JANUARY, 10);
         transactions.add(new TransactionWithCategory(new Transaction(100, TransactionType.OUTGOING, (Calendar) cal.clone(), 0, RepeatDuration.NEVER), cat1));
         cal.set(2023, Calendar.JANUARY, 12);
@@ -54,11 +54,11 @@ public class TransactionUtilsTest extends TestCase {
         List<TransactionWithCategory> sorted = TransactionUtils.sortTransactions(new ArrayList<>(transactions));
 
         // Should be sorted in descending order of date
-        assertEquals("Entertainment", sorted.get(0).category.getName()); // Jan 15
-        assertEquals("Utilities", sorted.get(1).category.getName()); // Jan 12
-        assertEquals("Groceries", sorted.get(2).category.getName()); // Jan 10
-        assertEquals("Groceries", sorted.get(3).category.getName()); // Jan 5
-        assertEquals("Income", sorted.get(4).category.getName()); // Jan 1
+        assertEquals("Entertainment", sorted.get(0).category.getName());    // Jan 15
+        assertEquals("Utilities", sorted.get(1).category.getName());        // Jan 12
+        assertEquals("Shopping", sorted.get(2).category.getName());         // Jan 10
+        assertEquals("Shopping", sorted.get(3).category.getName());         // Jan 5
+        assertEquals("Income", sorted.get(4).category.getName());           // Jan 1
     }
 
     public void testSelectRepeatDuration() {
@@ -73,7 +73,7 @@ public class TransactionUtilsTest extends TestCase {
     public void testGetTotalSpend() {
         double totalSpend = TransactionUtils.getTotalSpend(transactions);
 
-        // Should only sum outgoings: 100 + 50 + 25 + 75 = 250
+        // should only sum outgoings
         assertEquals(250.0, totalSpend);
 
         // test empty list
@@ -96,12 +96,12 @@ public class TransactionUtilsTest extends TestCase {
     public void testGetCategoryTotals() {
         Map<Category, Double> totals = TransactionUtils.getCategoryTotals(transactions);
 
-        // Should only contain outgoing transactions, aggregated by category
-        assertEquals(3, totals.size()); // Groceries, Utilities, Entertainment
-        assertEquals(125.0, totals.get(cat1)); // Groceries: 100 + 25
-        assertEquals(50.0, totals.get(cat2));  // Utilities: 50
-        assertEquals(75.0, totals.get(cat3));  // Entertainment: 75
-        assertNull(totals.get(cat4));          // Income category should not be present
+        // Should only contain outgoing transactions aggregated by category
+        assertEquals(3, totals.size());             // Shopping, Utilities, Entertainment
+        assertEquals(125.0, totals.get(cat1));      // shopping
+        assertEquals(50.0, totals.get(cat2));       // utilities
+        assertEquals(75.0, totals.get(cat3));       // entertainment
+        assertNull(totals.get(cat4));                       // incomings are not included in spending
     }
 
     public void testGetSortedCategoryTotals() {
@@ -109,11 +109,11 @@ public class TransactionUtilsTest extends TestCase {
 
         // Should be sorted in descending order
         assertEquals(3, sortedTotals.size());
-        assertEquals(cat1, sortedTotals.get(0).getKey()); // Groceries: 125.0
+        assertEquals(cat1, sortedTotals.get(0).getKey());               // shopping = 125.0
         assertEquals(125.0, sortedTotals.get(0).getValue());
-        assertEquals(cat3, sortedTotals.get(1).getKey()); // Entertainment: 75.0
+        assertEquals(cat3, sortedTotals.get(1).getKey());               // entertainment = 75.0
         assertEquals(75.0, sortedTotals.get(1).getValue());
-        assertEquals(cat2, sortedTotals.get(2).getKey()); // Utilities: 50.0
+        assertEquals(cat2, sortedTotals.get(2).getKey());               // utilities = 50.0
         assertEquals(50.0, sortedTotals.get(2).getValue());
     }
 
@@ -128,17 +128,17 @@ public class TransactionUtilsTest extends TestCase {
 
         // Named categories should be the top 2
         assertEquals(2, namedCategories.size());
-        assertEquals(cat1, namedCategories.get(0).getKey()); // Groceries: 125.0
-        assertEquals(cat3, namedCategories.get(1).getKey()); // Entertainment: 75.0
+        assertEquals(cat1, namedCategories.get(0).getKey()); // shopping = 125.0
+        assertEquals(cat3, namedCategories.get(1).getKey()); // entertainment = 75.0
 
-        // "Other" should be the sum of the rest
+        // other category should have sum of all others
         assertEquals("Other", otherCategory.getKey());
         assertEquals(50.0, otherCategory.getValue());
 
         // N larger than categories
         result = TransactionUtils.getTopNCategoryTotals(transactions, 5);
         assertEquals(3, result.first.size()); // Should just return all 3 categories
-        assertEquals(0.0, result.second.getValue());   // Other total should be 0
+        assertEquals(0.0, result.second.getValue());   // other total should be 0
 
         // test empty list
         result = TransactionUtils.getTopNCategoryTotals(Collections.emptyList(), topN);

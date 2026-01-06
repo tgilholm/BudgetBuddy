@@ -31,8 +31,6 @@ public class ConvertersTest extends TestCase
 
         // Assert the two are equal
         assertEquals(expected, actual);
-
-
     }
 
     public void testCalendarToDayMonthYear()
@@ -56,6 +54,5 @@ public class ConvertersTest extends TestCase
         String expected = "£50.00";
 
         assertEquals(expected, Converters.doubleToCurrencyString(amount));
-
     }
 }
