@@ -1,6 +1,6 @@
 package com.example.budgetbuddy.utility;
 
-import android.util.Pair;
+import androidx.core.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -129,7 +129,7 @@ public final class TransactionUtils
      * @return a <code>Map</code> of <code>Category</code> and <code>Double</code> objects with aggregated spending
      */
     @NonNull
-    private static Map<Category, Double> getCategoryTotals(@NonNull List<TransactionWithCategory> transactions)
+    static Map<Category, Double> getCategoryTotals(@NonNull List<TransactionWithCategory> transactions)
     {
         return transactions.stream()
                 .filter(t -> t.transaction.getType() == TransactionType.OUTGOING)   // Only consider outgoing values
@@ -147,7 +147,7 @@ public final class TransactionUtils
      * @return a sorted list of <code>Map.Entry</code> objects (<code>Category, Double</code>)
      */
     @NonNull
-    private static List<Map.Entry<Category, Double>> getSortedCategoryTotals(@NonNull List<TransactionWithCategory> transactions)
+    static List<Map.Entry<Category, Double>> getSortedCategoryTotals(@NonNull List<TransactionWithCategory> transactions)
     {
         return getCategoryTotals(transactions).entrySet()                               // Get the set of Map entries
                 .stream()                                                               // Iterate through the set
@@ -168,6 +168,13 @@ public final class TransactionUtils
     @NonNull
     public static Pair<List<Map.Entry<Category, Double>>, Map.Entry<String, Double>> getTopNCategoryTotals(@NonNull List<TransactionWithCategory> transactions, int topN)
     {
+        // Empty check
+        if (transactions.isEmpty())
+        {
+            // Break early
+            return new Pair<>(new ArrayList<>(), new AbstractMap.SimpleEntry<>("Other", 0.0));
+        }
+
         // Get the sorted totals
         List<Map.Entry<Category, Double>> sortedCategoryTotals = TransactionUtils.getSortedCategoryTotals(transactions);
         int limit = Math.min(sortedCategoryTotals.size(), topN); // Math.min ensures no out-of-bounds

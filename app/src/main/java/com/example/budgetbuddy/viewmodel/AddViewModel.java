@@ -50,6 +50,11 @@ public class AddViewModel extends AndroidViewModel
     public ValidationState addTransaction(String stringAmount, TransactionType type, String date, String time, long categoryID, RepeatDuration repeatDuration)
     {
         // Validate the amount field
+        if (stringAmount == null || stringAmount.isEmpty())
+        {
+            return ValidationState.EMPTY;
+        }
+
         double amount;
         if (!InputValidator.validateCurrencyInput(stringAmount))
         {
