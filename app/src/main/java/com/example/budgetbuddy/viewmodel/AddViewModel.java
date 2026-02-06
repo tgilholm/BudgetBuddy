@@ -10,7 +10,7 @@ import com.example.budgetbuddy.entities.Transaction;
 import com.example.budgetbuddy.enums.RepeatDuration;
 import com.example.budgetbuddy.enums.TransactionType;
 import com.example.budgetbuddy.enums.ValidationState;
-import com.example.budgetbuddy.repositories.DataRepository;
+import com.example.budgetbuddy.data.DataRepository;
 import com.example.budgetbuddy.utility.InputValidator;
 
 import java.util.Calendar;
