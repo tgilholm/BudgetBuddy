@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.database;
+package com.example.budgetbuddy.data.db;
 
 
 import androidx.lifecycle.LiveData;

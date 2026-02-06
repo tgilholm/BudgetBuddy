@@ -1,12 +1,12 @@
-package com.example.budgetbuddy.repositories;
+package com.example.budgetbuddy.data;
 
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 
-import com.example.budgetbuddy.database.AppDB;
-import com.example.budgetbuddy.database.CategoryDAO;
-import com.example.budgetbuddy.database.TransactionDAO;
+import com.example.budgetbuddy.data.db.AppDB;
+import com.example.budgetbuddy.data.db.CategoryDAO;
+import com.example.budgetbuddy.data.db.TransactionDAO;
 import com.example.budgetbuddy.entities.Category;
 import com.example.budgetbuddy.entities.Transaction;
 import com.example.budgetbuddy.entities.TransactionWithCategory;

@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.database;
+package com.example.budgetbuddy.data.db;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -24,15 +24,6 @@ public interface CategoryDAO
      */
     @Query("SELECT * FROM 'category'")
     LiveData<List<Category>> getAll();
-
-    /**
-     * Get a category by its ID
-     *
-     * @param id the ID of the category
-     * @return a <code>Category</code> object
-     */
-    @Query("SELECT * FROM 'category' WHERE categoryID = (:id)")
-    Category getCategoryByID(long id);
 
     /**
      * Insert a new category into the database
