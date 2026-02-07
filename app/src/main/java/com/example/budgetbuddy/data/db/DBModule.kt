@@ -1,6 +1,11 @@
+@file:Suppress("unused")
+
 package com.example.budgetbuddy.data.db
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
@@ -18,10 +23,15 @@ import javax.inject.Singleton
  * generates a factory class that calls provideDatabase when the DB is needed,
  * or provideTransactionDao when a DAO is needed, etc.
  *
- * This is an "object", not a class, so as to allow Hilt to simply access
- * these methods without having to instantiate the class first. At runtime, a
- * singleton static instance of this class is created.
+ * This is an "object" - a class initialised as soon as it is created,
+ * so as to allow Hilt to simply access these methods without having to instantiate the
+ * class first.
  */
+
+
+// "by" keyword- set the dataStore of this context to the dataStore in the specified file
+private val Context.dataStore by preferencesDataStore(name = "user_prefs")
+
 @Module
 @InstallIn(SingletonComponent::class)
 object DBModule
@@ -45,7 +55,7 @@ object DBModule
     }
 
     /**
-     * Returns or creates a singleton instance of the transaction DAO
+     * Returns or creates a singleton instance of the transaction DAO.
      * Consumes the AppDB instance provided by provideDatabase
      */
     @Singleton
@@ -56,7 +66,7 @@ object DBModule
     }
 
     /**
-     * Returns or creates a singleton instance of the category DAO
+     * Returns or creates a singleton instance of the category DAO.
      * Consumes the AppDB instance provided by provideDatabase
      */
     @Singleton
@@ -66,4 +76,13 @@ object DBModule
         return db.categoryDao()
     }
 
+    /**
+     * Returns or creates a singleton instance of the Preferences DataStore
+     */
+    @Singleton
+    @Provides
+    fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences>
+    {
+        return context.dataStore
+    }
 }

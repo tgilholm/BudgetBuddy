@@ -8,7 +8,10 @@ import com.example.budgetbuddy.enums.TransactionType
 import java.util.Calendar
 import java.util.Locale
 
-
+/**
+ * Data class for Transaction objects acting as an Entity in the room database.
+ * Auto-generates primary keys.
+ */
 @Entity(tableName = "transaction")
 data class Transaction(
     @PrimaryKey(autoGenerate = true)    // Let Room handle ID generation

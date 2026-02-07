@@ -4,6 +4,10 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/**
+ * Data class for Category objects acting as an Entity in the room database.
+ * Auto-generates primary keys.
+ */
 @Entity(tableName = "category")
 data class Category(
     @PrimaryKey(autoGenerate = true)    // avoiding static id generation

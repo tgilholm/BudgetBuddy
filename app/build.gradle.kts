@@ -1,5 +1,3 @@
-
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -48,21 +46,28 @@ dependencies {
     implementation(libs.viewpager2) // ViewPager2
     implementation(libs.mpandroidchart) // MPAndroidChart
 
-    // Add dependency for Room DB
+    // Room DB
     implementation(libs.room.runtime)
     implementation(libs.recyclerview)
 
-    // Preference Fragment dependency
+    // DataStore
+    implementation(libs.datastore.preferences)
+    implementation(libs.datastore.preferences.core)
+    implementation(libs.datastore)
+    implementation(libs.datastore.core)
+
+
+    // Preference Fragment
     implementation(libs.preference)
     implementation(libs.core)
     implementation(libs.ext.junit)
     implementation(libs.core.ktx)
 
-    // Hilt dependency
+    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.dagger.hilt.android.compiler)
 
-
+    // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
