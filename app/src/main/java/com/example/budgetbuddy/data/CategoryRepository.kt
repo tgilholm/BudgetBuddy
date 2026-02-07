@@ -33,4 +33,9 @@ interface CategoryRepository
      * with data extracted from provided Category object. Executes in background
      */
     suspend fun updateCategory(category: Category)
+
+    /**
+     * Deletes all categories from the database
+     */
+    suspend fun deleteAll()
 }

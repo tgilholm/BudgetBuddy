@@ -33,5 +33,8 @@ interface TransactionRepository
      */
     suspend fun deleteTransaction(transaction: Transaction)
 
-
+    /**
+     * Deletes all transactions from the database
+     */
+    suspend fun deleteAll()
 }

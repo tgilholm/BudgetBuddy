@@ -52,6 +52,8 @@ abstract class RepoModule
     /**
      * Binds the PreferenceRepository to the provided implementation
      */
+    @Binds
+    @Singleton
     abstract fun bindPreferenceRepo(
         impl: PreferenceRepositoryImpl
     ): PreferenceRepository
