@@ -22,7 +22,7 @@ class ValidationService @Inject constructor(
      * and adds it via the repository if so. If not, returns a
      * ValidationResult error back to the caller.
      */
-    suspend fun validateAndAdd(
+    suspend fun validateAndAddTransaction(
         amountString: String,   // All fields are marked NotNull implicitly (no ?)
         categoryID: Long,
         date: String,
