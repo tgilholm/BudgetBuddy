@@ -27,13 +27,15 @@ import javax.inject.Singleton
  * so as to allow Hilt to simply access these methods without having to instantiate the
  * class first.
  */
+
+
+// "by" keyword- set the dataStore of this context to the dataStore in the specified file
+private val Context.dataStore by preferencesDataStore(name = "user_prefs")
+
 @Module
 @InstallIn(SingletonComponent::class)
 object DBModule
 {
-    // "by" keyword- get the sa
-    private val Context.dataStore by preferencesDataStore(name = "user_prefs")
-
     /**
      * Returns the database instance for use in the Hilt dependency tree.
      * Hilt generates a singleton database instance here. Only the code
