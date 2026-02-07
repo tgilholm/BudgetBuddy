@@ -1,25 +1,15 @@
-package com.example.budgetbuddy.data.entities;
+package com.example.budgetbuddy.data.entities
 
-import androidx.room.Embedded;
-import androidx.room.Relation;
+import androidx.room.Embedded
+import androidx.room.Relation
 
-/**
- * Joins together transaction and category, linked by the category ID.
- * Room performs a SQL JOIN on the Transaction and Category entities.
- * This allows accessing the category data in a Transaction context.
- */
-public class TransactionWithCategory
-{
+data class TransactionWithCategory(
     @Embedded
-    public Transaction transaction;
+    val transaction: Transaction,       // "Owns" the DTO
 
-    @Relation(parentColumn = "category", entityColumn = "categoryID")
-    public Category category;
-
-
-    public TransactionWithCategory(Transaction transaction, Category category)
-    {
-        this.transaction = transaction;
-        this.category = category;
-    }
-}
+    @Relation(
+        parentColumn = "categoryID",
+        entityColumn = "id"
+    )
+    val category: Category              // SQL Join on category id field
+)

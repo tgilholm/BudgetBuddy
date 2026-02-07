@@ -14,7 +14,13 @@ import javax.inject.Singleton
  * of database classes.
  *
  * Annotated @Module to indicate to Hilt that this object generates objects
- * and to refer here when attempting to reference dependencies on them
+ * and to refer here when attempting to reference dependencies on them. Hilt
+ * generates a factory class that calls provideDatabase when the DB is needed,
+ * or provideTransactionDao when a DAO is needed, etc.
+ *
+ * This is an "object", not a class, so as to allow Hilt to simply access
+ * these methods without having to instantiate the class first. At runtime, a
+ * singleton static instance of this class is created.
  */
 @Module
 @InstallIn(SingletonComponent::class)
