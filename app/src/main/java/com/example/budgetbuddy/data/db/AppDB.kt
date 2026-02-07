@@ -3,9 +3,8 @@ package com.example.budgetbuddy.data.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.budgetbuddy.data.entities.Category
-import com.example.budgetbuddy.data.entities.Transaction
-import com.example.budgetbuddy.utility.Convertersold
+import com.example.budgetbuddy.domain.entities.Category
+import com.example.budgetbuddy.domain.entities.Transaction
 
 
 @Database(

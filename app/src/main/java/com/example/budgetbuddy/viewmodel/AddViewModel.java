@@ -5,8 +5,8 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.example.budgetbuddy.data.entities.Category;
-import com.example.budgetbuddy.data.entities.Transaction;
+import com.example.budgetbuddy.domain.entities.Category;
+import com.example.budgetbuddy.domain.entities.Transaction;
 import com.example.budgetbuddy.enums.RepeatDuration;
 import com.example.budgetbuddy.enums.TransactionType;
 import com.example.budgetbuddy.enums.ValidationState;

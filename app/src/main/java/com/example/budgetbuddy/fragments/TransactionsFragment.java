@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.adapters.EditRecyclerViewAdapter;
-import com.example.budgetbuddy.data.entities.TransactionWithCategory;
+import com.example.budgetbuddy.domain.entities.TransactionWithCategory;
 import com.example.budgetbuddy.utility.TransactionUtils;
 import com.example.budgetbuddy.viewmodel.TransactionViewModel;
 

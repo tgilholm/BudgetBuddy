@@ -4,7 +4,7 @@ import com.example.budgetbuddy.R
 import com.example.budgetbuddy.data.CategoryRepository
 import com.example.budgetbuddy.data.PreferenceRepository
 import com.example.budgetbuddy.data.TransactionRepository
-import com.example.budgetbuddy.data.entities.Category
+import com.example.budgetbuddy.domain.entities.Category
 import javax.inject.Inject
 
 class MaintenanceService @Inject constructor(

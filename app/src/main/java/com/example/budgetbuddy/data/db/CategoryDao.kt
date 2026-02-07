@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.example.budgetbuddy.data.entities.Category
+import com.example.budgetbuddy.domain.entities.Category
 import kotlinx.coroutines.flow.Flow
 
 @Dao

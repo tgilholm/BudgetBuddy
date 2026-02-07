@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.example.budgetbuddy.data.entities.TransactionWithCategory;
+import com.example.budgetbuddy.domain.entities.TransactionWithCategory;
 import com.example.budgetbuddy.data.DataRepository;
 
 import java.util.List;

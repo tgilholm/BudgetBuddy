@@ -6,8 +6,8 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.example.budgetbuddy.data.entities.PieChartData;
-import com.example.budgetbuddy.data.entities.TransactionWithCategory;
+import com.example.budgetbuddy.domain.entities.PieChartData;
+import com.example.budgetbuddy.domain.entities.TransactionWithCategory;
 import com.example.budgetbuddy.data.DataRepository;
 import com.example.budgetbuddy.utility.PieChartHandler;
 

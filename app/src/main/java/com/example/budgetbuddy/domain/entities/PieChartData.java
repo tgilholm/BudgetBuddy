@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.data.entities;
+package com.example.budgetbuddy.domain.entities;
 
 import com.github.mikephil.charting.data.PieDataSet;
 

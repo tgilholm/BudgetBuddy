@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgetbuddy.R;
-import com.example.budgetbuddy.data.entities.Category;
-import com.example.budgetbuddy.data.entities.Transaction;
-import com.example.budgetbuddy.data.entities.TransactionWithCategory;
+import com.example.budgetbuddy.domain.entities.Category;
+import com.example.budgetbuddy.domain.entities.Transaction;
+import com.example.budgetbuddy.domain.entities.TransactionWithCategory;
 import com.example.budgetbuddy.enums.TransactionType;
 import com.example.budgetbuddy.utility.ColorHandler;
 import com.example.budgetbuddy.utility.Convertersold;

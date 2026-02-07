@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.dialogs.CategoryCreatorFragment;
-import com.example.budgetbuddy.data.entities.Category;
+import com.example.budgetbuddy.domain.entities.Category;
 import com.example.budgetbuddy.utility.TransactionUtils;
 import com.example.budgetbuddy.viewmodel.AddViewModel;
 import com.example.budgetbuddy.dialogs.DatePickerFragment;

@@ -1,7 +1,7 @@
 package com.example.budgetbuddy.data
 
-import com.example.budgetbuddy.data.entities.Transaction
-import com.example.budgetbuddy.data.entities.TransactionWithCategory
+import com.example.budgetbuddy.domain.entities.Transaction
+import com.example.budgetbuddy.domain.entities.TransactionWithCategory
 import kotlinx.coroutines.flow.Flow
 
 /**

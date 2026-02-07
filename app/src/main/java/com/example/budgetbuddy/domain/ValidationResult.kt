@@ -1,17 +1,16 @@
 package com.example.budgetbuddy.domain
 
 /**
- * Class "handed back" to the caller as a result of validating a given operation
- * Contains either a success condition, or a provided error message. Allows
- * delegating validation to domain-level classes.
+ * Sealed class providing a functional result wrapper.
+ * E - an error type
+ * V - a value type
+ *
+ * On success, return the value type and no error.
+ * On failure, return the error type and no value.
  */
-sealed class ValidationResult
+sealed class ValidationResult<out E : DomainResult, out V>
 {
-    object Success : ValidationResult()
+    data class Success<out V>(val value: V) : ValidationResult<Nothing, V>()
 
-    /**
-     * A simple one-variable data class holding a validation message. By default,
-     * the message is "Validation Failed".
-     */
-    data class Error(val message: String = "Validation Failed") : ValidationResult()
+    data class Failure<out E : DomainResult>(val error: E): ValidationResult<E, Nothing>()
 }

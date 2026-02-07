@@ -1,9 +1,7 @@
 package com.example.budgetbuddy.domain.services
 
-import android.icu.util.Calendar
-import androidx.room.RoomOpenDelegate
 import com.example.budgetbuddy.data.TransactionRepository
-import com.example.budgetbuddy.data.entities.Transaction
+import com.example.budgetbuddy.domain.entities.Transaction
 import com.example.budgetbuddy.domain.ValidationResult
 import com.example.budgetbuddy.enums.RepeatDuration
 import com.example.budgetbuddy.enums.TransactionType
