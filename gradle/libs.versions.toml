@@ -1,5 +1,6 @@
 [versions]
 agp = "8.13.2"
+datastorePreferencesCorse = "1.2.0"
 hiltAndroid = "2.59.1"
 hiltAndroidCompiler = "2.59.1"
 junit = "4.13.2"
@@ -21,6 +22,7 @@ coreKtx = "1.17.0"
 
 [libraries]
 dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
+datastore-preferences-corse = { module = "androidx.datastore:datastore-preferences-corse", version.ref = "datastorePreferencesCorse" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

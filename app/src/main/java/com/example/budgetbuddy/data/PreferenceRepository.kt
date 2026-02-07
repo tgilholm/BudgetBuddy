@@ -4,12 +4,13 @@ import java.math.BigDecimal
 
 /**
  * Interface defining the contract implementations must follow for accessing
- * the data layer and carrying out operations pertaining to Budget data.
+ * the data layer and carrying out operations pertaining to budget, firstRun
+ * and other preference-level flags
  *
  * The interface segregation principle is enforced here, favouring small,
  * focused interfaces over "fat" ones, or a "god repository".
  */
-interface BudgetRepository
+interface PreferenceRepository
 {
     /**
      * Returns the stored budget quantity as a nullable BigDecimal
