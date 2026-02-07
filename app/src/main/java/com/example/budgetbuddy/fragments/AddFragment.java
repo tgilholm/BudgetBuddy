@@ -25,7 +25,7 @@ import com.example.budgetbuddy.utility.ChipHandler;
 import com.example.budgetbuddy.dialogs.TimePickerFragment;
 import com.example.budgetbuddy.enums.RepeatDuration;
 import com.example.budgetbuddy.enums.TransactionType;
-import com.example.budgetbuddy.utility.Converters;
+import com.example.budgetbuddy.utility.Convertersold;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -210,8 +210,8 @@ public class AddFragment extends Fragment
 
         // Always use 00:00 format for time output, i.e. 03:00 instead of 3.0
         // Set the locale to be the user's region
-        timeText.setText(Converters.calendarToHourMinute(userTime));
-        dateText.setText(Converters.calendarToDayMonthYear(userTime));
+        timeText.setText(Convertersold.calendarToHourMinute(userTime));
+        dateText.setText(Convertersold.calendarToDayMonthYear(userTime));
 
     }
 

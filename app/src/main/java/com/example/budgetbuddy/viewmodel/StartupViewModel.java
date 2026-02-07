@@ -5,24 +5,26 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.preference.PreferenceManager;
 
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.data.entities.Category;
 import com.example.budgetbuddy.enums.ValidationState;
-import com.example.budgetbuddy.data.DataRepository;
 import com.example.budgetbuddy.utility.InputValidator;
 
 import java.util.Arrays;
 import java.util.List;
 
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
 /**
  * ViewModel for interacting with the <code>FirstTimeStartupActivity</code>
  * Interfaces with the <code>DataRepository</code> and <code>SharedPreferences</code>
  */
-public class StartupViewModel extends AndroidViewModel
+@HiltViewModel
+public class StartupViewModel extends ViewModel
 {
     private final DataRepository dataRepository;
 

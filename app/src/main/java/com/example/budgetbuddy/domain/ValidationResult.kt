@@ -8,5 +8,10 @@ package com.example.budgetbuddy.domain
 sealed class ValidationResult
 {
     object Success : ValidationResult()
-    data class Error(val message: String) : ValidationResult()
+
+    /**
+     * A simple one-variable data class holding a validation message. By default,
+     * the message is "Validation Failed".
+     */
+    data class Error(val message: String = "Validation Failed") : ValidationResult()
 }

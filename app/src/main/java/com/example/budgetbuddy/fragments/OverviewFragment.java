@@ -22,7 +22,7 @@ import com.example.budgetbuddy.adapters.PieChartLegendAdapter;
 import com.example.budgetbuddy.data.entities.PieChartData;
 import com.example.budgetbuddy.data.entities.TransactionWithCategory;
 import com.example.budgetbuddy.utility.ColorHandler;
-import com.example.budgetbuddy.utility.Converters;
+import com.example.budgetbuddy.utility.Convertersold;
 import com.example.budgetbuddy.utility.PieChartHandler;
 import com.example.budgetbuddy.utility.TransactionUtils;
 import com.example.budgetbuddy.viewmodel.BudgetViewModel;
@@ -191,11 +191,11 @@ public class OverviewFragment extends Fragment
     private void updateRemainingBudget(Double totalBudget, Double remainingBudget)
     {
         // Display the remaining budget
-        txtBudgetRemaining.setText(Converters.doubleToCurrencyString(remainingBudget));
+        txtBudgetRemaining.setText(Convertersold.doubleToCurrencyString(remainingBudget));
         Log.d("OverviewFragment", "Recalculated remaining budget: " + remainingBudget + " of: " + totalBudget);
 
         // Display the total budget
-        String outputString = "Monthly Budget: " + Converters.doubleToCurrencyString(totalBudget);
+        String outputString = "Monthly Budget: " + Convertersold.doubleToCurrencyString(totalBudget);
         txtTotalBudget.setText(outputString);
 
         // Set the text colour to red if negative, green if positive
