@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.entities;
+package com.example.budgetbuddy.data.entities;
 
 import androidx.room.Embedded;
 import androidx.room.Relation;

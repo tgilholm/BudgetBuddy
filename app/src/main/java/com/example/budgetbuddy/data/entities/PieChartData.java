@@ -1,6 +1,4 @@
-package com.example.budgetbuddy.entities;
-
-import androidx.annotation.ColorInt;
+package com.example.budgetbuddy.data.entities;
 
 import com.github.mikephil.charting.data.PieDataSet;
 

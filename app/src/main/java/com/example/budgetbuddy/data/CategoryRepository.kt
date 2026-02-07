@@ -1,6 +1,6 @@
 package com.example.budgetbuddy.data
 
-import com.example.budgetbuddy.entities.Category
+import com.example.budgetbuddy.data.entities.Category
 import kotlinx.coroutines.flow.Flow
 
 interface CategoryRepository

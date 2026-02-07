@@ -5,11 +5,11 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.example.budgetbuddy.entities.Category
+import com.example.budgetbuddy.data.entities.Category
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-internal interface CategoryDao
+interface CategoryDao
 {
     /**
      * Inserts any number of Category objects into the database.

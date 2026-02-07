@@ -3,11 +3,11 @@ package com.example.budgetbuddy.data.db
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.budgetbuddy.entities.Transaction
-import com.example.budgetbuddy.entities.TransactionWithCategory
+import com.example.budgetbuddy.data.entities.Transaction
+import com.example.budgetbuddy.data.entities.TransactionWithCategory
 import kotlinx.coroutines.flow.Flow
 
-internal interface TransactionDao
+interface TransactionDao
 {
     /**
      * Returns flow list of all Transactions, ordered by dateTime by default.

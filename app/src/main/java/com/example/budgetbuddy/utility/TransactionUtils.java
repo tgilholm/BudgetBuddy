@@ -5,9 +5,9 @@ import androidx.core.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.budgetbuddy.entities.Category;
-import com.example.budgetbuddy.entities.Transaction;
-import com.example.budgetbuddy.entities.TransactionWithCategory;
+import com.example.budgetbuddy.data.entities.Category;
+import com.example.budgetbuddy.data.entities.Transaction;
+import com.example.budgetbuddy.data.entities.TransactionWithCategory;
 import com.example.budgetbuddy.enums.RepeatDuration;
 import com.example.budgetbuddy.enums.TransactionType;
 

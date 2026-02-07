@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.entities;
+package com.example.budgetbuddy.data.entities;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;

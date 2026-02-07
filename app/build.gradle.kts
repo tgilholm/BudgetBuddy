@@ -3,6 +3,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.dagger.hilt.android") version "2.59.1" apply false
+    id("com.google.devtools.ksp") version "2.3.5"
 }
 
 android {
@@ -55,6 +57,11 @@ dependencies {
     implementation(libs.core)
     implementation(libs.ext.junit)
     implementation(libs.core.ktx)
+
+    // Hilt dependency
+    implementation(libs.hilt.android)
+    ksp(libs.dagger.hilt.android.compiler)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

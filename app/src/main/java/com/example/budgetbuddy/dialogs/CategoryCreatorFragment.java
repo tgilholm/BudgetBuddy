@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.adapters.ColorPickerAdapter;
-import com.example.budgetbuddy.entities.Category;
+import com.example.budgetbuddy.data.entities.Category;
 import com.example.budgetbuddy.utility.ColorGridDecoration;
 
 import java.util.List;
