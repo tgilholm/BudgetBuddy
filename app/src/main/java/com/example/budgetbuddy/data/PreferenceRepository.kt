@@ -1,7 +1,6 @@
 package com.example.budgetbuddy.data
 
 import kotlinx.coroutines.flow.Flow
-import java.math.BigDecimal
 
 /**
  * Interface defining the contract implementations must follow for accessing

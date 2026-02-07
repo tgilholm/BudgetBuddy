@@ -16,13 +16,15 @@ class PreferenceRepositoryImpl @Inject constructor(
 ) : PreferenceRepository
 {
 
+    /**
+     * Holds the dataStore keys of the preferences' key-value pairs
+     */
     private object Keys
     {
         val BUDGET = doublePreferencesKey("budget") // location of "budget" key-value pair
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed") // first run or no
     }
 
-    // you can override values!?
     /*
     Overrides the base budget value in the interface. Classes observe the budget without needing to know the
     implementation behind them.
