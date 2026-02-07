@@ -1,32 +1,23 @@
-package com.example.budgetbuddy.data;
+package com.example.budgetbuddy.data
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import java.math.BigDecimal
 
-import java.math.BigDecimal;
-
-/**
- * Defines data-layer operations on <code>Budget</code> data.
- */
-public interface BudgetRepository
+interface BudgetRepository
 {
     /**
-     * Returns the budget quantity stored in SharedPreferences, DataStore etc.
-     *
-     * @return a <code>BigDecimal</code> representation of the budget
+     * Returns the stored budget quantity as a nullable BigDecimal
      */
-    @Nullable
-    BigDecimal getBudget();
+    fun getBudget(): BigDecimal?
 
     /**
-     * Updates the budget amount stored in SharedPreferences, DataStore etc.
+     * Sets the stored budget quantity to a new BigDecimal value
      *
-     * @param newBudget the <code>BigDecimal</code> new value for the budget.
+     * Note - if using SharedPreferences, convert to string before storing
      */
-    void setBudget(@NonNull BigDecimal newBudget);
+    fun setBudget(newBudget: BigDecimal)
 
     /**
-     * Resets the budget back to the default: ""
+     * Resets the stored budget quantity back to the specified default
      */
-    void resetBudget();
+    fun resetBudget()
 }

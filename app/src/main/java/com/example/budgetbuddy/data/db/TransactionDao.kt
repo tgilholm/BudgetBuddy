@@ -7,7 +7,7 @@ import com.example.budgetbuddy.entities.Transaction
 import com.example.budgetbuddy.entities.TransactionWithCategory
 import kotlinx.coroutines.flow.Flow
 
-interface TransactionDao
+internal interface TransactionDao
 {
     /**
      * Returns flow list of all Transactions, ordered by dateTime by default.
@@ -28,11 +28,11 @@ interface TransactionDao
      * Inserts any number of transactions to the database
      */
     @Insert
-    fun insert(vararg transactions: Transaction)
+    suspend fun insert(vararg transactions: Transaction)
 
     /**
      * Deletes the specified transaction from the database
      */
     @Delete
-    fun delete(transaction: Transaction)
+    suspend fun delete(transaction: Transaction)
 }

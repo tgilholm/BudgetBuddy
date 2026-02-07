@@ -1,65 +1,54 @@
-package com.example.budgetbuddy.data.db;
+package com.example.budgetbuddy.data.db
 
-import android.content.Context;
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.Transaction
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
+import com.example.budgetbuddy.entities.Category
+import com.example.budgetbuddy.utility.Converters
+import kotlin.reflect.KClass
 
-import androidx.room.Database;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.room.TypeConverters;
 
-import com.example.budgetbuddy.entities.Category;
-import com.example.budgetbuddy.entities.Transaction;
-import com.example.budgetbuddy.utility.Converters;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-/**
- * Extends <code>RoomDatabase</code>. Defines <code>Transaction</code> and <code>Category</code> entities
- * Holds a static instance of the database. Provides methods to access the DAOs
- */
-@Database(entities = {
-        Transaction.class,
-        Category.class
-}, version = 1, exportSchema = false)
-@TypeConverters({Converters.class})
-public abstract class AppDB extends RoomDatabase
+@Database(
+    entities = [com.example.budgetbuddy.entities.Transaction::class,
+        Category::class],
+    version = 1,
+    exportSchema = true
+    )
+@TypeConverters({Converters::class.java})
+internal abstract class AppDB : RoomDatabase()
 {
-    // Abstract access methods for the DAOs
-    public abstract TransactionDAO transactionDAO();
+    abstract fun transactionDao(): TransactionDao
+    abstract fun categoryDao(): CategoryDao
 
-    public abstract CategoryDAO categoryDAO();
-
-    // Defined as static to force a single instance, volatile to ensure threads receive updates
-    private static volatile AppDB DB_INSTANCE;
-
-    private static final int NUMBER_OF_THREADS = 4;
-    public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);    // Used for long DB queries
-
-    /**
-     * Returns a singleton instance of the database. Double-checked locking ensures there is only one instance.
-     * If there is no instance, a new one is created.
-     *
-     * @param context The application context
-     * @return An instance of the database
-     */
-    public static AppDB getDBInstance(final Context context)
+    companion object
     {
-        // First check
-        if (DB_INSTANCE == null)
+        @Volatile
+        private var INSTANCE: AppDB? = null
+        fun getDatabase(context: Context): AppDB
         {
-            synchronized (AppDB.class)
-            {    // Sync and check again
-                if (DB_INSTANCE == null)
-                {
-                    Converters converter = new Converters();        // Get the type converter
+            // elvis operator ?:
+            // return the first operand if true, otherwise evaluate & return the second
 
-                    // Build a new database
-                    DB_INSTANCE = Room.databaseBuilder(context.getApplicationContext(), AppDB.class, "budgetbuddy_DB"  // Name of the DB
-                    ).addTypeConverter(converter).build();
-                }
+            /*
+            Either returns the instance if one already exists, or synchronises and returns
+            a new instance of the database
+             */
+            return INSTANCE ?: synchronized(this)
+            {
+                val converter = Converters()
+
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDB::class.java,
+                    "budgetbuddy_DB"
+                ).addTypeConverter(converter).build()
+                INSTANCE = instance
+                instance
             }
         }
-        return DB_INSTANCE;
     }
 }
