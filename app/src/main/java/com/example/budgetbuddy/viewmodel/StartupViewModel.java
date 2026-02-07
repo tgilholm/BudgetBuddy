@@ -10,7 +10,7 @@ import androidx.lifecycle.Observer;
 import androidx.preference.PreferenceManager;
 
 import com.example.budgetbuddy.R;
-import com.example.budgetbuddy.entities.Category;
+import com.example.budgetbuddy.data.entities.Category;
 import com.example.budgetbuddy.enums.ValidationState;
 import com.example.budgetbuddy.data.DataRepository;
 import com.example.budgetbuddy.utility.InputValidator;

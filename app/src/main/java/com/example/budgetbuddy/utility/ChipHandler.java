@@ -6,7 +6,7 @@ import android.view.ContextThemeWrapper;
 import androidx.annotation.NonNull;
 
 import com.example.budgetbuddy.R;
-import com.example.budgetbuddy.entities.Category;
+import com.example.budgetbuddy.data.entities.Category;
 import com.google.android.material.chip.Chip;
 
 /**

@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgetbuddy.R;
-import com.example.budgetbuddy.entities.PieChartLegendItem;
+import com.example.budgetbuddy.data.entities.PieChartLegendItem;
 import com.example.budgetbuddy.utility.ColorHandler;
 
 import java.util.List;

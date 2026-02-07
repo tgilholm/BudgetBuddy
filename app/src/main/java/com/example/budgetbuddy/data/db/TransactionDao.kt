@@ -3,8 +3,8 @@ package com.example.budgetbuddy.data.db
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.budgetbuddy.entities.Transaction
-import com.example.budgetbuddy.entities.TransactionWithCategory
+import com.example.budgetbuddy.data.entities.Transaction
+import com.example.budgetbuddy.data.entities.TransactionWithCategory
 import kotlinx.coroutines.flow.Flow
 
 interface TransactionDao
@@ -28,11 +28,11 @@ interface TransactionDao
      * Inserts any number of transactions to the database
      */
     @Insert
-    fun insert(vararg transactions: Transaction)
+    suspend fun insert(vararg transactions: Transaction)
 
     /**
      * Deletes the specified transaction from the database
      */
     @Delete
-    fun delete(transaction: Transaction)
+    suspend fun delete(transaction: Transaction)
 }

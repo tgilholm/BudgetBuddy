@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.preference.PreferenceManager;
 
-import com.example.budgetbuddy.data.db.AppDB;
+import com.example.budgetbuddy.data.db.javadb;
 
 /**
  * Used to perform factory reset operations from settings.
@@ -16,13 +16,13 @@ import com.example.budgetbuddy.data.db.AppDB;
 public class SettingsViewModel extends AndroidViewModel
 {
     private final SharedPreferences sharedPreferences;
-    private final AppDB db;
+    private final javadb db;
 
     public SettingsViewModel(@NonNull Application application)
     {
         super(application);
 
-        db = AppDB.getDBInstance(application);
+        db = javadb.getDBInstance(application);
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(application);
     }
 
@@ -32,7 +32,7 @@ public class SettingsViewModel extends AndroidViewModel
      */
     public void resetDB()
     {
-        AppDB.databaseWriteExecutor.execute(() ->
+        javadb.databaseWriteExecutor.execute(() ->
         {
             db.clearAllTables();
             resetSharedPrefs();

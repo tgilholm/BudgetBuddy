@@ -6,10 +6,10 @@ import androidx.core.util.Pair;
 import androidx.annotation.NonNull;
 
 import com.example.budgetbuddy.R;
-import com.example.budgetbuddy.entities.Category;
-import com.example.budgetbuddy.entities.PieChartData;
-import com.example.budgetbuddy.entities.PieChartLegendItem;
-import com.example.budgetbuddy.entities.TransactionWithCategory;
+import com.example.budgetbuddy.data.entities.Category;
+import com.example.budgetbuddy.data.entities.PieChartData;
+import com.example.budgetbuddy.data.entities.PieChartLegendItem;
+import com.example.budgetbuddy.data.entities.TransactionWithCategory;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;

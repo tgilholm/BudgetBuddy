@@ -19,8 +19,8 @@ import android.widget.TextView;
 
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.adapters.PieChartLegendAdapter;
-import com.example.budgetbuddy.entities.PieChartData;
-import com.example.budgetbuddy.entities.TransactionWithCategory;
+import com.example.budgetbuddy.data.entities.PieChartData;
+import com.example.budgetbuddy.data.entities.TransactionWithCategory;
 import com.example.budgetbuddy.utility.ColorHandler;
 import com.example.budgetbuddy.utility.Converters;
 import com.example.budgetbuddy.utility.PieChartHandler;
