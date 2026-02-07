@@ -1,5 +1,3 @@
-
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -53,7 +51,10 @@ dependencies {
     implementation(libs.recyclerview)
 
     // DataStore
-    implementation(libs.datastore.preferences.corse)
+    implementation(libs.datastore.preferences)
+    implementation(libs.datastore.preferences.core)
+    implementation(libs.datastore)
+    implementation(libs.datastore.core)
 
 
     // Preference Fragment

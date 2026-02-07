@@ -1,5 +1,6 @@
 package com.example.budgetbuddy.data
 
+import kotlinx.coroutines.flow.Flow
 import java.math.BigDecimal
 
 /**
@@ -12,20 +13,17 @@ import java.math.BigDecimal
  */
 interface PreferenceRepository
 {
-    /**
-     * Returns the stored budget quantity as a nullable BigDecimal
-     */
-    fun getBudget(): BigDecimal?
+    val budget: Flow<Double>    // Observable budget value, auto-updated
+    val isOnboardingCompleted: Flow<Boolean>
 
     /**
-     * Sets the stored budget quantity to a new BigDecimal value
-     *
-     * Note - if using SharedPreferences, convert to string before storing
+     * Updates the Double budget value in preferences with a new value
      */
-    fun setBudget(newBudget: BigDecimal)
+    suspend fun updateBudget(newBudget: Double)
 
     /**
-     * Resets the stored budget quantity back to the specified default
+     * Sets the value of the "first run" or onboarding flag to true or false
+     * Setting this value to true will avoid the "startup" page on subsequent runs
      */
-    fun resetBudget()
+    suspend fun setOnboardingCompleted(completed: Boolean)
 }

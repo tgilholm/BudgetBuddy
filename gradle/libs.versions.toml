@@ -1,6 +1,6 @@
 [versions]
 agp = "8.13.2"
-datastorePreferencesCorse = "1.2.0"
+datastorePreferencesCore = "1.2.0"
 hiltAndroid = "2.59.1"
 hiltAndroidCompiler = "2.59.1"
 junit = "4.13.2"
@@ -19,10 +19,13 @@ viewpager2 = "1.1.0"
 core = "1.7.0"
 kotlin = "2.2.0"
 coreKtx = "1.17.0"
+datastoreCore = "1.2.0"
 
 [libraries]
 dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
-datastore-preferences-corse = { module = "androidx.datastore:datastore-preferences-corse", version.ref = "datastorePreferencesCorse" }
+datastore = { module = "androidx.datastore:datastore", version.ref = "datastorePreferencesCore" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferencesCore" }
+datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCore" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -39,6 +42,7 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 core = { group = "androidx.test", name = "core", version.ref = "core" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+datastore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "datastoreCore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

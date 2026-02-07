@@ -1,7 +1,9 @@
+@file:Suppress("unused")
+
 package com.example.budgetbuddy.data
 
-import com.example.budgetbuddy.data.impl.BudgetRepositoryImpl
 import com.example.budgetbuddy.data.impl.CategoryRepositoryImpl
+import com.example.budgetbuddy.data.impl.PreferenceRepositoryImpl
 import com.example.budgetbuddy.data.impl.TransactionRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -48,10 +50,10 @@ abstract class RepoModule
     ): CategoryRepository
 
     /**
-     * Binds the BudgetRepository to the provided implementation
+     * Binds the PreferenceRepository to the provided implementation
      */
-    abstract fun bindBudgetRepo(
-        impl: BudgetRepositoryImpl
-    ): BudgetRepository
+    abstract fun bindPreferenceRepo(
+        impl: PreferenceRepositoryImpl
+    ): PreferenceRepository
 
 }
