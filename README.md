@@ -1,6 +1,3 @@
-# BudgetBuddy
-*A budget tracking application*
-
 ## Overview
 BudgetBuddy is designed to overcome some of the shortcomings inherent in competing budget tracking apps. It aims for a seamless system for keeping track of one's monthly/weekly budget. 
 
