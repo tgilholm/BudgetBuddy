@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.dialogs;
+package com.example.budgetbuddy.ui.dialogs;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.activities;
+package com.example.budgetbuddy.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +15,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.adapters.AppFragmentStateAdapter;
-import com.example.budgetbuddy.viewmodel.StartupViewModel;
+import com.example.budgetbuddy.ui.viewmodel.StartupViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;

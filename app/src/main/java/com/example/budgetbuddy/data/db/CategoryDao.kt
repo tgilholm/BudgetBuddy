@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.example.budgetbuddy.domain.entities.Category
+import com.example.budgetbuddy.domain.entities.CategoryName
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -36,4 +37,11 @@ interface CategoryDao
      */
     @Update
     suspend fun update(category: Category)
+
+    /**
+     * Queries the DB for any categories matching the name. If the amount is 1, the name
+     * exists and true is returned. If not found, return false
+     */
+    @Query("SELECT EXISTS(SELECT 1  FROM 'category' WHERE 'name' = :name LIMIT 1)")
+    fun existsByName(name: String) : Boolean
 }

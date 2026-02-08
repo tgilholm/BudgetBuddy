@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.viewmodel
+package com.example.budgetbuddy.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.example.budgetbuddy.data.PreferenceRepository

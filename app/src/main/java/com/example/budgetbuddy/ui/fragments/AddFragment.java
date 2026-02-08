@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.fragments;
+package com.example.budgetbuddy.ui.fragments;
 
 import android.os.Bundle;
 
@@ -16,13 +16,13 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.budgetbuddy.R;
-import com.example.budgetbuddy.dialogs.CategoryCreatorFragment;
+import com.example.budgetbuddy.ui.dialogs.CategoryCreatorFragment;
 import com.example.budgetbuddy.domain.entities.Category;
 import com.example.budgetbuddy.utility.TransactionUtils;
-import com.example.budgetbuddy.viewmodel.AddViewModel;
-import com.example.budgetbuddy.dialogs.DatePickerFragment;
+import com.example.budgetbuddy.ui.viewmodel.AddViewModel;
+import com.example.budgetbuddy.ui.dialogs.DatePickerFragment;
 import com.example.budgetbuddy.utility.ChipHandler;
-import com.example.budgetbuddy.dialogs.TimePickerFragment;
+import com.example.budgetbuddy.ui.dialogs.TimePickerFragment;
 import com.example.budgetbuddy.enums.RepeatDuration;
 import com.example.budgetbuddy.enums.TransactionType;
 import com.example.budgetbuddy.utility.Convertersold;

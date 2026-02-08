@@ -19,6 +19,11 @@ interface CategoryRepository
     fun getAllCategories() : Flow<List<Category>>
 
     /**
+     * Returns true if a category name already exists in the database
+     */
+    fun categoryNameExists(name: String) : Boolean
+
+    /**
      * Inserts a new Category in a background thread
      */
     suspend fun insertAllCategories(vararg category: Category)
@@ -38,4 +43,6 @@ interface CategoryRepository
      * Deletes all categories from the database
      */
     suspend fun deleteAll()
+
+
 }

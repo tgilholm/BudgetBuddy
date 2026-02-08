@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.fragments;
+package com.example.budgetbuddy.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,10 +13,10 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
 import com.example.budgetbuddy.R;
-import com.example.budgetbuddy.activities.MainActivity;
-import com.example.budgetbuddy.dialogs.ConfirmResetFragment;
-import com.example.budgetbuddy.viewmodel.BudgetViewModel;
-import com.example.budgetbuddy.viewmodel.SettingsViewModel;
+import com.example.budgetbuddy.ui.activities.MainActivity;
+import com.example.budgetbuddy.ui.dialogs.ConfirmResetFragment;
+import com.example.budgetbuddy.ui.viewmodel.BudgetViewModel;
+import com.example.budgetbuddy.ui.viewmodel.SettingsViewModel;
 
 /**
  * Extends PreferenceFragmentCompat. Loads <code>preferences.xml</code> to create the options,

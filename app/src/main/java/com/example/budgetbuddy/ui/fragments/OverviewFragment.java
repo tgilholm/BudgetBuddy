@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.fragments;
+package com.example.budgetbuddy.ui.fragments;
 
 import android.os.Bundle;
 
@@ -25,8 +25,8 @@ import com.example.budgetbuddy.utility.ColorHandler;
 import com.example.budgetbuddy.utility.Convertersold;
 import com.example.budgetbuddy.utility.PieChartHandler;
 import com.example.budgetbuddy.utility.TransactionUtils;
-import com.example.budgetbuddy.viewmodel.BudgetViewModel;
-import com.example.budgetbuddy.viewmodel.OverviewViewModel;
+import com.example.budgetbuddy.ui.viewmodel.BudgetViewModel;
+import com.example.budgetbuddy.ui.viewmodel.OverviewViewModel;
 import com.example.budgetbuddy.adapters.RecyclerViewAdapter;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;

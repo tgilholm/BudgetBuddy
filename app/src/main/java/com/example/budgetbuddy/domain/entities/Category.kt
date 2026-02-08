@@ -3,7 +3,7 @@ package com.example.budgetbuddy.domain.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.budgetbuddy.domain.ValidationResult
+import com.example.budgetbuddy.domain.Result
 
 /**
  * Data class for Category objects acting as an Entity in the room database.
@@ -21,6 +21,18 @@ data class Category(
     val colorID: Int,                   // id of the colour in res
 )
 
+
+/**
+ * Sealed interface specifying error types for category validation failures
+ */
+sealed interface CategoryError
+{
+    object AlreadyExists : CategoryError
+    object EmptyName : CategoryError
+    object TooLong : CategoryError
+    object NotSelected : CategoryError
+}
+
 /*
  * Value class annotated JvmInline, effectively ensuring certain validation conditions
  * are met without lengthy, duplicate code in the UI and Domain layers.
@@ -31,11 +43,6 @@ data class Category(
  * This is a key tenet of DDD - Domain-driven-design code, wherein it should
  * be effectively impossible to construct impossible data.
  */
-
-/**
- * Sealed interface specifying error types for category validation failures
- */
-
 
 
 /**
@@ -49,17 +56,17 @@ value class CategoryName private constructor(val value: String)
     companion object
     {
         // Return a validation result with either an error or the name object
-        fun create(raw: String): ValidationResult<CategoryError, CategoryName>
+        fun create(raw: String): Result<CategoryError, CategoryName>
         {
             val trimmed = raw.trim()
             return when
             {
                 // Empty or just whitespace
-                trimmed.isBlank() -> ValidationResult.Failure(CategoryError.Empty)
-                trimmed.length > 32 -> ValidationResult.Failure(CategoryError.TooLong)
+                trimmed.isBlank() -> Result.Failure(CategoryError.EmptyName)
+                trimmed.length > 32 -> Result.Failure(CategoryError.TooLong)
 
                 // Return the trimmed result if successful
-                else -> ValidationResult.Success(CategoryName(trimmed))
+                else -> Result.Success(CategoryName(trimmed))
             }
         }
 
@@ -75,13 +82,13 @@ value class CategoryColor(val value: Int)
 {
     companion object
     {
-        fun create(raw: Int): ValidationResult<CategoryError, CategoryColor>
+        fun create(raw: Int): Result<CategoryError, CategoryColor>
         {
             return when
             {
                 // No category selected
-                raw < 0 -> ValidationResult.Failure(CategoryError.NotSelected)
-                else -> ValidationResult.Success(CategoryColor(raw))
+                raw < 0 -> Result.Failure(CategoryError.NotSelected)
+                else -> Result.Success(CategoryColor(raw))
             }
         }
     }

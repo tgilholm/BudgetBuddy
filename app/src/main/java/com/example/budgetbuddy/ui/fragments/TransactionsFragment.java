@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.fragments;
+package com.example.budgetbuddy.ui.fragments;
 
 import android.os.Bundle;
 
@@ -18,7 +18,7 @@ import com.example.budgetbuddy.R;
 import com.example.budgetbuddy.adapters.EditRecyclerViewAdapter;
 import com.example.budgetbuddy.domain.entities.TransactionWithCategory;
 import com.example.budgetbuddy.utility.TransactionUtils;
-import com.example.budgetbuddy.viewmodel.TransactionViewModel;
+import com.example.budgetbuddy.ui.viewmodel.TransactionViewModel;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.activities;
+package com.example.budgetbuddy.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import androidx.core.view.WindowCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.budgetbuddy.R;
-import com.example.budgetbuddy.viewmodel.StartupViewModel;
+import com.example.budgetbuddy.ui.viewmodel.StartupViewModel;
 
 /**
  * Activity to run on the first startup of the application. Accepts user-defined budget & passes

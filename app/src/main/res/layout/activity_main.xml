@@ -9,7 +9,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".activities.MainActivity">
+    tools:context=".ui.activities.MainActivity">
 
     <!-- Add an AppBarLayout to contain all the elements at the top of the display -->
     <com.google.android.material.appbar.AppBarLayout

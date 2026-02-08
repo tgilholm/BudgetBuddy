@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.viewmodel;
+package com.example.budgetbuddy.ui.viewmodel;
 
 
 import android.app.Application;

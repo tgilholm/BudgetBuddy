@@ -21,6 +21,11 @@ class CategoryRepositoryImpl @Inject constructor(
     override fun getAllCategories() = dao.getAll()
 
     /**
+     * Returns true if a category name already exists in the database
+     */
+    override fun categoryNameExists(name: String) = dao.existsByName(name)
+
+    /**
      * Inserts a new Category in a background thread
      */
     override suspend fun insertAllCategories(vararg category: Category)
@@ -43,5 +48,13 @@ class CategoryRepositoryImpl @Inject constructor(
     override suspend fun updateCategory(category: Category)
     {
         dao.update(category)
+    }
+
+    /**
+     * Deletes all categories from the database
+     */
+    override suspend fun deleteAll()
+    {
+        TODO("Not yet implemented")
     }
 }

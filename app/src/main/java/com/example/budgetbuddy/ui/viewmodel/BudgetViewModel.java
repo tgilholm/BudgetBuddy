@@ -1,4 +1,4 @@
-package com.example.budgetbuddy.viewmodel;
+package com.example.budgetbuddy.ui.viewmodel;
 
 // Similar format to OverviewViewModel
 // The purpose is to centralise all "budget" interactions here

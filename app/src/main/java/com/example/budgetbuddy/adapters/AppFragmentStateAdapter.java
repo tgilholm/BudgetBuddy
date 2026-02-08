@@ -5,10 +5,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.budgetbuddy.fragments.AddFragment;
-import com.example.budgetbuddy.fragments.OverviewFragment;
-import com.example.budgetbuddy.fragments.SettingsFragment;
-import com.example.budgetbuddy.fragments.TransactionsFragment;
+import com.example.budgetbuddy.ui.fragments.AddFragment;
+import com.example.budgetbuddy.ui.fragments.OverviewFragment;
+import com.example.budgetbuddy.ui.fragments.SettingsFragment;
+import com.example.budgetbuddy.ui.fragments.TransactionsFragment;
 
 /**
  * Extends <code>FragmentStateAdapter</code> to create all the fragments

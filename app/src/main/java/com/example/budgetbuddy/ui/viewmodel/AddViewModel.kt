@@ -1,18 +1,17 @@
-package com.example.budgetbuddy.viewmodel
+package com.example.budgetbuddy.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.budgetbuddy.data.entities.CategoryError
 import com.example.budgetbuddy.domain.entities.CategoryName
-import com.example.budgetbuddy.domain.ValidationResult
-import com.example.budgetbuddy.domain.services.MaintenanceService
+import com.example.budgetbuddy.domain.Result
+import com.example.budgetbuddy.domain.usecase.AddCategoryUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AddViewModel @Inject constructor(
-    private val maintenanceService: MaintenanceService
+    private val addCategoryUseCase: AddCategoryUseCase
 ) : ViewModel()
 {
     /*
@@ -27,7 +26,7 @@ class AddViewModel @Inject constructor(
 
     fun addTransaction()
 
-    fun addCategory(name: String, colorID: Int)
+    fun onAddCategory(name: String, colorID: Int)
     {
         val categoryName: CategoryName
 
@@ -35,13 +34,13 @@ class AddViewModel @Inject constructor(
         when (val nameResult = CategoryName.create(name))   // A ValidationResult object
         {
             // If name validation failed, dispatch the error message
-            is ValidationResult.Failure ->
+            is Result.Failure ->
             {
                 viewModelScope.launch { _uiState.send(nameResult.error) }
             }
 
             // If succeeded, proceed
-            is ValidationResult.Success ->
+            is Result.Success ->
             {
                 viewModelScope
             }
