@@ -27,10 +27,10 @@ data class Category(
  */
 sealed interface CategoryError
 {
-    object AlreadyExists : CategoryError
-    object EmptyName : CategoryError
-    object TooLong : CategoryError
-    object NotSelected : CategoryError
+    data object AlreadyExists : CategoryError
+    data object EmptyName : CategoryError
+    data object TooLong : CategoryError
+    data object NotSelected : CategoryError
 }
 
 /*

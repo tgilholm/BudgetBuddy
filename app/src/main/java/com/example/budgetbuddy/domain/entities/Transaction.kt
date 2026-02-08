@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.budgetbuddy.enums.RepeatDuration
 import com.example.budgetbuddy.enums.TransactionType
+import com.example.budgetbuddy.domain.Result
 import java.util.Calendar
 import java.util.Locale
 
@@ -58,3 +59,98 @@ data class Transaction(
             dateTime.get(Calendar.YEAR)
         )
 }
+
+sealed interface TransactionError
+{
+    data object Empty : TransactionError
+    data object BadFormat : TransactionError
+    data object InvalidAmount : TransactionError
+    data object NoCategory : TransactionError
+    data object InvalidDateTime : TransactionError
+}
+
+enum class TransactionType
+{
+    INCOMING,
+    OUTGOING
+}
+
+enum class RepeatDuration
+{
+    NEVER,
+    DAILY,
+    WEEKLY,
+    MONTHLY,
+    YEARLY
+}
+
+
+/**
+ * Transaction amounts are taken in as strings and parsed to doubles
+ * in this value class. Returns TransactionError if parsing fails
+ *
+ *
+ *               Regex:
+ *               [0-9]+               Matches if the string contains one-or-more numbers
+ *               [.]                  Matches if the string contains a decimal point
+ *               [0-9]{1, 2}          Matches if numeric and at most 2 d.p.
+ *               ([.][0-9]{1,2})?     Matches if numeric after the d.p (optional)
+ *               Complete Regex: [0-9]+([.][0-9]{2})?
+ *
+ */
+@JvmInline
+value class TransactionAmount(val value: Double)
+{
+    companion object
+    {
+        fun create(raw: String): Result<TransactionError, TransactionAmount>
+        {
+            // Pre-trim and compile regex
+            val trimmed = raw.trim()
+            val regex = Regex("[0-9]+(\\.[0-9]{1,2})?")
+
+            return when
+            {
+                // Empty strings
+                trimmed.isBlank() ->
+                    Result.Failure(TransactionError.Empty)
+
+                // Doesn't match pattern
+                !trimmed.matches(regex)
+                    -> Result.Failure(TransactionError.BadFormat)
+
+                // Parse to double & catch unexpected errors
+                else ->
+                {
+                    /*
+                    Returns the TransactionAmount(Double) if non-null, or
+                    TransactionError.BadFormat if it is null.
+                    ?.let performs a safe call to TransactionAmount([the double])
+                    "Safe" meaning only if toDoubleOrNull returned non-null
+
+                    if the left-hand value ^ is null, ?: returns the right-hand value
+                     */
+                    trimmed.toDoubleOrNull()
+                        ?.let { Result.Success(TransactionAmount(it)) }
+                        ?: Result.Failure(TransactionError.BadFormat)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Value class for category foreign keys. Prevents transactions being created
+ * without a category.
+ */
+@JvmInline
+value class TransactionCategory(val value: Long /* Foreign key */)
+{
+
+}
+
+
+@JvmInline
+value class TransactionDateTime()
+
+
