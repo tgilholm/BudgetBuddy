@@ -2,11 +2,13 @@ package com.example.budgetbuddy.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.budgetbuddy.domain.entities.CategoryName
+import com.example.budgetbuddy.R
 import com.example.budgetbuddy.domain.Result
+import com.example.budgetbuddy.domain.entities.CategoryError
 import com.example.budgetbuddy.domain.usecase.AddCategoryUseCase
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
+import com.example.budgetbuddy.ui.UIEvent
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,37 +16,39 @@ class AddViewModel @Inject constructor(
     private val addCategoryUseCase: AddCategoryUseCase
 ) : ViewModel()
 {
-    /*
-    _uiState - Mutable, internal Channel for updating messages - _private
-    uiState  - Immutable Channel observed by listeners to receive messages - public
+    // _ for private vals, omit for public
+    private val _events = MutableSharedFlow<UIEvent>()
+    val events = _events.asSharedFlow()
 
-    A Channel is used for these messages as they are only received once
-     */
-    private val _uiState = Channel<CategoryError>()
-
-    val uiState = _uiState.receiveAsFlow()    // Immutable stateFlow exposed publicly
 
     fun addTransaction()
 
     fun onAddCategory(name: String, colorID: Int)
     {
-        val categoryName: CategoryName
-
-        // Attempt to parse to CategoryName object
-        when (val nameResult = CategoryName.create(name))   // A ValidationResult object
-        {
-            // If name validation failed, dispatch the error message
-            is Result.Failure ->
+        viewModelScope.launch {
+            // Delegate to the UseCase for validation & adding
+            when (val result = addCategoryUseCase(name, colorID))
             {
-                viewModelScope.launch { _uiState.send(nameResult.error) }
-            }
+                is Result.Success ->
+                {
+                    _events.emit(UIEvent.ShowToast(R.string.category_added))
+                }
 
-            // If succeeded, proceed
-            is Result.Success ->
-            {
-                viewModelScope
+                is Result.Failure ->
+                {
+                    _events.emit(UIEvent.ShowToast(mapCategoryError(result.error)))
+                }
             }
         }
+    }
+
+    private fun mapCategoryError(error: CategoryError): Int = when (error)
+    {
+        CategoryError.EmptyName -> R.string.err_empty_name
+        CategoryError.AlreadyExists -> R.string.err_duplicate_name
+        CategoryError.TooLong -> R.string.err_too_long
+        CategoryError.NotSelected -> R.string.err_none_selected
+
     }
 
 }
