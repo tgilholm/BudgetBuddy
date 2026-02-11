@@ -25,32 +25,6 @@ public final class InputValidator
 
 
     /**
-     * Validates that a string is not empty and conforms to the format set out by the regex. <br><br>
-     * Regex breakdown: <br>
-     * <pre>
-     * [0-9]+               Matches if the string contains one-or-more numbers<br>
-     * [.]                  Matches if the string contains a decimal point<br>
-     * [0-9]{1, 2}          Matches if numeric and at most 2 d.p.<br>
-     * ([.][0-9]{1,2})?     Matches if numeric after the d.p (optional) <br>
-     * Complete Regex: [0-9]+([.][0-9]{2})?
-     * </pre>
-     *
-     * @param input a numeric string, e.g. "12.34"
-     * @return true, if <code>input</code> is of the correct format, false otherwise
-     */
-    public static boolean validateCurrencyInput(@NonNull String input)
-    {
-        // Checks for empty strings
-        if (input.isEmpty())
-        {
-            return false;
-        }
-
-        // Checks the input against the regex
-        return input.matches("[0-9]+([.][0-9]{1,2})?");
-    }
-
-    /**
      * Concatenates two strings, validates whether the resulting string matches the correct format and returns a <code>Calendar</code>
 
      * @param date in the format "dd/mm/yyyy"

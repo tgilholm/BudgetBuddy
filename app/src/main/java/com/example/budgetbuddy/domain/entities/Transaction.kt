@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import com.example.budgetbuddy.enums.RepeatDuration
 import com.example.budgetbuddy.enums.TransactionType
 import com.example.budgetbuddy.domain.Result
+import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
@@ -146,11 +147,39 @@ value class TransactionAmount(val value: Double)
 @JvmInline
 value class TransactionCategory(val value: Long /* Foreign key */)
 {
-
+    companion object
+    {
+        fun create(raw: Long): Result<TransactionError, TransactionCategory>
+        {
+            return when
+            {
+                raw < 0 -> Result.Failure(TransactionError.NoCategory)
+                else -> Result.Success(TransactionCategory(raw))
+            }
+        }
+    }
 }
 
 
+/**
+ * Value class enforcing correct date-time format
+ */
 @JvmInline
-value class TransactionDateTime()
+value class TransactionDateTime(val calendar: Calendar)
+{
+    companion object
+    {
+        fun create(rawDate: String, rawTime: String)
+        {
+            val dateFormat = SimpleDateFormat("dd/MM/YYYY HH:mm", Locale.getDefault())
+
+            try
+            {
+                val parsedDateTime = dateFormat.parse(rawDate + " " )
+            }
+        }
+
+    }
+}
 
 
