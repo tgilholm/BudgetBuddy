@@ -2,7 +2,7 @@ package com.example.budgetbuddy.data.impl
 
 import com.example.budgetbuddy.data.CategoryRepository
 import com.example.budgetbuddy.data.db.CategoryDao
-import com.example.budgetbuddy.data.entities.Category
+import com.example.budgetbuddy.domain.entities.Category
 import javax.inject.Inject
 
 /**
@@ -19,6 +19,11 @@ class CategoryRepositoryImpl @Inject constructor(
      * Returns a Flow list of all categories
      */
     override fun getAllCategories() = dao.getAll()
+
+    /**
+     * Returns true if a category name already exists in the database
+     */
+    override fun categoryNameExists(name: String) = dao.existsByName(name)
 
     /**
      * Inserts a new Category in a background thread
@@ -43,5 +48,13 @@ class CategoryRepositoryImpl @Inject constructor(
     override suspend fun updateCategory(category: Category)
     {
         dao.update(category)
+    }
+
+    /**
+     * Deletes all categories from the database
+     */
+    override suspend fun deleteAll()
+    {
+        TODO("Not yet implemented")
     }
 }

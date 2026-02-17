@@ -11,12 +11,12 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.budgetbuddy.R;
-import com.example.budgetbuddy.data.entities.Category;
-import com.example.budgetbuddy.data.entities.Transaction;
-import com.example.budgetbuddy.data.entities.TransactionWithCategory;
+import com.example.budgetbuddy.domain.entities.Category;
+import com.example.budgetbuddy.domain.entities.Transaction;
+import com.example.budgetbuddy.domain.entities.TransactionWithCategory;
 import com.example.budgetbuddy.enums.TransactionType;
 import com.example.budgetbuddy.utility.ColorHandler;
-import com.example.budgetbuddy.utility.Converters;
+import com.example.budgetbuddy.utility.Convertersold;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,17 +136,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
             // Set the category and amount fields
             textCategory.setText(c.getName());
-            textAmount.setText(Converters.doubleToCurrencyString(t.getAmount()));
+            textAmount.setText(Convertersold.doubleToCurrencyString(t.getAmount()));
 
             // Positive transactions are green
             if (t.getType() == TransactionType.INCOMING)
             {
-                textAmount.setText(Converters.doubleToCurrencyString(t.getAmount()));
+                textAmount.setText(Convertersold.doubleToCurrencyString(t.getAmount()));
                 textAmount.setTextColor(ColorHandler.resolveColorID(itemView.getContext(), R.color.brightGreen));
             } else
             {
                 // Negative transactions are red with a minus sign
-                textAmount.setText(String.format("-%s", Converters.doubleToCurrencyString(t.getAmount())));
+                textAmount.setText(String.format("-%s", Convertersold.doubleToCurrencyString(t.getAmount())));
                 textAmount.setTextColor(ColorHandler.resolveColorID(itemView.getContext(), R.color.brightRed));
             }
             textDateTime.setText(t.getDateTimeString());

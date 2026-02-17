@@ -1,6 +1,6 @@
 package com.example.budgetbuddy.data
 
-import com.example.budgetbuddy.data.entities.Category
+import com.example.budgetbuddy.domain.entities.Category
 import kotlinx.coroutines.flow.Flow
 
 
@@ -19,6 +19,11 @@ interface CategoryRepository
     fun getAllCategories() : Flow<List<Category>>
 
     /**
+     * Returns true if a category name already exists in the database
+     */
+    fun categoryNameExists(name: String) : Boolean
+
+    /**
      * Inserts a new Category in a background thread
      */
     suspend fun insertAllCategories(vararg category: Category)
@@ -33,4 +38,11 @@ interface CategoryRepository
      * with data extracted from provided Category object. Executes in background
      */
     suspend fun updateCategory(category: Category)
+
+    /**
+     * Deletes all categories from the database
+     */
+    suspend fun deleteAll()
+
+
 }

@@ -2,7 +2,7 @@ package com.example.budgetbuddy.data.impl
 
 import com.example.budgetbuddy.data.TransactionRepository
 import com.example.budgetbuddy.data.db.TransactionDao
-import com.example.budgetbuddy.data.entities.Transaction
+import com.example.budgetbuddy.domain.entities.Transaction
 import javax.inject.Inject
 
 /**

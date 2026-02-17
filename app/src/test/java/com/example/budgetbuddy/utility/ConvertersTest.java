@@ -27,7 +27,7 @@ public class ConvertersTest extends TestCase
         String expected = "12:30";
 
         // Act - execute the test
-        String actual = Converters.calendarToHourMinute(calendar);
+        String actual = Convertersold.calendarToHourMinute(calendar);
 
         // Assert the two are equal
         assertEquals(expected, actual);
@@ -42,7 +42,7 @@ public class ConvertersTest extends TestCase
         String expected = "12/07/2026";     // Months are 0-indexed
 
         // Act
-        String actual = Converters.calendarToDayMonthYear(calendar);
+        String actual = Convertersold.calendarToDayMonthYear(calendar);
 
         // Assert
         assertEquals(expected, actual);
@@ -53,6 +53,6 @@ public class ConvertersTest extends TestCase
         double amount = 50;
         String expected = "£50.00";
 
-        assertEquals(expected, Converters.doubleToCurrencyString(amount));
+        assertEquals(expected, Convertersold.doubleToCurrencyString(amount));
     }
 }

@@ -3,8 +3,8 @@ package com.example.budgetbuddy.data.db
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.budgetbuddy.data.entities.Transaction
-import com.example.budgetbuddy.data.entities.TransactionWithCategory
+import com.example.budgetbuddy.domain.entities.Transaction
+import com.example.budgetbuddy.domain.entities.TransactionWithCategory
 import kotlinx.coroutines.flow.Flow
 
 interface TransactionDao
