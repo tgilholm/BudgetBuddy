@@ -2,8 +2,8 @@ package com.example.budgetbuddy.adapters;
 
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.example.budgetbuddy.entities.Transaction;
-import com.example.budgetbuddy.entities.TransactionWithCategory;
+import com.example.budgetbuddy.domain.entities.Transaction;
+import com.example.budgetbuddy.domain.entities.TransactionWithCategory;
 
 import java.util.List;
 import java.util.Objects;

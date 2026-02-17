@@ -3,9 +3,9 @@ package com.example.budgetbuddy.utility;
 import androidx.core.util.Pair;
 
 import com.example.budgetbuddy.R;
-import com.example.budgetbuddy.entities.Category;
-import com.example.budgetbuddy.entities.Transaction;
-import com.example.budgetbuddy.entities.TransactionWithCategory;
+import com.example.budgetbuddy.domain.entities.Category;
+import com.example.budgetbuddy.domain.entities.Transaction;
+import com.example.budgetbuddy.domain.entities.TransactionWithCategory;
 import com.example.budgetbuddy.enums.RepeatDuration;
 import com.example.budgetbuddy.enums.TransactionType;
 

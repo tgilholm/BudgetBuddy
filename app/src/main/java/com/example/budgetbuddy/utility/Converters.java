@@ -1,8 +1,6 @@
 package com.example.budgetbuddy.utility;
 
 import androidx.annotation.NonNull;
-import androidx.room.ProvidedTypeConverter;
-import androidx.room.TypeConverter;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -10,31 +8,8 @@ import java.util.Locale;
 /**
  * Utility class, converts complex values to primitives usable in RoomDB tables
  */
-@ProvidedTypeConverter
-public class Converters {
-
-    /**
-     * Converts a <code>Calendar</code> object to its epoch in milliseconds
-     * @param calendar a <code>Calendar</code> object
-     * @return the <code>long</code> time in milliseconds
-     */
-    @TypeConverter
-    public long fromCalendar(@NonNull Calendar calendar) {
-        return calendar.getTimeInMillis();
-    }
-
-    /**
-     * Converts a <code>long</code> time in milliseconds to a <code>Calendar</code>
-     * @param timeInMillis a <code>long</code> representing a time epoch
-     * @return a <code>Calendar</code> object
-     */
-    @NonNull
-    @TypeConverter
-    public Calendar fromLong(Long timeInMillis) {
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(timeInMillis);
-        return c;
-    }
+public class Converters
+{
 
     /**
      * Extracts the hour and minute from a <code>Calendar</code> and expresses it in a formatted string
